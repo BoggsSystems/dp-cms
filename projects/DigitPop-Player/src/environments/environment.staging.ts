@@ -6,6 +6,6 @@ export const environment = {
   CLOUDINARY_UPLOAD_PRESET: 'yspatu75',
   billsbyUrl: 'https://public.billsby.com/api/v1/rest/core/stagingdigitpop',
   billsbyKey: 'stagingdigitpop_e63c7ed880354970adf026d1a9c80e97',
-  homeUrl: 'https://www.digitpop.com',
+  homeUrl: 'http://digitpop.com',
   iOSFallbackUrl: 'http://digitpop.com'
 };
