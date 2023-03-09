@@ -135,7 +135,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
       // TODO: change targetOrigin url for staging/live deployment
       window.parent.postMessage({
         init: true, action: 'getCampaignId'
-      }, 'http://digitpop.com');
+      }, 'https://digitpop.com');
 
       addEventListener('message', (event) => {
         if (event.data.campaignId) {
@@ -175,7 +175,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
 
   onStartVideo() {
     const targetWindow = window.parent;
-    targetWindow.postMessage('start', 'http://digitpop.com');
+    targetWindow.postMessage('start', environment.homeUrl);
     if (!this.preview && this.subscription != null) {
       this.adService.createView(this.adId, this.subscription.cycleId).subscribe((res) => {
         console.log(res);
@@ -188,7 +188,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
     this.setSize();
     this.showVideo = true;
 
-    if (!this.videoMuted && false) { // Remove false to mute by default
+    if (!this.videoMuted) { // Remove false to mute by default
       this.toggleVideoMute();
     }
     this.videoPlayer.nativeElement.play();
@@ -247,7 +247,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
     this.showCanvas = false;
 
     // TODO: Change the URL
-    targetWindow.postMessage('exit', 'http://digitpop.com');
+    targetWindow.postMessage('exit', environment.homeUrl);
     // targetWindow.postMessage('exit', `${environment.homeUrl}`);
   }
 
