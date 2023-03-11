@@ -191,7 +191,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       textColor: '#ffffff',
       branding: true
     });
-    window.addEventListener('message', this.receiveMessage.bind(this), false);
+    // window.addEventListener('message', this.receiveMessage.bind(this), false);
   }
 
   iOSVersion() {
