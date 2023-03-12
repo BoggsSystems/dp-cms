@@ -66,7 +66,7 @@ export class AppComponent implements OnInit, DoCheck {
           this.notificationMessage = params.verified;
           this.disableNotification = false;
           if (params.verified) {
-            localStorage.setItem('verified', params.verified);
+            localStorage.setItem('verified', 'true');
           }
           this.router.navigate(['/home']);
 
