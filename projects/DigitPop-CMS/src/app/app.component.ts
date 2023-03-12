@@ -84,8 +84,9 @@ export class AppComponent implements OnInit, DoCheck {
           return;
         }
 
-        if (event.key === 'verified') {
-          this.disableNotification = event.newValue === 'true';
+        if (event.key === 'verified' && event.newValue === 'true') {
+          this.disableNotification = true;
+          localStorage.removeItem('verified');
         }
       });
     }
