@@ -8,6 +8,7 @@ import {Observable, Subject} from 'rxjs';
 export class DataService {
   private subjectName = new Subject<any>();
   private shoppableSubject = new Subject<any>();
+  private verificationSubject = new Subject<any>();
 
   constructor() {
   }
@@ -26,5 +27,13 @@ export class DataService {
 
   getShoppableTour(): Observable<any> {
     return this.shoppableSubject.asObservable();
+  }
+
+  setVerifiedState(verified: boolean) {
+    this.verificationSubject.next({verified});
+  }
+
+  getVerifiedState(): Observable<any> {
+    return this.verificationSubject.asObservable();
   }
 }

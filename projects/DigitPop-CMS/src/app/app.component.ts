@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, DoCheck {
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(map((result) => result.matches), shareReplay());
-  bc: BroadcastChannel;
+
   email: any;
   password: any;
   dialogRef: any;
@@ -54,6 +54,7 @@ export class AppComponent implements OnInit, DoCheck {
 
   // tslint:disable-next-line:max-line-length
   constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private data: DataService) {
+
     router.events.subscribe(() => {
       this.getSections();
     });
@@ -62,9 +63,11 @@ export class AppComponent implements OnInit, DoCheck {
       const x = this.route.queryParams;
       x.subscribe(params => {
         if (params.verified) {
-          this.bc.postMessage({verified: params.verified});
           this.notificationMessage = params.verified;
           this.disableNotification = false;
+          if (params.verified) {
+            localStorage.setItem('verified', params.verified);
+          }
           this.router.navigate(['/home']);
 
           setTimeout(() => {
@@ -75,11 +78,16 @@ export class AppComponent implements OnInit, DoCheck {
     }
 
     if (!this.isVerified) {
-      this.bc = new BroadcastChannel('verification');
-      this.bc.onmessage = (event) => {
-        console.log(event);
-      };
       this.notificationMessage = 'Please, check your email for verification.';
+      window.addEventListener('storage', (event) => {
+        if (event.storageArea !== localStorage) {
+          return;
+        }
+
+        if (event.key === 'verified') {
+          this.disableNotification = event.newValue === 'true';
+        }
+      });
     }
   }
 
@@ -89,14 +97,6 @@ export class AppComponent implements OnInit, DoCheck {
     if (this.authService.currentUserValue) {
       this.enableShoppableTour = this.authService.currentUserValue.toured;
       this.isVerified = this.authService.currentUserValue.verified;
-    }
-
-    if (!this.isVerified) {
-      window.addEventListener('storage', (event) => {
-        if (event.storageArea === localStorage) {
-          console.log(event);
-        }
-      }, false);
     }
 
     this.disableNotification = this.isVerified;
@@ -260,9 +260,5 @@ export class AppComponent implements OnInit, DoCheck {
 
   account() {
     this.router.navigate(['/cms/account']);
-  }
-
-  handleBroadcast = () => {
-    const bc = new BroadcastChannel('verification');
   }
 }
