@@ -867,6 +867,7 @@ export class ProjectWizardComponent implements OnInit {
 
     dialogConfig.data = {
       id: this.project._id,
+      isPreview: true,
     };
 
     const dialogRef = this.dialog.open(PreviewComponent, dialogConfig);
