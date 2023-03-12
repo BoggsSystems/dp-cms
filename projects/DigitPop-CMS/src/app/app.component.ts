@@ -83,8 +83,7 @@ export class AppComponent implements OnInit, DoCheck {
         if (event.storageArea !== localStorage) {
           return;
         }
-        console.log(event.key);
-        if (event.key === 'verified' && event.newValue === 'true') {
+        if (event.key === 'verified') {
           this.disableNotification = true;
         }
       });
