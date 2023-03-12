@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, DoCheck, OnInit, ViewChild} from '@angular/core';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {Observable} from 'rxjs';
 import {map, shareReplay} from 'rxjs/operators';
@@ -25,11 +25,11 @@ import {DataService} from './xchane/services/data.service';
   styleUrls: ['./app.component.scss'],
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, DoCheck {
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(map((result) => result.matches), shareReplay());
-
+  bc: BroadcastChannel;
   email: any;
   password: any;
   dialogRef: any;
@@ -54,7 +54,6 @@ export class AppComponent implements OnInit {
 
   // tslint:disable-next-line:max-line-length
   constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private data: DataService) {
-
     router.events.subscribe(() => {
       this.getSections();
     });
@@ -63,6 +62,7 @@ export class AppComponent implements OnInit {
       const x = this.route.queryParams;
       x.subscribe(params => {
         if (params.verified) {
+          this.bc.postMessage({verified: params.verified});
           this.notificationMessage = params.verified;
           this.disableNotification = false;
           this.router.navigate(['/home']);
@@ -75,6 +75,10 @@ export class AppComponent implements OnInit {
     }
 
     if (!this.isVerified) {
+      this.bc = new BroadcastChannel('verification');
+      this.bc.onmessage = (event) => {
+        console.log(event);
+      };
       this.notificationMessage = 'Please, check your email for verification.';
     }
   }
@@ -85,6 +89,14 @@ export class AppComponent implements OnInit {
     if (this.authService.currentUserValue) {
       this.enableShoppableTour = this.authService.currentUserValue.toured;
       this.isVerified = this.authService.currentUserValue.verified;
+    }
+
+    if (!this.isVerified) {
+      window.addEventListener('storage', (event) => {
+        if (event.storageArea === localStorage) {
+          console.log(event);
+        }
+      }, false);
     }
 
     this.disableNotification = this.isVerified;
@@ -248,5 +260,9 @@ export class AppComponent implements OnInit {
 
   account() {
     this.router.navigate(['/cms/account']);
+  }
+
+  handleBroadcast = () => {
+    const bc = new BroadcastChannel('verification');
   }
 }
