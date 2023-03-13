@@ -7,10 +7,10 @@ export class ProjectMedia {
   category: string;
   categoryId: string;
   media: {
-    url: string; duration: number | string;
+    secure_url: string; duration: number | string;
   };
   thumbnail: {
-    url: string;
+    secure_url: string;
   };
   watched: boolean;
 }

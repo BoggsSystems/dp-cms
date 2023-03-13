@@ -23,14 +23,14 @@
       href="">
       <div class="preview-backdrop"></div>
       <video
-        poster="{{video.thumbnail.url}}">
+        poster="{{video.thumbnail.secure_url}}">
         <source
-          src="{{video.media.url}}"
+          src="{{video.media.secure_url}}"
           type="video/mp4"
         />
       </video>
       <img alt="video title" height="170"
-           src="{{video.thumbnail.url}}">
+           src="{{video.thumbnail.secure_url}}">
       <img
         [hidden]="video.watched || !enabledShoppableTour"
         alt=""
