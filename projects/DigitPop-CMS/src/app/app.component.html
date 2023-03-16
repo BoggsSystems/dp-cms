@@ -1,4 +1,3 @@
-<button (click)="sendMsg()">Test</button>
 <mat-spinner class="spinner" [diameter]="50" *ngIf="spinnerService.visibility | async"></mat-spinner>
 <mat-toolbar *ngIf="currentUser && !disableNotification" class="notification">
   <p>{{data.getNotification.message}}</p>

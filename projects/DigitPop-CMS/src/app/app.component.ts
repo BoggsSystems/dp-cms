@@ -110,16 +110,6 @@ export class AppComponent implements OnInit, DoCheck {
     }
   }
 
-
-  sendMsg() {
-    const message = {
-      trigger: 'verified',
-      value: true
-    };
-
-    this.webSocket.messages.next(message);
-  }
-
   ngOnInit() {
     this.isTrial = false;
 
