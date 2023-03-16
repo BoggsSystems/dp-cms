@@ -6,5 +6,6 @@ export const environment = {
   billsbyKey: 'stagingdigitpop_e63c7ed880354970adf026d1a9c80e97',
   cloudinaryUrl: 'https://api.cloudinary.com/v1_1/',
   CLOUDINARY_CLOUD_NAME: 'boggssystems',
-  CLOUDINARY_UPLOAD_PRESET: 'yspatu75'
+  CLOUDINARY_UPLOAD_PRESET: 'yspatu75',
+  websocketURL: 'ws://production-digitpop-server.herokuapp.com:8081'
 };

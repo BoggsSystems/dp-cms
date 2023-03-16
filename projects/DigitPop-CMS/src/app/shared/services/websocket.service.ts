@@ -5,7 +5,7 @@ import {map} from 'rxjs/operators';
 import {XchaneAuthenticationService} from './xchane-auth-service.service';
 import {environment} from '../../../environments/environment';
 
-const WS = `ws://${environment.apiUrl}:8081`;
+const WS = environment.websocketURL;
 
 export interface Message {
   trigger: string,
