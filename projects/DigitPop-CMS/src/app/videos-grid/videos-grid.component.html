@@ -32,7 +32,7 @@
       <img alt="video title" height="170"
            src="{{video.thumbnail.secure_url}}">
       <img
-        [hidden]="video.watched || !enabledShoppableTour"
+        [hidden]="video.watched || !videoTour"
         alt=""
         class="shoppable-video-indicator"
         src="/assets/img/shoppable-video.svg"

@@ -76,7 +76,6 @@ export class VideoComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    console.log('updated the build correctly');
     this.handleTutorial();
     this.videoType = VideoType.Regular;
 

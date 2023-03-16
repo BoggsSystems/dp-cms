@@ -16,6 +16,7 @@ import {XchaneUser} from './shared/models/xchane.user';
 import {
   XchaneAuthenticationService
 } from './shared/services/xchane-auth-service.service';
+import {WebsocketService} from './shared/services/websocket.service';
 import {DataService} from './xchane/services/data.service';
 
 
@@ -23,6 +24,7 @@ import {DataService} from './xchane/services/data.service';
   selector: 'digit-pop-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  providers: [WebsocketService]
 })
 
 export class AppComponent implements OnInit, DoCheck {
@@ -46,28 +48,46 @@ export class AppComponent implements OnInit, DoCheck {
   navSections: Object;
   isEligible: boolean;
   sectionsKeys: any;
-  enableShoppableTour = true;
+  videoTour = true;
   disableNotification: boolean;
   isVerified: boolean;
   notificationMessage: string;
+  bc: BroadcastChannel;
   @ViewChild(HomeComponent) child: HomeComponent;
 
   // tslint:disable-next-line:max-line-length
-  constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private data: DataService) {
+  constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private webSocket: WebsocketService, public data: DataService) {
+
+    webSocket.messages.subscribe(message => {
+      console.log(message);
+      if (message.trigger === 'tour') {
+        this.videoTour = message.value;
+      } else if (message.trigger === 'verified' && message.value) {
+        this.isVerified = true;
+        this.notificationMessage = 'Email verified successfully.';
+
+        setTimeout(() => {
+          this.disableNotification = message.value;
+        }, 4000);
+      }
+    });
 
     router.events.subscribe(() => {
       this.getSections();
     });
 
+    this.bc = new BroadcastChannel('notifications');
+
     if (this.route != null && this.route.queryParams != null) {
       const x = this.route.queryParams;
       x.subscribe(params => {
         if (params.verified) {
+          this.data
+            .setNotification(true, params.verified);
           this.notificationMessage = params.verified;
           this.disableNotification = false;
-          if (params.verified) {
-            localStorage.setItem('verified', 'true');
-          }
+
+          this.bc.postMessage({verified: true});
           this.router.navigate(['/home']);
 
           setTimeout(() => {
@@ -78,23 +98,33 @@ export class AppComponent implements OnInit, DoCheck {
     }
 
     if (!this.isVerified) {
-      this.notificationMessage = 'Please, check your email for verification.';
-      window.addEventListener('storage', (event) => {
-        if (event.storageArea !== localStorage) {
+      this.bc.onmessage = (event) => {
+        if (!event.data.verified) {
           return;
         }
-        if (event.key === 'verified') {
-          this.disableNotification = true;
-        }
-      });
+        this.data.setNotification(false, 'Changed Notification Message');
+
+        console.log(this.data.getNotification);
+        this.bc.close();
+      };
     }
+  }
+
+
+  sendMsg() {
+    const message = {
+      trigger: 'verified',
+      value: true
+    };
+
+    this.webSocket.messages.next(message);
   }
 
   ngOnInit() {
     this.isTrial = false;
 
     if (this.authService.currentUserValue) {
-      this.enableShoppableTour = this.authService.currentUserValue.toured;
+      this.videoTour = this.authService.currentUserValue.tour;
       this.isVerified = this.authService.currentUserValue.verified;
     }
 
@@ -103,7 +133,6 @@ export class AppComponent implements OnInit, DoCheck {
     if (localStorage.getItem('trial')) {
       localStorage.removeItem('trial');
     }
-
   }
 
   ngDoCheck() {
@@ -150,12 +179,12 @@ export class AppComponent implements OnInit, DoCheck {
     }
   }
 
-  toured = () => {
+  onTour = () => {
     this.authService
-      .tour()
+      .tour() /* Update user object property */
       .subscribe((res: XchaneUser) => {
         this.authService.storeUser(res);
-        this.data.setShoppableTour(res.toured);
+        this.data.setVideoTour(res.tour); /* Set app subject with new value */
       }, (error: any) => {
         console.error(error);
       });

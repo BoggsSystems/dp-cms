@@ -25,7 +25,6 @@ export class LoginComponent implements OnInit {
   @Input() fromQuiz = false;
   @Input() campaignId: string;
   @Input() projectId: string;
-  @Input() toured = false;
   loginForm: FormGroup;
   loading = false;
   submitted = false;
@@ -43,9 +42,6 @@ export class LoginComponent implements OnInit {
     }
     this.validRole = Role.Consumer;
 
-    if (localStorage.getItem('enabledShoppableTour')) {
-      this.toured = localStorage.getItem('enabledShoppableTour') === 'true';
-    }
     // redirect to home if already logged in
     // if (this.authenticationService.currentUserValue) {
     //   this.dialogRef.close();
@@ -93,7 +89,7 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) {
       return;
     }
-    // console.log("user:",this.f.email.value, this.f.password.value);
+
     this.loading = true;
     if (this.validRole === 'consumer') {
       this.xchaneAuthenticationService
@@ -101,28 +97,17 @@ export class LoginComponent implements OnInit {
         .pipe(first())
         .subscribe((res) => {
           if (res) {
+
             if (this.keepMeSignedIn) {
               this.storeUser(res);
               localStorage.setItem('currentRole', 'customer');
+              localStorage.setItem('XchaneCurrentUser', JSON.stringify(res));
             } else {
               sessionStorage.setItem('currentRole', 'customer');
+              sessionStorage.setItem('XchaneCurrentUser', JSON.stringify(res));
             }
 
             this.dialogRef.close();
-
-            if (!res.toured && this.toured) {
-              this.xchaneAuthenticationService
-                .tour()
-                .subscribe(user => {
-                  if (this.keepMeSignedIn) {
-                    localStorage.setItem('enabledShoppableTour', 'true');
-                    localStorage.setItem('XchaneCurrentUser', JSON.stringify(user));
-                  } else {
-                    sessionStorage.setItem('enabledShoppableTour', 'true');
-                    sessionStorage.setItem('XchaneCurrentUser', JSON.stringify(user));
-                  }
-                });
-            }
 
             if (this.fromQuiz) {
               return this.addPointsToUser(res._id);

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,8 +7,8 @@ import {Observable, Subject} from 'rxjs';
 
 export class DataService {
   private subjectName = new Subject<any>();
-  private shoppableSubject = new Subject<any>();
-  private verificationSubject = new Subject<any>();
+  private tourSubject = new Subject<any>();
+  private notificationSubject = new BehaviorSubject<any>({displayNotification: true, message: 'Please, check your email for verification.'});
 
   constructor() {
   }
@@ -21,19 +21,19 @@ export class DataService {
     return this.subjectName.asObservable();
   }
 
-  setShoppableTour(enabled: boolean) {
-    this.shoppableSubject.next({enabled});
+  setVideoTour(enabled: boolean) {
+    this.tourSubject.next({enabled});
   }
 
-  getShoppableTour(): Observable<any> {
-    return this.shoppableSubject.asObservable();
+  getVideoTour(): Observable<any> {
+    return this.tourSubject.asObservable();
   }
 
-  setVerifiedState(verified: boolean) {
-    this.verificationSubject.next({verified});
+  setNotification(displayNotification: boolean, notificationMessage: string) {
+    this.notificationSubject.next({displayNotification, notificationMessage});
   }
 
-  getVerifiedState(): Observable<any> {
-    return this.verificationSubject.asObservable();
+  public get getNotification(): any {
+    return this.notificationSubject.value;
   }
 }

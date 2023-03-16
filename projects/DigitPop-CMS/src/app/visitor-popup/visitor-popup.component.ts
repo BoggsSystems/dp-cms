@@ -10,12 +10,8 @@ export class VisitorPopupComponent implements OnInit {
   campaignId: string;
   xchaneUserId: string;
   projectId: string;
-  toured = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { campaignId: string, projectId: string }) {
-    if (localStorage.getItem('enabledShoppableTour')) {
-      this.toured = localStorage.getItem('enabledShoppableTour') === 'true';
-    }
   }
 
   ngOnInit(): void {

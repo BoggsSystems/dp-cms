@@ -1,6 +1,7 @@
+<button (click)="sendMsg()">Test</button>
 <mat-spinner class="spinner" [diameter]="50" *ngIf="spinnerService.visibility | async"></mat-spinner>
 <mat-toolbar *ngIf="currentUser && !disableNotification" class="notification">
-  <p>{{notificationMessage}}</p>
+  <p>{{data.getNotification.message}}</p>
 </mat-toolbar>
 <mat-toolbar color="secondary">
     <div id="main_logo">
@@ -34,7 +35,7 @@
         <mat-menu #menu="matMenu">
           <div *ngIf="currentUser" class="user-id">Account ID: {{ currentUser ? currentUser._id : '' }}</div>
           <div mat-menu-item *ngIf="currentUser && currentRole === 'customer'" (click) = "$event.stopPropagation()" >
-            <mat-slide-toggle color="primary" [(ngModel)]="enableShoppableTour" (change)="toured()">Shoppable Tour</mat-slide-toggle>
+            <mat-slide-toggle color="primary" [(ngModel)]="videoTour" (change)="onTour()">Video Tour</mat-slide-toggle>
           </div>
           <div *ngIf="currentUser && currentRole === 'customer'">
             <a mat-menu-item href="#" routerLink="/dashboard" routerLinkActive="active">Account Dashboard</a>

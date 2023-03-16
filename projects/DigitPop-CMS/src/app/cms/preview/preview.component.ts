@@ -12,7 +12,7 @@ export class PreviewComponent implements OnInit {
   iFrameSrc: any;
   campaignId: string | boolean;
   categoryId: string | boolean;
-  enabledShoppableTour: boolean;
+  videoTour = true;
   isPreview: boolean;
   onAdd = new EventEmitter();
 
@@ -20,7 +20,7 @@ export class PreviewComponent implements OnInit {
     this.iFrameSrc = `${environment.playerUrl}/ad/${data.id}/preview/true/userId/${data.userId !== false ? data.userId : 'false'}`;
     this.campaignId = data.campaignId ? data.campaignId : false;
     this.categoryId = data.categoryId ? data.categoryId : false;
-    this.enabledShoppableTour = data.enabledShoppableTour ? data.enabledShoppableTour : false;
+    this.videoTour = 'tour' in data ?? data.tour;
     this.isPreview = data.isPreview ? data.isPreview : false;
     addEventListener('message', (event) => {
       this.sendMessage(event);
@@ -35,7 +35,7 @@ export class PreviewComponent implements OnInit {
     campaignId: this.campaignId,
     categoryId: this.categoryId,
     isPreview: this.isPreview,
-    toured: this.enabledShoppableTour
+    tour: this.videoTour
   }) => {
     const targetOrigin = event ? event.origin : '*';
     const iframe = document.querySelector('iframe.iframe') as HTMLIFrameElement;

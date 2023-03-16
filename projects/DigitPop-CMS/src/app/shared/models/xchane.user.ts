@@ -7,7 +7,7 @@ export class XchaneUser {
   credits: number;
   welcomed: boolean;
   approved: boolean;
-  toured: boolean;
+  tour: boolean;
   verified: boolean;
   referrerCode: string;
   token?: any;

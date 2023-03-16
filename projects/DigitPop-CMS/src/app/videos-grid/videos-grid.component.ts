@@ -21,6 +21,7 @@ import {PlayerComponent} from '../xchane/player/player.component';
 import {timer} from 'rxjs';
 import {VisitorPopupComponent} from '../visitor-popup/visitor-popup.component';
 import {XchaneUser} from '../shared/models/xchane.user';
+import {WebsocketService} from '../shared/services/websocket.service';
 import {DataService} from '../xchane/services/data.service';
 
 @Component({
@@ -49,26 +50,29 @@ export class VideosGridComponent implements OnInit {
   monthNames: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   scoreBubbleIsOpen: boolean;
   canToggle: boolean;
-  enabledShoppableTour = true;
+  videoTour = true;
   isUser: string | boolean;
 
   // tslint:disable-next-line:max-line-length
-  constructor(private videosService: VideosGridService, private engagementService: EngagementService, private authService: XchaneAuthenticationService, private dialog: MatDialog, private router: Router, private data: DataService) {
+  constructor(private videosService: VideosGridService, private engagementService: EngagementService, private authService: XchaneAuthenticationService, private dialog: MatDialog, private router: Router, private webSocket: WebsocketService, private data: DataService) {
     this.scoreBubbleIsOpen = false;
     this.canToggle = false;
     this.videosCount = Array(this.videosLimit).fill(0).map((x, i) => i);
     this.categoryVideosCount = 0;
     this.selectedCategories = ['Cosmetics']; // Set default category
-    this.data.getShoppableTour().subscribe(enabledShoppableTour => {
-      this.enabledShoppableTour = enabledShoppableTour.enabled;
+
+    webSocket.messages.subscribe(message => {
+      if (message.trigger === 'tour') {
+        this.videoTour = message.value;
+      }
     });
   }
 
   ngOnInit(): void {
     if (this.authService.currentUserValue) {
-      this.enabledShoppableTour = this.authService.currentUserValue.toured ? this.authService.currentUserValue.toured : false;
-      localStorage.setItem('enabledShoppableTour', String(this.enabledShoppableTour));
+      this.videoTour = 'tour' in this.authService.currentUserValue ? this.authService.currentUserValue.tour : true;
     }
+
     this.getCategories();
     window.addEventListener('message', this.handlePostQuizMessage.bind(this), false);
   }
@@ -166,7 +170,7 @@ export class VideosGridComponent implements OnInit {
       campaignId,
       userId,
       categoryId,
-      enabledShoppableTour: this.enabledShoppableTour
+      videoTour: this.videoTour
     };
     this.previewDialogRef = this.dialog.open(PreviewComponent, dialogConfig);
     const sub = this.previewDialogRef.componentInstance.onAdd.subscribe(() => {
@@ -252,20 +256,6 @@ export class VideosGridComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
     });
-  }
-
-  toured = () => {
-    if (!this.authService.currentUserValue.toured) {
-      this.authService
-        .tour()
-        .subscribe((res: XchaneUser) => {
-          if (res.toured) {
-            this.authService.storeUser(res);
-          }
-        }, (error: any) => {
-          console.error(error);
-        });
-    }
   }
 
   private refreshUser = () => {
