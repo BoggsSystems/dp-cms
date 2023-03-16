@@ -3,8 +3,9 @@ import {Observable, Observer, Subject} from 'rxjs';
 import {AnonymousSubject} from 'rxjs/internal/Subject';
 import {map} from 'rxjs/operators';
 import {XchaneAuthenticationService} from './xchane-auth-service.service';
+import {environment} from '../../../environments/environment';
 
-const WS = 'ws://localhost:8081';
+const WS = `ws://${environment.apiUrl}:8081`;
 
 export interface Message {
   trigger: string,
