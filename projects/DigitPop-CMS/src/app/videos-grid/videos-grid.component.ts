@@ -1,5 +1,10 @@
 'use strict';
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  OnInit,
+  ViewEncapsulation
+} from '@angular/core';
 import {
   MatDialog,
   MatDialogConfig,
@@ -28,10 +33,11 @@ import {DataService} from '../xchane/services/data.service';
   selector: 'digit-pop-videos-grid',
   templateUrl: './videos-grid.component.html',
   styleUrls: ['./videos-grid.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  providers: [WebsocketService]
 })
 
-export class VideosGridComponent implements OnInit {
+export class VideosGridComponent implements OnInit, AfterViewChecked {
   selectedCategories: string[] = [];
   categories: string[] = [];
   activeCategories: Category[] = [];
@@ -60,12 +66,6 @@ export class VideosGridComponent implements OnInit {
     this.videosCount = Array(this.videosLimit).fill(0).map((x, i) => i);
     this.categoryVideosCount = 0;
     this.selectedCategories = ['Cosmetics']; // Set default category
-
-    webSocket.messages.subscribe(message => {
-      if (message.trigger === 'tour') {
-        this.videoTour = message.value;
-      }
-    });
   }
 
   ngOnInit(): void {
@@ -75,6 +75,15 @@ export class VideosGridComponent implements OnInit {
 
     this.getCategories();
     window.addEventListener('message', this.handlePostQuizMessage.bind(this), false);
+  }
+
+  ngAfterViewChecked() {
+    this.webSocket.messages.subscribe(message => {
+      console.log('11/');
+      if (message.trigger === 'tour') {
+        this.videoTour = message.value;
+      }
+    });
   }
 
   buildGrid: () => void = async () => {
