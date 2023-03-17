@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
   Component,
   ElementRef,
@@ -9,12 +10,13 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
-  HashLocationStrategy, Location, LocationStrategy,
+  HashLocationStrategy,
+  Location,
+  LocationStrategy,
 } from '@angular/common';
 import {environment} from '../../environments/environment';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {PreviewComponent} from '../cms/preview/preview.component';
-import {WelcomeComponent} from '../xchane/help/welcome/welcome.component';
 import {
   animate,
   animation,
@@ -39,6 +41,7 @@ import {
   MetricsService
 } from 'projects/DigitPop-CMS/src/app/shared/services/metrics.service';
 import {Metric} from '../shared/models/metric';
+import {WebsocketService} from '../shared/services/websocket.service';
 
 interface CustomWindow extends Window {
   billsbyData: any;
@@ -52,7 +55,7 @@ declare let Calendly: any;
   templateUrl: './home.component.html',
   providers: [Location, {
     provide: LocationStrategy, useClass: HashLocationStrategy
-  },],
+  }, WebsocketService ],
   animations: [trigger('openClose', [state('open', style({
     top: '0px',
     left: '0px',
@@ -70,7 +73,7 @@ declare let Calendly: any;
   styleUrls: ['./home.component.scss'],
 })
 
-export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   location: Location;
   iFrameSrc: any;
   fadeAnimation: any;
@@ -82,7 +85,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('embeddedIFrame') embeddedIFrame: ElementRef;
 
   // tslint:disable-next-line:max-line-length
-  constructor(private router: Router, private route: ActivatedRoute, private dialog: MatDialog, location: Location, private _builder: AnimationBuilder, public platform: Platform, private userService: UserService, private metricsService: MetricsService, private authService: AuthenticationService, private xchaneAuthService: XchaneAuthenticationService) {
+  constructor(private router: Router, private route: ActivatedRoute, private dialog: MatDialog, location: Location, private _builder: AnimationBuilder, public platform: Platform, private userService: UserService, private metricsService: MetricsService, private authService: AuthenticationService, private xchaneAuthService: XchaneAuthenticationService, private webSocket: WebsocketService) {
     const nav = this.router.getCurrentNavigation();
     const checkNav = nav != null && nav.extras != null && nav.extras.state != null;
 
@@ -123,6 +126,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.loggedIn) {
       this.welcomed = this.xchaneAuthService.currentUserValue.welcomed;
     }
+  }
+
+  ngAfterViewChecked() {
+    this.webSocket.messages.subscribe(message => {
+      if (message.trigger === 'login') {
+        this.loggedIn = message.value;
+      }
+    });
   }
 
   preview() {
