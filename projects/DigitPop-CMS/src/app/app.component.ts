@@ -1,4 +1,10 @@
-import {Component, DoCheck, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  DoCheck,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {Observable} from 'rxjs';
 import {map, shareReplay} from 'rxjs/operators';
@@ -27,7 +33,7 @@ import {DataService} from './xchane/services/data.service';
   providers: [WebsocketService]
 })
 
-export class AppComponent implements OnInit, DoCheck {
+export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(map((result) => result.matches), shareReplay());
@@ -57,20 +63,6 @@ export class AppComponent implements OnInit, DoCheck {
 
   // tslint:disable-next-line:max-line-length
   constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private webSocket: WebsocketService, public data: DataService) {
-
-    webSocket.messages.subscribe(message => {
-      console.log(message);
-      if (message.trigger === 'tour') {
-        this.videoTour = message.value;
-      } else if (message.trigger === 'verified' && message.value) {
-        this.isVerified = true;
-        this.notificationMessage = 'Email verified successfully.';
-
-        setTimeout(() => {
-          this.disableNotification = message.value;
-        }, 4000);
-      }
-    });
 
     router.events.subscribe(() => {
       this.getSections();
@@ -108,6 +100,7 @@ export class AppComponent implements OnInit, DoCheck {
         this.bc.close();
       };
     }
+
   }
 
   ngOnInit() {
@@ -123,6 +116,25 @@ export class AppComponent implements OnInit, DoCheck {
     if (localStorage.getItem('trial')) {
       localStorage.removeItem('trial');
     }
+  }
+
+  ngAfterViewChecked() {
+    this.wsConnection();
+  }
+
+  wsConnection = () => {
+    this.webSocket.messages.subscribe(message => {
+      if (message.trigger === 'tour') {
+        this.videoTour = message.value;
+      } else if (message.trigger === 'verified' && message.value) {
+        this.isVerified = true;
+        this.notificationMessage = 'Email verified successfully.';
+
+        setTimeout(() => {
+          this.disableNotification = message.value;
+        }, 4000);
+      }
+    });
   }
 
   ngDoCheck() {
