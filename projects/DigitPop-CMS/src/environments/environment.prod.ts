@@ -7,5 +7,5 @@ export const environment = {
   cloudinaryUrl: 'https://api.cloudinary.com/v1_1/',
   CLOUDINARY_CLOUD_NAME: 'boggssystems',
   CLOUDINARY_UPLOAD_PRESET: 'yspatu75',
-  websocketURL: 'wss://production-digitpop-server.herokuapp.com'
+  websocketURL: 'ws://production-digitpop-server.herokuapp.com'
 };
