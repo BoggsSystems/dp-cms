@@ -243,40 +243,39 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
 
   handlePostQuiz = (answer: any) => {
     this.previewDialogRef.close();
-    console.log(answer);
 
-    // const isCorrect = this.isUser ? event.data.isCorrect.correct : event.data.isCorrect;
-    // let confirmDialog: any;
-    //
-    // if (!isCorrect) {
-    //   confirmDialog = this.dialog.open(AnswerDialogComponent, {
-    //     data: {
-    //       title: 'Incorrect Answer',
-    //       message: 'Incorrect Answer, would you like to try again?',
-    //     },
-    //   });
-    //
-    //   return confirmDialog.afterClosed().subscribe((result: boolean) => {
-    //     confirmDialog.close();
-    //
-    //     if (result === true) {
-    //       this.openPlayer(this.projectId, this.campaignId, this.categoryId);
-    //     }
-    //   });
-    // }
-    //
-    // this.videos = this.videos.map(video => {
-    //   if (video._id !== this.projectId) {
-    //     return video;
-    //   }
-    //
-    //   video.watched = true;
-    //   return video;
-    // });
-    //
-    // this.canToggle = true;
-    // this.scoreBubbleToggle(event.data.isUser);
-    // this.canToggle = false;
+    const isCorrect = answer.correct;
+    let confirmDialog: any;
+
+    if (!isCorrect) {
+      confirmDialog = this.dialog.open(AnswerDialogComponent, {
+        data: {
+          title: 'Incorrect Answer',
+          message: 'Incorrect Answer, would you like to try again?',
+        },
+      });
+
+      return confirmDialog.afterClosed().subscribe((result: boolean) => {
+        confirmDialog.close();
+
+        if (result === true) {
+          this.openPlayer(this.projectId, this.campaignId, this.categoryId);
+        }
+      });
+    }
+
+    this.videos = this.videos.map(video => {
+      if (video._id !== this.projectId) {
+        return video;
+      }
+
+      video.watched = true;
+      return video;
+    });
+
+    this.canToggle = true;
+    this.scoreBubbleToggle(true);
+    this.canToggle = false;
   }
 
   scoreBubbleToggle = (isUser: boolean) => {
