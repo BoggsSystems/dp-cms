@@ -137,10 +137,6 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
     });
   }
 
-  sendWSMEssage = () => {
-    this.webSocket.messages.next({ trigger: 'wor', value: 'hellow world!' });
-  }
-
   ngDoCheck() {
     this.isLogin = false;
     this.isCMS = false;
