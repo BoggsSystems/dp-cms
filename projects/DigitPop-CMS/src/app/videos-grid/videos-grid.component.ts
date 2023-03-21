@@ -74,14 +74,18 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
     }
 
     this.getCategories();
-    window.addEventListener('message', this.handlePostQuizMessage.bind(this), false);
+    // window.addEventListener('message', this.handlePostQuizMessage.bind(this), false);
   }
 
   ngAfterViewChecked() {
     this.webSocket.messages.subscribe(message => {
+
       if (message.trigger === 'tour') {
         this.videoTour = message.value;
+      } else if (message.trigger === 'postQuiz') {
+        this.handlePostQuiz(message.value);
       }
+
     });
   }
 
@@ -235,6 +239,44 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
       this.scoreBubbleToggle(event.data.isUser);
       this.canToggle = false;
     }
+  }
+
+  handlePostQuiz = (answer: any) => {
+    this.previewDialogRef.close();
+    console.log(answer);
+
+    // const isCorrect = this.isUser ? event.data.isCorrect.correct : event.data.isCorrect;
+    // let confirmDialog: any;
+    //
+    // if (!isCorrect) {
+    //   confirmDialog = this.dialog.open(AnswerDialogComponent, {
+    //     data: {
+    //       title: 'Incorrect Answer',
+    //       message: 'Incorrect Answer, would you like to try again?',
+    //     },
+    //   });
+    //
+    //   return confirmDialog.afterClosed().subscribe((result: boolean) => {
+    //     confirmDialog.close();
+    //
+    //     if (result === true) {
+    //       this.openPlayer(this.projectId, this.campaignId, this.categoryId);
+    //     }
+    //   });
+    // }
+    //
+    // this.videos = this.videos.map(video => {
+    //   if (video._id !== this.projectId) {
+    //     return video;
+    //   }
+    //
+    //   video.watched = true;
+    //   return video;
+    // });
+    //
+    // this.canToggle = true;
+    // this.scoreBubbleToggle(event.data.isUser);
+    // this.canToggle = false;
   }
 
   scoreBubbleToggle = (isUser: boolean) => {
