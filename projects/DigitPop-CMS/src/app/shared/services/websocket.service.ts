@@ -24,6 +24,7 @@ export class WebsocketService {
     }
 
     this.messages = (this.connect(WS + '/' + this.userId).pipe(map((response: MessageEvent): Message => {
+      console.log(JSON.parse(response.data));
       return JSON.parse(response.data);
     })) as BehaviorSubject<Message>);
   }
