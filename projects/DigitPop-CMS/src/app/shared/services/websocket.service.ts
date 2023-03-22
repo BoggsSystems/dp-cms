@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, Observer, Subject} from 'rxjs';
-import {AnonymousSubject} from 'rxjs/internal/Subject';
-import {map} from 'rxjs/operators';
-import {XchaneAuthenticationService} from './xchane-auth-service.service';
-import {environment} from '../../../environments/environment';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, Observer, Subject } from 'rxjs';
+import { AnonymousSubject } from 'rxjs/internal/Subject';
+import { map } from 'rxjs/operators';
+import { XchaneAuthenticationService } from './xchane-auth-service.service';
+import { environment } from '../../../environments/environment';
 
 const WS = environment.websocketURL;
 
@@ -23,21 +23,20 @@ export class WebsocketService {
       this.userId = this.auth.currentUserValue._id;
     }
 
-    this.messages = (this.connect(WS + '/' + this.userId).pipe(map((response: MessageEvent): Message => {
-      console.log(JSON.parse(response.data));
+    this.messages = (this.connect(WS + '/' + this.userId, 'parent-protocol').pipe(map((response: MessageEvent): Message => {
       return JSON.parse(response.data);
     })) as BehaviorSubject<Message>);
   }
 
-  public connect(url: string): AnonymousSubject<MessageEvent> {
+  public connect(url: string, protocol: string): AnonymousSubject<MessageEvent> {
     if (!this.subject) {
-      this.subject = this.create(url);
+      this.subject = this.create(url, protocol);
     }
     return this.subject;
   }
 
-  private create(url: string): AnonymousSubject<MessageEvent> {
-    const ws = new WebSocket(url);
+  private create(url: string, protocol: string): AnonymousSubject<MessageEvent> {
+    const ws = new WebSocket(url, protocol);
 
     const observable = new Observable((obs: Observer<MessageEvent>) => {
       ws.onmessage = obs.next.bind(obs);
