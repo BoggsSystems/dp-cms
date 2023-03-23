@@ -55,11 +55,22 @@ export class WebsocketService {
       }
     };
 
-    setInterval(() => {
+    const pingInterval = setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ trigger: 'ping', value: Date.now() }));
       }
-    }, 20000);
+    }, 10000);
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.trigger === 'ping') {
+        ws.send(JSON.stringify({ trigger: 'pong', value: message.value }));
+      }
+    };
+
+    ws.onclose = () => {
+      clearInterval(pingInterval);
+    };
 
     return new AnonymousSubject<MessageEvent>(observer, observable);
   }
