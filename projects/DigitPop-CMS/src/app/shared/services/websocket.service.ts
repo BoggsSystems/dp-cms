@@ -55,6 +55,12 @@ export class WebsocketService {
       }
     };
 
+    setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ trigger: 'ping', value: Date.now() }));
+      }
+    }, 20000);
+
     return new AnonymousSubject<MessageEvent>(observer, observable);
   }
 }
