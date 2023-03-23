@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Observer, Subject } from 'rxjs';
-import { AnonymousSubject } from 'rxjs/internal/Subject';
-import {map, share} from 'rxjs/operators';
-import { XchaneAuthenticationService } from './xchane-auth-service.service';
-import { environment } from '../../../environments/environment';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable, Observer, Subject} from 'rxjs';
+import {AnonymousSubject} from 'rxjs/internal/Subject';
+import {map} from 'rxjs/operators';
+import {XchaneAuthenticationService} from './xchane-auth-service.service';
+import {environment} from '../../../environments/environment';
 
 const WS = environment.websocketURL;
 
@@ -23,21 +23,27 @@ export class WebsocketService {
       this.userId = this.auth.currentUserValue._id;
     }
 
-    this.connect(WS + '/' + this.userId, 'parent-protocol').subscribe();
+    this.messages = (this.connect(WS + '/' + this.userId).pipe(map((response: MessageEvent): Message => {
+      console.log(JSON.parse(response.data));
+      return JSON.parse(response.data);
+    })) as BehaviorSubject<Message>);
   }
 
-  public connect(url: string, protocol: string): Observable<Message> {
-    const ws = new WebSocket(url, protocol);
+  public connect(url: string): AnonymousSubject<MessageEvent> {
+    if (!this.subject) {
+      this.subject = this.create(url);
+    }
+    return this.subject;
+  }
 
-    const observable = new Observable<Message>((obs: Observer<Message>) => {
-      ws.onmessage = (event) => obs.next(JSON.parse(event.data));
-      ws.onerror = (event) => obs.error(event);
-      ws.onclose = (event) => obs.complete();
-      return () => {
-        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-          ws.close();
-        }
-      }
+  private create(url: string): AnonymousSubject<MessageEvent> {
+    const ws = new WebSocket(url);
+
+    const observable = new Observable((obs: Observer<MessageEvent>) => {
+      ws.onmessage = obs.next.bind(obs);
+      ws.onerror = obs.error.bind(obs);
+      ws.onclose = obs.complete.bind(obs);
+      return ws.close.bind(ws);
     });
 
     const observer: any = {
@@ -49,6 +55,6 @@ export class WebsocketService {
       }
     };
 
-    return Subject.create(observer, observable).pipe(share());
+    return new AnonymousSubject<MessageEvent>(observer, observable);
   }
 }
