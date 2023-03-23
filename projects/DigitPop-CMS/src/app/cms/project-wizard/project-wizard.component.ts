@@ -20,7 +20,8 @@ import {
   ProductGroup
 } from 'projects/DigitPop-Player/src/app/models/productGroup';
 import {
-  Product, ProductImage,
+  Product,
+  ProductImage,
 } from 'projects/DigitPop-Player/src/app/models/product';
 import {
   ConfirmDialogComponent
@@ -45,6 +46,7 @@ import {ProjectWizardYoutubePopup} from './popup/youtube-popup.component';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {Cache} from '../../shared/helpers/cache';
 import {MatSlideToggleChange} from '@angular/material/slide-toggle';
+import {environment} from '../../../environments/environment';
 
 
 @Component({
@@ -68,8 +70,10 @@ export class ProjectWizardComponent implements OnInit {
   editFlag = false;
   copyClipboardText = 'Copy to clipboard';
   error = '';
+  playerURL = '';
 
   constructor(private videoService: VideoService, private imageService: ImageService, private projectService: ProjectService, private productGroupService: ProductGroupService, private dialog: MatDialog, private productService: ProductService, private router: Router, private authService: AuthenticationService, private clipboard: Clipboard,) {
+    this.playerURL = environment.playerUrl;
     // Logic to determine if we're editing an existing project or creating a new one
     var nav = this.router.getCurrentNavigation();
 

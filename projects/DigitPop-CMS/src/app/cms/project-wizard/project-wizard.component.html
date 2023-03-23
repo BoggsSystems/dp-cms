@@ -2,7 +2,7 @@
   <div [style]="" class="project-details" fxLayout
        fxLayoutAlign="space-between center">
     <h3
-      style="margin: 0; font-weight: bold">{{project.name ? project.name : 'Untitled Project'}}</h3>
+        style="margin: 0; font-weight: bold">{{project.name ? project.name : 'Untitled Project'}}</h3>
     <div *ngIf="project.media" class="toggle-project-active">
       Publish Project
       <mat-slide-toggle (change)="setActive($event)"
@@ -18,11 +18,11 @@
       <form [formGroup]="projectFormGroup">
         <ng-template matStepLabel>Title</ng-template>
         <button
-          (click)="onTitleHelp()"
-          aria-label="Open Video Help"
-          color="primary"
-          mat-icon-button
-          type="button"
+            (click)="onTitleHelp()"
+            aria-label="Open Video Help"
+            color="primary"
+            mat-icon-button
+            type="button"
         >
           <mat-icon>help</mat-icon>
         </button>
@@ -36,10 +36,10 @@
           <mat-form-field>
             <mat-label>Title</mat-label>
             <input
-              formControlName="title"
-              matInput
-              placeholder="Title of Shoppable Video"
-              required
+                formControlName="title"
+                matInput
+                placeholder="Title of Shoppable Video"
+                required
             />
           </mat-form-field>
         </div>
@@ -91,37 +91,37 @@
       <form [formGroup]="projectFormGroup">
         <ng-template matStepLabel>Upload a video</ng-template>
         <button
-          (click)="onVideoHelp()"
-          aria-label="Open Video Help"
-          color="primary"
-          mat-icon-button
-          type="button"
+            (click)="onVideoHelp()"
+            aria-label="Open Video Help"
+            color="primary"
+            mat-icon-button
+            type="button"
         >
           <mat-icon>help</mat-icon>
         </button>
         <mat-form-field>
           <ngx-mat-file-input
-            (ngModelChange)="onSubmit()"
-            accept="video/*"
-            formControlName="video"
-            placeholder="Basic Input"
+              (ngModelChange)="onSubmit()"
+              accept="video/*"
+              formControlName="video"
+              placeholder="Basic Input"
           ></ngx-mat-file-input>
           <mat-icon matSuffix>folder</mat-icon>
         </mat-form-field>
         <div>
           <mat-progress-bar
-            [value]="uploadStatus"
-            class="progressBar"
-            mode="determinate"
+              [value]="uploadStatus"
+              class="progressBar"
+              mode="determinate"
           ></mat-progress-bar>
         </div>
         <div *ngIf="project.media != null && project.media?.url != null">
           <video
-            [src]="project.media?.url"
-            class="videoPreview"
-            controls
-            preload="auto"
-            type="video/mp4"
+              [src]="project.media?.url"
+              class="videoPreview"
+              controls
+              preload="auto"
+              type="video/mp4"
           >
             Your browser does not support the video tag.
           </video>
@@ -136,24 +136,24 @@
       <form [formGroup]="projectFormGroup">
         <ng-template matStepLabel>Select a Thumbnail</ng-template>
         <button
-          (click)="onThumbnailHelp()"
-          aria-label="Select Thumbnail Help"
-          color="primary"
-          mat-icon-button
-          type="button"
+            (click)="onThumbnailHelp()"
+            aria-label="Select Thumbnail Help"
+            color="primary"
+            mat-icon-button
+            type="button"
         >
           <mat-icon>help</mat-icon>
         </button>
         <mat-form-field>
           <ngx-mat-file-input
-            (ngModelChange)="onSubmitThumbnail()"
-            formControlName="thumbnail"
-            placeholder="Basic Input"
+              (ngModelChange)="onSubmitThumbnail()"
+              formControlName="thumbnail"
+              placeholder="Basic Input"
           ></ngx-mat-file-input>
           <mat-icon matSuffix>folder</mat-icon>
         </mat-form-field>
         <div
-          *ngIf="project.thumbnail != null && project.thumbnail?.url != null"
+            *ngIf="project.thumbnail != null && project.thumbnail?.url != null"
         >
           <div class="thumbnail">
             <img [src]="project.thumbnail?.url"/>
@@ -197,28 +197,28 @@
     <!--    </mat-step>-->
 
     <mat-step
-      *ngFor="let productGroup of getProductGroupControls(); let i = index"
-      [stepControl]="projectFormGroup"
+        *ngFor="let productGroup of getProductGroupControls(); let i = index"
+        [stepControl]="projectFormGroup"
     >
       <div [formGroup]="projectFormGroup">
         <div formArrayName="productGroups">
           <div [formGroupName]="i">
             <ng-template matStepLabel>Product Group</ng-template>
             <button
-              (click)="onProductGroupHelp()"
-              aria-label="Open Product Group Help"
-              color="primary"
-              mat-icon-button
-              type="button"
+                (click)="onProductGroupHelp()"
+                aria-label="Open Product Group Help"
+                color="primary"
+                mat-icon-button
+                type="button"
             >
               <mat-icon>help</mat-icon>
             </button>
             <button
-              (click)="onDeleteProductGroup(i, productGroup)"
-              aria-label="Example icon button with a delete icon"
-              color="primary"
-              mat-icon-button
-              type="button"
+                (click)="onDeleteProductGroup(i, productGroup)"
+                aria-label="Example icon button with a delete icon"
+                color="primary"
+                mat-icon-button
+                type="button"
             >
               <mat-icon>delete</mat-icon>
             </button>
@@ -226,10 +226,10 @@
               <mat-form-field>
                 <mat-label>Name</mat-label>
                 <input
-                  formControlName="title"
-                  matInput
-                  placeholder="Enter product group name here"
-                  required
+                    formControlName="title"
+                    matInput
+                    placeholder="Enter product group name here"
+                    required
                 />
               </mat-form-field>
             </div>
@@ -258,21 +258,21 @@
             <div>
               <mat-form-field>
                 <ngx-mat-file-input
-                  (ngModelChange)="onSubmitThumbnail()"
-                  formControlName="thumbnail"
-                  placeholder="Basic Input"
+                    (ngModelChange)="onSubmitThumbnail()"
+                    formControlName="thumbnail"
+                    placeholder="Basic Input"
                 ></ngx-mat-file-input>
                 <mat-icon matSuffix>folder</mat-icon>
               </mat-form-field>
               <div
-                *ngIf="
+                  *ngIf="
                   project.productGroupTimeLine[i] != null &&
                   project.productGroupTimeLine[i].thumbnail != null
                 "
               >
                 <div class="thumbnail">
                   <img
-                    [src]="project.productGroupTimeLine[i]?.thumbnail?.url"
+                      [src]="project.productGroupTimeLine[i]?.thumbnail?.url"
                   />
                 </div>
               </div>
@@ -281,20 +281,20 @@
               <mat-form-field>
                 <mat-label>Time</mat-label>
                 <input
-                  formControlName="time"
-                  matInput
-                  placeholder="Enter product group time here"
-                  required
+                    formControlName="time"
+                    matInput
+                    placeholder="Enter product group time here"
+                    required
                 />
               </mat-form-field>
             </div>
 
             <video
-              [src]="project.media?.url"
-              class="videoPreview"
-              controls
-              preload="auto"
-              type="video/mp4"
+                [src]="project.media?.url"
+                class="videoPreview"
+                controls
+                preload="auto"
+                type="video/mp4"
             >
               Your browser does not support the video tag.
             </video>
@@ -311,11 +311,11 @@
 
             <div>
               <mat-step
-                *ngFor="
+                  *ngFor="
                   let product of getProductsFromProductFormGroup(i);
                   let j = index
                 "
-                [stepControl]="getProductsFormGroup(i)"
+                  [stepControl]="getProductsFormGroup(i)"
               >
                 <div formArrayName="products">
                   <div [formGroupName]="j">
@@ -325,20 +325,20 @@
                         {{ i + 1 }}</ng-template
                       >
                       <button
-                        (click)="onProductHelp()"
-                        aria-label="Open Product Help"
-                        color="primary"
-                        mat-icon-button
-                        type="button"
+                          (click)="onProductHelp()"
+                          aria-label="Open Product Help"
+                          color="primary"
+                          mat-icon-button
+                          type="button"
                       >
                         <mat-icon>help</mat-icon>
                       </button>
                       <button
-                        (click)="onDeleteProduct(i, j)"
-                        aria-label="Example icon button with a delete icon"
-                        color="primary"
-                        mat-icon-button
-                        type="button"
+                          (click)="onDeleteProduct(i, j)"
+                          aria-label="Example icon button with a delete icon"
+                          color="primary"
+                          mat-icon-button
+                          type="button"
                       >
                         <mat-icon>delete</mat-icon>
                       </button>
@@ -346,10 +346,10 @@
                         <mat-form-field>
                           <mat-label>Name</mat-label>
                           <input
-                            formControlName="name"
-                            matInput
-                            placeholder="Enter product name here"
-                            required
+                              formControlName="name"
+                              matInput
+                              placeholder="Enter product name here"
+                              required
                           />
                         </mat-form-field>
                       </div>
@@ -357,10 +357,10 @@
                         <mat-form-field>
                           <mat-label>Subtitle</mat-label>
                           <input
-                            formControlName="subtitle"
-                            matInput
-                            placeholder="Enter product subtitle here"
-                            required
+                              formControlName="subtitle"
+                              matInput
+                              placeholder="Enter product subtitle here"
+                              required
                           />
                         </mat-form-field>
                       </div>
@@ -368,10 +368,10 @@
                         <mat-form-field class="description">
                           <mat-label>Description</mat-label>
                           <input
-                            formControlName="description"
-                            matInput
-                            placeholder="Enter product description here"
-                            required
+                              formControlName="description"
+                              matInput
+                              placeholder="Enter product description here"
+                              required
                           />
                         </mat-form-field>
                       </div>
@@ -379,10 +379,10 @@
                         <mat-form-field>
                           <mat-label>Price</mat-label>
                           <input
-                            formControlName="price"
-                            matInput
-                            placeholder="Enter product price here"
-                            required
+                              formControlName="price"
+                              matInput
+                              placeholder="Enter product price here"
+                              required
                           />
                           <div class="product-price-placeholder">$ (USD)</div>
                         </mat-form-field>
@@ -391,24 +391,24 @@
                         <mat-form-field>
                           <mat-label>Link URL</mat-label>
                           <input
-                            formControlName="makeThisYourLookURL"
-                            matInput
-                            placeholder="Enter product link URL here"
-                            required
+                              formControlName="makeThisYourLookURL"
+                              matInput
+                              placeholder="Enter product link URL here"
+                              required
                           />
                         </mat-form-field>
                       </div>
                       <div style="margin: 10px; padding: 0">
                         <button
-                          (click)="addProductImage(i, j)"
-                          mat-raised-button
-                          type="button"
+                            (click)="addProductImage(i, j)"
+                            mat-raised-button
+                            type="button"
                         >
                           Add Product Image
                         </button>
                       </div>
                       <div
-                        *ngFor="
+                          *ngFor="
                           let productImg of getProductImageArrayControls(i, j);
                           let k = index
                         "
@@ -418,11 +418,11 @@
                             <div style="margin: 10px; padding: 0">
                               <mat-form-field>
                                 <ngx-mat-file-input
-                                  (ngModelChange)="
+                                    (ngModelChange)="
                                     onSubmitProductImage(i, j, k)
                                   "
-                                  formControlName="imageFile"
-                                  placeholder="Basic Input"
+                                    formControlName="imageFile"
+                                    placeholder="Basic Input"
                                 ></ngx-mat-file-input>
                                 <mat-icon matSuffix>folder</mat-icon>
                               </mat-form-field>
@@ -430,23 +430,23 @@
                             <div style="margin-left: 10px">
                               <div class="thumbnail">
                                 <img
-                                  [src]="
+                                    [src]="
                                     this.project.productGroupTimeLine[i]
                                       .products[j].images[k]?.url
                                   "
                                 />
                               </div>
                               <button
-                                (click)="onDeleteProductImage(i, j, k)"
-                                *ngIf="
+                                  (click)="onDeleteProductImage(i, j, k)"
+                                  *ngIf="
                                   this.project.productGroupTimeLine[i].products[
                                     j
                                   ].images[k] != (null || undefined)
                                 "
-                                aria-label="Example icon button with a delete icon"
-                                color="primary"
-                                mat-icon-button
-                                teype="button"
+                                  aria-label="Example icon button with a delete icon"
+                                  color="primary"
+                                  mat-icon-button
+                                  teype="button"
                               >
                                 <mat-icon>delete</mat-icon>
                               </button>
@@ -475,9 +475,9 @@
                         Back
                       </button>
                       <button
-                        mat-button
-                        matStepperNext
-                        type="button"
+                          mat-button
+                          matStepperNext
+                          type="button"
                       >
                         Next
                       </button>
@@ -496,11 +496,11 @@
       <p>Preview your Shoppable Video here while you're making it.</p>
 
       <button
-        (click)="onPreviewHelp()"
-        aria-label="Open Product Group Help"
-        color="primary"
-        mat-icon-button
-        type="button"
+          (click)="onPreviewHelp()"
+          aria-label="Open Product Group Help"
+          color="primary"
+          mat-icon-button
+          type="button"
       >
         <mat-icon>help</mat-icon>
       </button>
@@ -514,11 +514,11 @@
     <mat-step *ngIf="!isTrial">
       <ng-template matStepLabel>Done</ng-template>
       <button
-        (click)="onProductGroupHelp()"
-        aria-label="Select Thumbnail Help"
-        color="primary"
-        mat-icon-button
-        type="button"
+          (click)="onProductGroupHelp()"
+          aria-label="Select Thumbnail Help"
+          color="primary"
+          mat-icon-button
+          type="button"
       >
         <mat-icon>help</mat-icon>
       </button>
@@ -527,19 +527,19 @@
         <source src="../../assets/video/how-to-get-views.mp4" type="video/mp4">
       </video>
       <p>Video URL is :
-        https://production-digitpop-player.herokuapp.com/ad/{{ project._id }}</p>
+        {{ playerURL }}/ad/{{ project._id }}</p>
       <div id="iframe-snippet">
         <code #elementContentToCopy>
           <span><</span>iframe width="560" height="315"
-          src="https://18.195.23.143:4201/ad/{{ project._id }}"><span><</span>/iframe<span>></span>
+          src="{{ playerURL }}/ad/{{ project._id }}"><span><</span>/iframe<span>></span>
         </code>
         <input type="hidden"/>
         <mat-icon
-          (click)="onCopyToClipboard(elementContentToCopy)"
-          [matTooltip]="copyClipboardText"
-          class="your-icon-class"
-          matTooltipPosition="above"
-          on-focusout="onResetCopyToClipboardText()"
+            (click)="onCopyToClipboard(elementContentToCopy)"
+            [matTooltip]="copyClipboardText"
+            class="your-icon-class"
+            matTooltipPosition="above"
+            on-focusout="onResetCopyToClipboardText()"
         >content_copy
         </mat-icon
         >
