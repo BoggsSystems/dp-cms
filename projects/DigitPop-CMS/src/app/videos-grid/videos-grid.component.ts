@@ -241,11 +241,12 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
 
   scoreBubbleToggle = (isUser: boolean) => {
     if (this.canToggle) {
-      this.scoreBubbleIsOpen = !this.scoreBubbleIsOpen;
+      this.scoreBubbleIsOpen = true;
 
       if (this.scoreBubbleIsOpen) {
         const scoreBubbleTimer = timer(2000);
         scoreBubbleTimer.subscribe((x: any) => {
+          this.scoreBubbleIsOpen = false;
           if (isUser) {
             return this.openVisitorPopup();
           }
