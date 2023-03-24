@@ -12,7 +12,9 @@ export class PingWsService {
   startPinging(): void {
     this.intervalId = setInterval(() => {
       if (this.websocketService.isConnected()) {
-        this.websocketService.send({ trigger: 'ping', value: Date.now() });
+        const pingMessage = { trigger: 'ping', value: Date.now() };
+        this.websocketService.send(pingMessage);
+        console.log(`Sent ping message at ${new Date()}:`, pingMessage);
       }
     }, 10000);
   }
