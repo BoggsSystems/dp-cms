@@ -257,7 +257,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
   }
 
   openVisitorPopup = () => {
-    if (this.popupOpened) { return; };
+    if (this.popupOpened) { return; }
     this.popupOpened = true;
     const dialogRef = this.dialog.open(VisitorPopupComponent, {
       maxWidth: '90%',

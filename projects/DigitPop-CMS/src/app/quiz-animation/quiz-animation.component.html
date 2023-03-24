@@ -1,6 +1,7 @@
 <div
-  [class]="scoreBubbleIsOpen ? 'open' : 'closed'"
-  class="quiz-animation">
+    *ngIf="scoreBubbleIsOpen"
+    [class]="scoreBubbleIsOpen ? 'open' : 'closed'"
+    class="quiz-animation">
   <div class="quiz-animation-bubble">
     <div class="quiz-animation-bubble-score">+100</div>
   </div>
