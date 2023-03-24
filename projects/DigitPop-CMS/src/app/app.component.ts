@@ -132,6 +132,8 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
         setTimeout(() => {
           this.disableNotification = message.value;
         }, 4000);
+      } else if (message.trigger === 'uuid' && message.value) {
+        sessionStorage.setItem('uuid', message.value);
       }
     });
   }

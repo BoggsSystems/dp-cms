@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Observer, Subject } from 'rxjs';
-import { AnonymousSubject } from 'rxjs/internal/Subject';
-import { map } from 'rxjs/operators';
-import { XchaneAuthenticationService } from './xchane-auth-service.service';
-import { environment } from '../../../environments/environment';
-import { PingWsService } from './ping-ws.service';
+import {Injectable} from '@angular/core';
+import {Observable, Observer, Subject} from 'rxjs';
+import {AnonymousSubject} from 'rxjs/internal/Subject';
+import {map} from 'rxjs/operators';
+import {XchaneAuthenticationService} from './xchane-auth-service.service';
+import {environment} from '../../../environments/environment';
 
 export interface Message {
   trigger: string;
@@ -17,13 +16,13 @@ const WS = environment.websocketURL;
   providedIn: 'root'
 })
 export class WebsocketService {
+  public messages: Subject<Message> = new Subject<Message>();
   private userId = '';
   private subject: AnonymousSubject<MessageEvent>;
-  public messages: Subject<Message> = new Subject<Message>();
+  private intervalId: number;
 
   constructor(
     private auth: XchaneAuthenticationService,
-    private pingService: PingWsService
   ) {
     if (this.auth.currentUserValue && this.auth.currentUserValue._id) {
       this.userId = this.auth.currentUserValue._id;
@@ -37,7 +36,7 @@ export class WebsocketService {
       this.messages.next(message);
     });
 
-    this.pingService.startPinging();
+    this.startPinging();
   }
 
   public connect(url: string): AnonymousSubject<MessageEvent> {
@@ -78,9 +77,21 @@ export class WebsocketService {
     };
 
     ws.onclose = () => {
-      this.pingService.stopPinging();
+      this.stopPinging();
     };
 
     return new AnonymousSubject<MessageEvent>(observer, observable);
+  }
+
+  private startPinging(): void {
+    this.intervalId = setInterval(() => {
+      if (this.isConnected()) {
+        this.send({trigger: 'ping', value: Date.now()});
+      }
+    }, 10000);
+  }
+
+  private stopPinging(): void {
+    clearInterval(this.intervalId);
   }
 }

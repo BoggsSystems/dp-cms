@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { WebsocketService } from './websocket.service';
+import { WebsocketService, Message } from './websocket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +12,8 @@ export class PingWsService {
   startPinging(): void {
     this.intervalId = setInterval(() => {
       if (this.websocketService.isConnected()) {
-        const pingMessage = { trigger: 'ping', value: Date.now() };
-        this.websocketService.send(pingMessage);
-        console.log(`Sent ping message at ${new Date()}:`, pingMessage);
+        const message: Message = { trigger: 'ping', value: Date.now() };
+        this.websocketService.send(message);
       }
     }, 10000);
   }
