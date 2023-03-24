@@ -8,7 +8,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {
   HashLocationStrategy,
   Location,
@@ -27,12 +27,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import {Platform} from '@angular/cdk/platform';
 import {User} from '../shared/models/user';
-import {
-  UserService
-} from '../../../../DigitPop-Player/src/app/shared/services/user.service';
-import {AuthenticationService} from '../shared/services/auth-service.service';
 import {
   XchaneAuthenticationService
 } from '../shared/services/xchane-auth-service.service';
@@ -86,14 +81,10 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
 
   constructor(
     private _builder: AnimationBuilder,
-    private authService: AuthenticationService,
     private dialog: MatDialog,
     location: Location,
     private metricsService: MetricsService,
-    private platform: Platform,
-    private route: ActivatedRoute,
     private router: Router,
-    private userService: UserService,
     private webSocket: WebsocketService,
     private xchaneAuthService: XchaneAuthenticationService
   ) {
@@ -105,9 +96,9 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       this.loggedIn = true;
     }
 
-    // if (this.authService.currentUserValue._id) {
-    //   this.loggedIn = true;
-    // }
+    if (this.xchaneAuthService.currentUserValue._id) {
+      this.loggedIn = true;
+    }
 
     this.location = location;
     this.iFrameSrc = `${environment.playerUrl}/ad/60518dfbe73b860004205e72`;
