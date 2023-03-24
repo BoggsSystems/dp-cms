@@ -84,25 +84,48 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
   @ViewChild('embeddedFrame') embeddedFrame: ElementRef;
   @ViewChild('embeddedIFrame') embeddedIFrame: ElementRef;
 
-  // tslint:disable-next-line:max-line-length
-  constructor(private router: Router, private route: ActivatedRoute, private dialog: MatDialog, location: Location, private _builder: AnimationBuilder, public platform: Platform, private userService: UserService, private metricsService: MetricsService, private authService: AuthenticationService, private xchaneAuthService: XchaneAuthenticationService, private webSocket: WebsocketService) {
-    const nav = this.router.getCurrentNavigation();
-    const checkNav = nav != null && nav.extras != null && nav.extras.state != null;
+  constructor(
+    private _builder: AnimationBuilder,
+    private authService: AuthenticationService,
+    private dialog: MatDialog,
+    location: Location,
+    private metricsService: MetricsService,
+    private platform: Platform,
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService,
+    private webSocket: WebsocketService,
+    private xchaneAuthService: XchaneAuthenticationService
+  ) {
 
-    if (checkNav) {
-      const navState = nav.extras.state;
-      if (navState.loggedIn) {
-        this.loggedIn = true;
-      }
+    const nav = this.router.getCurrentNavigation();
+    const navState = nav?.extras?.state;
+
+    if (navState?.loggedIn) {
+      this.loggedIn = true;
+    }
+
+    if (this.authService.currentUserValue._id) {
+      this.loggedIn = true;
     }
 
     this.location = location;
     this.iFrameSrc = `${environment.playerUrl}/ad/60518dfbe73b860004205e72`;
-    this.fadeAnimation = animation([style({opacity: '{{ start }}'}), animate('{{ time }}', style({opacity: '{{ end }}'})),], {
-      params: {
-        time: '1000ms', start: 0, end: 1
+
+    this.fadeAnimation = animation(
+      [
+        style({opacity: '{{ start }}'}),
+        animate('{{ time }}', style({opacity: '{{ end }}'})),
+      ],
+      {
+        params: {
+          time: '1000ms',
+          start: 0,
+          end: 1,
+        },
       }
-    });
+    );
+
   }
 
   @HostListener('window:orientationchange', ['$event']) onOrientationChange(event: any) {
@@ -120,6 +143,17 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     }
 
     console.log('orientationChanged');
+  }
+
+  ngOnInit(): void {
+    Calendly.initBadgeWidget({
+      url: 'https://calendly.com/digitpop/15min',
+      text: 'Schedule a Demo',
+      color: '#ff216a',
+      textColor: '#ffffff',
+      branding: true
+    });
+    window.addEventListener('message', this.receiveMessage.bind(this), false);
   }
 
   ngAfterViewInit() {
@@ -152,57 +186,6 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       id: '63047b558d2a7b000416050d',
     };
     const dialogRef = this.dialog.open(PreviewComponent, dialogConfig);
-  }
-
-  preview_fenty_icon() {
-    const metric = new Metric();
-    metric.description = 'Preview Shoppable Video Button Press';
-    console.log('Calling metrics service');
-
-    this.metricsService.createMetric(metric).subscribe((res) => {
-      console.log('Metric Created');
-    }, (err) => {
-      console.log('Error : ' + err);
-    });
-
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.data = {
-      id: '62295ae4eac043000487fa6f',
-    };
-
-    const dialogRef = this.dialog.open(PreviewComponent, dialogConfig);
-  }
-
-  preview_cardi_reebok() {
-    const metric = new Metric();
-    metric.description = 'Preview Shoppable Video Button Press';
-    console.log('Calling metrics service');
-
-    this.metricsService.createMetric(metric).subscribe((res) => {
-      console.log('Metric Created');
-    }, (err) => {
-      console.log('Error : ' + err);
-    });
-
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.data = {
-      id: '6310850fa0640500046e961a',
-    };
-
-    const dialogRef = this.dialog.open(PreviewComponent, dialogConfig);
-  }
-
-  ngOnInit(): void {
-    Calendly.initBadgeWidget({
-      url: 'https://calendly.com/digitpop/15min',
-      text: 'Schedule a Demo',
-      color: '#ff216a',
-      textColor: '#ffffff',
-      branding: true
-    });
-    window.addEventListener('message', this.receiveMessage.bind(this), false);
   }
 
   iOSVersion() {
@@ -314,12 +297,6 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     }
   }
 
-  clicktrial() {
-    const element: HTMLElement = document.getElementById('checkout') as HTMLElement;
-    element.click();
-    return {message: 'trial mode'};
-  }
-
   openSignup() {
 
     const metric = new Metric();
@@ -338,36 +315,6 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
 
     dialogRef.afterClosed().subscribe(() => {
       console.log('The dialog was closed');
-    });
-  }
-
-
-  createFreeTrialAccount() {
-
-    console.log('In  createFreeTrialAccount');
-    const user = new User();
-
-    const r = (Math.random() + 1).toString(36).substring(7);
-    console.log('random', r);
-
-    user.email = 'testfreetrial@gmail.com';
-    user.password = 'testfreetrial';
-
-    this.authService.createUser(user).subscribe((res) => {
-      if (res) {
-
-        console.log('USER CREATED ' + res);
-        localStorage.setItem('currentRole', 'Business');
-        // localStorage.setItem("trial",'true');
-
-        // const navigationExtras: NavigationExtras = {
-        //   state: { trial: true },
-        // };
-
-        this.router.navigate(['/cms/dashboard']);
-      }
-    }, (err) => {
-      console.log('Update error : ' + err.toString());
     });
   }
 
