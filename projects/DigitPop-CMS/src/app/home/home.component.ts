@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       this.loggedIn = true;
     }
 
-    if (this.xchaneAuthService.currentUserValue._id) {
+    if (this.xchaneAuthService?.currentUserValue?._id) {
       this.loggedIn = true;
     }
 
