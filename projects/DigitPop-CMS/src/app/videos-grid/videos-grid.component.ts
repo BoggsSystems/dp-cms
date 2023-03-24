@@ -286,6 +286,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
         scoreBubbleTimer.subscribe((x: any) => {
           this.scoreBubbleIsOpen = !this.scoreBubbleIsOpen;
           if (!isUser) {
+            console.log('open');
             return this.openVisitorPopup();
           }
           this.refreshUser();
