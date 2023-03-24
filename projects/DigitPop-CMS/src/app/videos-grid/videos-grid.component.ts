@@ -272,7 +272,8 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
     });
 
     this.canToggle = true;
-    this.scoreBubbleToggle(true);
+    const isUser = !answer.uuid;
+    this.scoreBubbleToggle(isUser);
     this.canToggle = false;
   }
 
