@@ -57,6 +57,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
   canToggle: boolean;
   videoTour = true;
   isUser: string | boolean;
+  popupOpened = false;
 
   // tslint:disable-next-line:max-line-length
   constructor(private videosService: VideosGridService, private engagementService: EngagementService, private authService: XchaneAuthenticationService, private dialog: MatDialog, private router: Router, private webSocket: WebsocketService, private data: DataService) {
@@ -256,6 +257,8 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
   }
 
   openVisitorPopup = () => {
+    if (this.popupOpened) { return; };
+    this.popupOpened = true;
     const dialogRef = this.dialog.open(VisitorPopupComponent, {
       maxWidth: '90%',
       data: {
