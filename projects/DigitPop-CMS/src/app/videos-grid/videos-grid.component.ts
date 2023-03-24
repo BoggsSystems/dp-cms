@@ -200,45 +200,6 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
     return `${this.monthNames[date.getMonth()]}, ${date.getDate()} - ${date.getFullYear()}`;
   }
 
-  handlePostQuizMessage = (event: any) => {
-    if (event.data.action === 'postQuiz') {
-      this.previewDialogRef.close();
-
-      const isCorrect = this.isUser ? event.data.isCorrect.correct : event.data.isCorrect;
-      let confirmDialog: any;
-
-      if (!isCorrect) {
-        confirmDialog = this.dialog.open(AnswerDialogComponent, {
-          data: {
-            title: 'Incorrect Answer',
-            message: 'Incorrect Answer, would you like to try again?',
-          },
-        });
-
-        return confirmDialog.afterClosed().subscribe((result: boolean) => {
-          confirmDialog.close();
-
-          if (result === true) {
-            this.openPlayer(this.projectId, this.campaignId, this.categoryId);
-          }
-        });
-      }
-
-      this.videos = this.videos.map(video => {
-        if (video._id !== this.projectId) {
-          return video;
-        }
-
-        video.watched = true;
-        return video;
-      });
-
-      this.canToggle = true;
-      this.scoreBubbleToggle(event.data.isUser);
-      this.canToggle = false;
-    }
-  }
-
   handlePostQuiz = (answer: any) => {
     this.previewDialogRef.close();
 
@@ -272,7 +233,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
     });
 
     this.canToggle = true;
-    const isUser = !answer.uuid;
+    const isUser = 'uuid' in answer;
     this.scoreBubbleToggle(isUser);
     this.canToggle = false;
   }
@@ -285,8 +246,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
         const scoreBubbleTimer = timer(2000);
         scoreBubbleTimer.subscribe((x: any) => {
           this.scoreBubbleIsOpen = !this.scoreBubbleIsOpen;
-          if (!isUser) {
-            console.log('open');
+          if (isUser) {
             return this.openVisitorPopup();
           }
           this.refreshUser();
