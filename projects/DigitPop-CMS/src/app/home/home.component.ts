@@ -105,9 +105,9 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       this.loggedIn = true;
     }
 
-    if (this.authService.currentUserValue._id) {
-      this.loggedIn = true;
-    }
+    // if (this.authService.currentUserValue._id) {
+    //   this.loggedIn = true;
+    // }
 
     this.location = location;
     this.iFrameSrc = `${environment.playerUrl}/ad/60518dfbe73b860004205e72`;
