@@ -37,6 +37,7 @@ import {
 } from 'projects/DigitPop-CMS/src/app/shared/services/metrics.service';
 import {Metric} from '../shared/models/metric';
 import {WebsocketService} from '../shared/services/websocket.service';
+import {DataService} from '../xchane/services/data.service';
 
 interface CustomWindow extends Window {
   billsbyData: any;
@@ -86,7 +87,8 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     private metricsService: MetricsService,
     private router: Router,
     private webSocket: WebsocketService,
-    private xchaneAuthService: XchaneAuthenticationService
+    private xchaneAuthService: XchaneAuthenticationService,
+    private data: DataService
   ) {
 
     const nav = this.router.getCurrentNavigation();
@@ -99,6 +101,11 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     if (this.xchaneAuthService?.currentUserValue?._id) {
       this.loggedIn = true;
     }
+
+    this.data.getLogin().subscribe(loginState => {
+      console.log(loginState);
+      this.loggedIn = loginState.loggedIn;
+    })
 
     this.location = location;
     this.iFrameSrc = `${environment.playerUrl}/ad/60518dfbe73b860004205e72`;
