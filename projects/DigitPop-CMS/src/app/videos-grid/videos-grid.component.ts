@@ -33,8 +33,7 @@ import {DataService} from '../xchane/services/data.service';
   selector: 'digit-pop-videos-grid',
   templateUrl: './videos-grid.component.html',
   styleUrls: ['./videos-grid.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [WebsocketService]
+  encapsulation: ViewEncapsulation.None
 })
 
 export class VideosGridComponent implements OnInit, AfterViewChecked {

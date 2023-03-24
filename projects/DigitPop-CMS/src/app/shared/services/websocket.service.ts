@@ -1,31 +1,43 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, Observer, Subject} from 'rxjs';
-import {AnonymousSubject} from 'rxjs/internal/Subject';
-import {map} from 'rxjs/operators';
-import {XchaneAuthenticationService} from './xchane-auth-service.service';
-import {environment} from '../../../environments/environment';
-
-const WS = environment.websocketURL;
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, Observer, Subject } from 'rxjs';
+import { AnonymousSubject } from 'rxjs/internal/Subject';
+import { map } from 'rxjs/operators';
+import { XchaneAuthenticationService } from './xchane-auth-service.service';
+import { environment } from '../../../environments/environment';
+import { PingWsService } from './ping-ws.service';
 
 export interface Message {
   trigger: string;
   value: any;
 }
 
-@Injectable()
+const WS = environment.websocketURL;
+
+@Injectable({
+  providedIn: 'root'
+})
 export class WebsocketService {
-  public messages: Subject<Message>;
   private userId = '';
   private subject: AnonymousSubject<MessageEvent>;
+  public messages: Subject<Message> = new Subject<Message>();
 
-  constructor(private auth: XchaneAuthenticationService) {
+  constructor(
+    private auth: XchaneAuthenticationService,
+    private pingService: PingWsService
+  ) {
     if (this.auth.currentUserValue && this.auth.currentUserValue._id) {
       this.userId = this.auth.currentUserValue._id;
     }
 
-    this.messages = (this.connect(WS + '/' + this.userId).pipe(map((response: MessageEvent): Message => {
-      return JSON.parse(response.data);
-    })) as BehaviorSubject<Message>);
+    this.connect(WS + '/' + this.userId).pipe(
+      map((response: MessageEvent): Message => {
+        return JSON.parse(response.data);
+      })
+    ).subscribe((message: Message) => {
+      this.messages.next(message);
+    });
+
+    this.pingService.startPinging();
   }
 
   public connect(url: string): AnonymousSubject<MessageEvent> {
@@ -33,6 +45,16 @@ export class WebsocketService {
       this.subject = this.create(url);
     }
     return this.subject;
+  }
+
+  public isConnected(): boolean {
+    return this.subject && !this.subject.closed;
+  }
+
+  public send(message: Message): void {
+    if (this.isConnected()) {
+      this.subject.next({data: JSON.stringify(message)} as MessageEvent);
+    }
   }
 
   private create(url: string): AnonymousSubject<MessageEvent> {
@@ -46,7 +68,8 @@ export class WebsocketService {
     });
 
     const observer: any = {
-      error: null, complete: null, // tslint:disable-next-line:ban-types
+      error: null,
+      complete: null,
       next: (data: Object) => {
         if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify(data));
@@ -54,21 +77,8 @@ export class WebsocketService {
       }
     };
 
-    const pingInterval = setInterval(() => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ trigger: 'ping', value: Date.now() }));
-      }
-    }, 10000);
-
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.trigger === 'ping') {
-        ws.send(JSON.stringify({ trigger: 'pong', value: message.value }));
-      }
-    };
-
     ws.onclose = () => {
-      clearInterval(pingInterval);
+      this.pingService.stopPinging();
     };
 
     return new AnonymousSubject<MessageEvent>(observer, observable);

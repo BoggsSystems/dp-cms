@@ -29,8 +29,7 @@ import {DataService} from './xchane/services/data.service';
 @Component({
   selector: 'digit-pop-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  providers: [WebsocketService]
+  styleUrls: ['./app.component.scss']
 })
 
 export class AppComponent implements OnInit, DoCheck, AfterViewChecked {

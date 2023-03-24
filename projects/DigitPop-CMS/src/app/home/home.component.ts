@@ -55,7 +55,7 @@ declare let Calendly: any;
   templateUrl: './home.component.html',
   providers: [Location, {
     provide: LocationStrategy, useClass: HashLocationStrategy
-  }, WebsocketService ],
+  }],
   animations: [trigger('openClose', [state('open', style({
     top: '0px',
     left: '0px',
