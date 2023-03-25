@@ -103,9 +103,8 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     }
 
     this.data.getLogin().subscribe(loginState => {
-      console.log(loginState);
       this.loggedIn = loginState.loggedIn;
-    })
+    });
 
     this.location = location;
     this.iFrameSrc = `${environment.playerUrl}/ad/60518dfbe73b860004205e72`;

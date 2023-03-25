@@ -13,6 +13,7 @@ import {XchaneUser} from '../shared/models/xchane.user';
 import {
   throwError as observableThrowError
 } from 'rxjs/internal/observable/throwError';
+import {DataService} from '../xchane/services/data.service';
 
 interface customWindow extends Window {
   billsbyData: any;
@@ -41,7 +42,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   errorMessage: string;
 
   // tslint:disable-next-line:max-line-length
-  constructor(public dialogRef: MatDialogRef<SignupComponent>, fb: FormBuilder, private route: ActivatedRoute, private router: Router, private authService: XchaneAuthenticationService, private bizAuthService: AuthenticationService) {
+  constructor(public dialogRef: MatDialogRef<SignupComponent>, fb: FormBuilder, private route: ActivatedRoute, private router: Router, private authService: XchaneAuthenticationService, private bizAuthService: AuthenticationService, private data: DataService) {
     this.validRole = Role.Consumer;
     //  window['billsbyData'] = {
     //   email: "fake@eamil.net",
@@ -156,12 +157,13 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   refreshHomepage = () => {
-    const navigationExtras: NavigationExtras = {
-      state: {
-        loggedIn: true
-      },
-    };
-    return this.router.navigate(['/home'], navigationExtras);
+    this.data.setLogin(true);
+    // const navigationExtras: NavigationExtras = {
+    //   state: {
+    //     loggedIn: true
+    //   },
+    // };
+    return this.router.navigate(['/home']);
   }
 
   ngOnDestroy(): void {

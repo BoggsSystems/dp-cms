@@ -74,7 +74,6 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
     }
 
     this.getCategories();
-    // window.addEventListener('message', this.handlePostQuizMessage.bind(this), false);
   }
 
   ngAfterViewChecked() {
