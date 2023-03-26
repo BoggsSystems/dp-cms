@@ -162,8 +162,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   refreshHomepage = () => {
     this.data.setLogin(true);
     this.webSocket.connect(environment.websocketURL + '/' + this.authService.currentUserValue._id);
-    this.router.navigate(['/home']);
-    return this.webSocket.connect(environment.websocketURL + '/' + this.authService.currentUserValue._id);
+    return this.router.navigate(['/home']);
   }
 
   ngOnDestroy(): void {

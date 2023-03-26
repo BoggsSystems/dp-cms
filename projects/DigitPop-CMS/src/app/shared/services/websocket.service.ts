@@ -20,6 +20,7 @@ export class WebsocketService {
   private userId = '';
   private subject: AnonymousSubject<MessageEvent>;
   private intervalId: number;
+  private webSocket: WebSocket;
 
   constructor(
     private auth: XchaneAuthenticationService,
@@ -41,12 +42,34 @@ export class WebsocketService {
 
   public connect(url: string): AnonymousSubject<MessageEvent> {
     if (this.isConnected()) {
-      this.subject.complete();
+      this.disconnect();
     }
 
-    if (!this.subject) {
-      this.subject = this.create(url);
-    }
+    const ws = new WebSocket(url);
+    this.webSocket = ws;
+
+    const observable = new Observable((obs: Observer<MessageEvent>) => {
+      ws.onmessage = obs.next.bind(obs);
+      ws.onerror = obs.error.bind(obs);
+      ws.onclose = obs.complete.bind(obs);
+      return ws.close.bind(ws);
+    });
+
+    const observer: any = {
+      error: null,
+      complete: null,
+      next: (data: Object) => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(data));
+        }
+      }
+    };
+
+    ws.onclose = () => {
+      this.stopPinging();
+    };
+
+    this.subject = new AnonymousSubject<MessageEvent>(observer, observable);
 
     return this.subject;
   }
