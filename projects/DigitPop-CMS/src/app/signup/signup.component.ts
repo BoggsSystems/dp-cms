@@ -15,6 +15,7 @@ import {
 } from 'rxjs/internal/observable/throwError';
 import {DataService} from '../xchane/services/data.service';
 import {WebsocketService} from '../shared/services/websocket.service';
+import {environment} from '../../environments/environment';
 
 interface customWindow extends Window {
   billsbyData: any;
@@ -138,7 +139,7 @@ export class SignupComponent implements OnInit, OnDestroy {
         this.dialogRef.close();
         this.webSocket.disconnect();
         this.authService.storeUser(response.user);
-        this.webSocket.connect();
+        this.webSocket.connect(environment + '/' + this.authService.currentUserValue._id);
         localStorage.setItem('currentRole', 'customer');
         if (this.fromQuiz) {
           return this.addPointsToUser(response.user._id);
