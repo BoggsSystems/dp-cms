@@ -46,6 +46,13 @@ export class WebsocketService {
     return this.subject;
   }
 
+  public disconnect(): void {
+    if (this.subject) {
+      this.subject.complete();
+      this.subject = null;
+    }
+  }
+
   public isConnected(): boolean {
     return this.subject && !this.subject.closed;
   }

@@ -14,6 +14,7 @@ import {
   throwError as observableThrowError
 } from 'rxjs/internal/observable/throwError';
 import {DataService} from '../xchane/services/data.service';
+import {WebsocketService} from '../shared/services/websocket.service';
 
 interface customWindow extends Window {
   billsbyData: any;
@@ -26,6 +27,7 @@ declare const window: customWindow;
   selector: 'digit-pop-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
+  providers: [WebsocketService]
 })
 
 export class SignupComponent implements OnInit, OnDestroy {
@@ -42,7 +44,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   errorMessage: string;
 
   // tslint:disable-next-line:max-line-length
-  constructor(public dialogRef: MatDialogRef<SignupComponent>, fb: FormBuilder, private route: ActivatedRoute, private router: Router, private authService: XchaneAuthenticationService, private bizAuthService: AuthenticationService, private data: DataService) {
+  constructor(public dialogRef: MatDialogRef<SignupComponent>, fb: FormBuilder, private route: ActivatedRoute, private router: Router, private authService: XchaneAuthenticationService, private bizAuthService: AuthenticationService, private data: DataService, private webSocket: WebsocketService) {
     this.validRole = Role.Consumer;
     //  window['billsbyData'] = {
     //   email: "fake@eamil.net",
@@ -134,7 +136,9 @@ export class SignupComponent implements OnInit, OnDestroy {
         }
 
         this.dialogRef.close();
+        this.webSocket.disconnect();
         this.authService.storeUser(response.user);
+        this.webSocket.connect();
         localStorage.setItem('currentRole', 'customer');
         if (this.fromQuiz) {
           return this.addPointsToUser(response.user._id);
