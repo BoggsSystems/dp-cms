@@ -81,7 +81,6 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
       if (message.trigger === 'tour') {
         this.videoTour = message.value;
       } else if (message.trigger === 'quizAnswer') {
-        console.log('answeredl');
         this.handlePostQuiz(message.value);
       }
 
@@ -207,7 +206,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
     const isCorrect = answer.correct;
     let confirmDialog: any;
 
-    if (!isCorrect) {
+    if (!isCorrect && this.dialog.openDialogs.length === 0) {
       confirmDialog = this.dialog.open(AnswerDialogComponent, {
         data: {
           title: 'Incorrect Answer',
