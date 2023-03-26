@@ -161,6 +161,7 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   refreshHomepage = () => {
     this.data.setLogin(true);
+    this.webSocket.send({trigger: 'signup', value: this.authService.currentUserValue._id});
     this.webSocket.connect(environment.websocketURL + '/' + this.authService.currentUserValue._id);
     return this.router.navigate(['/']);
   }
