@@ -79,8 +79,6 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.webSocket.messages.subscribe(message => {
-      console.log('inside');
-      console.log(message);
       if (message.trigger === 'tour') {
         this.videoTour = message.value;
       } else if (message.trigger === 'quizAnswer') {
