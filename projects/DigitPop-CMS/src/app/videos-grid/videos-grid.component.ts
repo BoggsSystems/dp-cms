@@ -1,6 +1,6 @@
 'use strict';
 import {
-  AfterViewChecked,
+  AfterViewInit,
   Component,
   OnInit,
   ViewEncapsulation
@@ -36,7 +36,7 @@ import {DataService} from '../xchane/services/data.service';
   encapsulation: ViewEncapsulation.None
 })
 
-export class VideosGridComponent implements OnInit, AfterViewChecked {
+export class VideosGridComponent implements OnInit, AfterViewInit {
   selectedCategories: string[] = [];
   categories: string[] = [];
   activeCategories: Category[] = [];
@@ -76,7 +76,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
     this.getCategories();
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewInit() {
     this.webSocket.messages.subscribe(message => {
       if (message.trigger === 'tour') {
         this.videoTour = message.value;
@@ -206,8 +206,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
     const isCorrect = answer.correct;
     let confirmDialog: any;
 
-    if (!isCorrect && this.dialog.openDialogs.length === 0) {
-      console.log('Opened Dialog');
+    if (!isCorrect && this.dialog === null) {
       confirmDialog = this.dialog.open(AnswerDialogComponent, {
         data: {
           title: 'Incorrect Answer',
