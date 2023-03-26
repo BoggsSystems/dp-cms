@@ -158,11 +158,6 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   refreshHomepage = () => {
     this.data.setLogin(true);
-    // const navigationExtras: NavigationExtras = {
-    //   state: {
-    //     loggedIn: true
-    //   },
-    // };
     return this.router.navigate(['/home']);
   }
 

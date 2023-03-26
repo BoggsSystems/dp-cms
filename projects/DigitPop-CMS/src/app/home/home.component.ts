@@ -91,13 +91,6 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     private data: DataService
   ) {
 
-    const nav = this.router.getCurrentNavigation();
-    const navState = nav?.extras?.state;
-
-    if (navState?.loggedIn) {
-      this.loggedIn = true;
-    }
-
     if (this.xchaneAuthService?.currentUserValue?._id) {
       this.loggedIn = true;
     }

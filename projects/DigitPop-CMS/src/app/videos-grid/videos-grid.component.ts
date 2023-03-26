@@ -81,6 +81,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
       if (message.trigger === 'tour') {
         this.videoTour = message.value;
       } else if (message.trigger === 'quizAnswer') {
+        console.log('answeredl');
         this.handlePostQuiz(message.value);
       }
 
