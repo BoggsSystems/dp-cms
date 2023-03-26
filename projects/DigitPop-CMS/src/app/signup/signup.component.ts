@@ -139,7 +139,6 @@ export class SignupComponent implements OnInit, OnDestroy {
         this.authService.storeUser(response.user);
         localStorage.setItem('currentRole', 'customer');
 
-        this.webSocket.connect(environment.websocketURL + '/' + response.user._id);
         if (this.fromQuiz) {
           return this.addPointsToUser(response.user._id);
         }
@@ -162,7 +161,9 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   refreshHomepage = () => {
     this.data.setLogin(true);
-    return this.router.navigate(['/home']);
+    this.webSocket.connect(environment.websocketURL + '/' + this.authService.currentUserValue._id);
+    this.router.navigate(['/home']);
+    return this.webSocket.connect(environment.websocketURL + '/' + this.authService.currentUserValue._id);
   }
 
   ngOnDestroy(): void {
