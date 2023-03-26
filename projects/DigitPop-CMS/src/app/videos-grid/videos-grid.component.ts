@@ -84,7 +84,6 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
       } else if (message.trigger === 'quizAnswer') {
         this.handlePostQuiz(message.value);
       }
-
     });
   }
 
@@ -202,7 +201,6 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   }
 
   handlePostQuiz = (answer: any) => {
-    console.log('called handle');
     if (this.dialogOpen) { return; }
     this.previewDialogRef.close();
 
