@@ -58,6 +58,7 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   videoTour = true;
   isUser: string | boolean;
   popupOpened = false;
+  dialogOpen = false;
 
   // tslint:disable-next-line:max-line-length
   constructor(private videosService: VideosGridService, private engagementService: EngagementService, private authService: XchaneAuthenticationService, private dialog: MatDialog, private router: Router, private webSocket: WebsocketService, private data: DataService) {
@@ -206,7 +207,7 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     const isCorrect = answer.correct;
     let confirmDialog: any;
 
-    if (!isCorrect && this.dialog === null) {
+    if (!isCorrect && !this.dialogOpen) {
       confirmDialog = this.dialog.open(AnswerDialogComponent, {
         data: {
           title: 'Incorrect Answer',
@@ -214,7 +215,10 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
         },
       });
 
+      this.dialogOpen = true;
+
       return confirmDialog.afterClosed().subscribe((result: boolean) => {
+        this.dialogOpen = false;
         confirmDialog.close();
 
         if (result === true) {
