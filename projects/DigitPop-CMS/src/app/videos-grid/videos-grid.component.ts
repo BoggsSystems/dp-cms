@@ -202,6 +202,8 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   }
 
   handlePostQuiz = (answer: any) => {
+    console.log('called handle');
+    if (this.dialogOpen) { return; }
     this.previewDialogRef.close();
 
     const isCorrect = answer.correct;
