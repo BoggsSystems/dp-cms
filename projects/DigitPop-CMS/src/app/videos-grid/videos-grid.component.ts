@@ -207,6 +207,7 @@ export class VideosGridComponent implements OnInit, AfterViewChecked {
     let confirmDialog: any;
 
     if (!isCorrect && this.dialog.openDialogs.length === 0) {
+      console.log('Opened Dialog');
       confirmDialog = this.dialog.open(AnswerDialogComponent, {
         data: {
           title: 'Incorrect Answer',
