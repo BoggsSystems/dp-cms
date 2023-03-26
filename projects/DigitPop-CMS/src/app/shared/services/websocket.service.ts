@@ -40,9 +40,14 @@ export class WebsocketService {
   }
 
   public connect(url: string): AnonymousSubject<MessageEvent> {
+    if (this.isConnected()) {
+      this.subject.complete();
+    }
+
     if (!this.subject) {
       this.subject = this.create(url);
     }
+
     return this.subject;
   }
 

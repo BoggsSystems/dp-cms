@@ -139,8 +139,6 @@ export class SignupComponent implements OnInit, OnDestroy {
         this.authService.storeUser(response.user);
         localStorage.setItem('currentRole', 'customer');
 
-        this.webSocket.send({trigger: 'signup', value: response.user._id});
-        this.webSocket.disconnect();
         this.webSocket.connect(environment.websocketURL + '/' + response.user._id);
         if (this.fromQuiz) {
           return this.addPointsToUser(response.user._id);
