@@ -57,7 +57,6 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
   disableNotification: boolean;
   isVerified: boolean;
   notificationMessage: string;
-  bc: BroadcastChannel;
   @ViewChild(HomeComponent) child: HomeComponent;
 
   // tslint:disable-next-line:max-line-length
@@ -66,8 +65,6 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
     router.events.subscribe(() => {
       this.getSections();
     });
-
-    this.bc = new BroadcastChannel('notifications');
 
     if (this.route != null && this.route.queryParams != null) {
       const x = this.route.queryParams;
@@ -78,7 +75,6 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
           this.notificationMessage = params.verified;
           this.disableNotification = false;
 
-          this.bc.postMessage({verified: true});
           this.router.navigate(['/home']);
 
           setTimeout(() => {
@@ -87,19 +83,6 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
         }
       });
     }
-
-    if (!this.isVerified) {
-      this.bc.onmessage = (event) => {
-        if (!event.data.verified) {
-          return;
-        }
-        this.data.setNotification(false, 'Changed Notification Message');
-
-        console.log(this.data.getNotification);
-        this.bc.close();
-      };
-    }
-
   }
 
   ngOnInit() {
