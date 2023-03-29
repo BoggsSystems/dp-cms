@@ -13,6 +13,8 @@ import {
   throwError as observableThrowError
 } from 'rxjs/internal/observable/throwError';
 import {XchaneUser} from '../shared/models/xchane.user';
+import {environment} from '../../environments/environment';
+import {WebsocketService} from '../shared/services/websocket.service';
 
 @Component({
   selector: 'digit-pop-login',
@@ -36,7 +38,7 @@ export class LoginComponent implements OnInit {
   keepMeSignedIn = false;
 
   // tslint:disable-next-line:max-line-length
-  constructor(public dialogRef: MatDialogRef<LoginComponent>, private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private xchaneAuthenticationService: XchaneAuthenticationService, private billsbyService: BillsbyService) {
+  constructor(public dialogRef: MatDialogRef<LoginComponent>, private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private xchaneAuthenticationService: XchaneAuthenticationService, private billsbyService: BillsbyService, private webSocket: WebsocketService) {
     if (this.authenticationService.currentUserValue) {
       this.router.navigate(['/']);
     }
@@ -97,6 +99,8 @@ export class LoginComponent implements OnInit {
         .pipe(first())
         .subscribe((res) => {
           if (res) {
+            this.webSocket.send({trigger: 'login', value: this.xchaneAuthenticationService.currentUserValue._id});
+            this.webSocket.connect(environment.websocketURL + '/' + this.xchaneAuthenticationService.currentUserValue._id);
 
             if (this.keepMeSignedIn) {
               this.storeUser(res);
