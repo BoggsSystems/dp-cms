@@ -44,6 +44,7 @@ export class PreviewComponent implements OnInit {
       return this.onAdd.emit();
     }
 
+    console.log(message);
     iframe.contentWindow.postMessage(message, targetOrigin);
   }
 }
