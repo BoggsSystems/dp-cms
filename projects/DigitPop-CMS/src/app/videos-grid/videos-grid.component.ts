@@ -185,7 +185,6 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
       categoryId,
       videoTour: this.videoTour
     };
-    console.log(dialogConfig.data);
     this.previewDialogRef = this.dialog.open(PreviewComponent, dialogConfig);
     const sub = this.previewDialogRef.componentInstance.onAdd.subscribe(() => {
       this.previewDialogRef.close();
