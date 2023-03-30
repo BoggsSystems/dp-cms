@@ -26,7 +26,13 @@ export class PreviewComponent implements OnInit {
     this.videoTour = 'tour' in data ?? data.tour;
     this.isPreview = data.isPreview ? data.isPreview : false;
     addEventListener('message', (event) => {
-      this.sendMessage(event);
+      this.sendMessage(event, {
+        onPremise: true,
+        campaignId: this.campaignId,
+        categoryId: this.categoryId,
+        isPreview: this.isPreview,
+        tour: this.videoTour
+      });
     });
   }
 
@@ -46,6 +52,8 @@ export class PreviewComponent implements OnInit {
     if (event.data === 'exit') {
       return this.onAdd.emit();
     }
+
+    console.log(message);
     iframe.contentWindow.postMessage(message, targetOrigin);
   }
 }
