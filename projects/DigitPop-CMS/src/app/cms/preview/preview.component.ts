@@ -21,17 +21,14 @@ export class PreviewComponent implements OnInit {
 
     console.log(data);
     this.iFrameSrc = `${environment.playerUrl}/ad/${data.id}/preview/true/userId/${data.userId !== false ? data.userId : uuid}`;
-    this.campaignId = data.campaignId ? data.campaignId : false;
-    this.categoryId = data.categoryId ? data.categoryId : false;
-    this.videoTour = 'tour' in data ?? data.tour;
-    this.isPreview = data.isPreview ? data.isPreview : false;
+
     addEventListener('message', (event) => {
       this.sendMessage(event, {
         onPremise: true,
-        campaignId: this.campaignId,
-        categoryId: this.categoryId,
-        isPreview: this.isPreview,
-        tour: this.videoTour
+        campaignId: data.campaignId ? data.campaignId : false,
+        categoryId: data.categoryId ? data.categoryId : false,
+        isPreview: data.isPreview ? data.isPreview : false,
+        tour: 'tour' in data ?? data.tour
       });
     });
   }
@@ -39,13 +36,7 @@ export class PreviewComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  sendMessage = (event: MessageEvent, message: any = {
-    onPremise: true,
-    campaignId: this.campaignId,
-    categoryId: this.categoryId,
-    isPreview: this.isPreview,
-    tour: this.videoTour
-  }) => {
+  sendMessage = (event: MessageEvent, message: any) => {
     const targetOrigin = event ? event.origin : '*';
     const iframe = document.querySelector('iframe.iframe') as HTMLIFrameElement;
 
@@ -53,7 +44,6 @@ export class PreviewComponent implements OnInit {
       return this.onAdd.emit();
     }
 
-    console.log(message);
     iframe.contentWindow.postMessage(message, targetOrigin);
   }
 }
