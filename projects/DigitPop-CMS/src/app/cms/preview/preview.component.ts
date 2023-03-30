@@ -18,18 +18,18 @@ export class PreviewComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<PreviewComponent>, @Inject(MAT_DIALOG_DATA) data: any) {
     const uuid = sessionStorage.getItem('uuid');
-
-    console.log(data);
     this.iFrameSrc = `${environment.playerUrl}/ad/${data.id}/preview/true/userId/${data.userId !== false ? data.userId : uuid}`;
 
     addEventListener('message', (event) => {
-      this.sendMessage(event, {
-        onPremise: true,
-        campaignId: data.campaignId ? data.campaignId : false,
-        categoryId: data.categoryId ? data.categoryId : false,
-        isPreview: data.isPreview ? data.isPreview : false,
-        tour: 'tour' in data ?? data.tour
-      });
+      if (event.data.action === 'getCampaignId') {
+        this.sendMessage(event, {
+          onPremise: true,
+          campaignId: data.campaignId ? data.campaignId : false,
+          categoryId: data.categoryId ? data.categoryId : false,
+          isPreview: data.isPreview ? data.isPreview : false,
+          tour: 'tour' in data ?? data.tour
+        });
+      }
     });
   }
 
@@ -44,7 +44,6 @@ export class PreviewComponent implements OnInit {
       return this.onAdd.emit();
     }
 
-    console.log(message);
     iframe.contentWindow.postMessage(message, targetOrigin);
   }
 }
