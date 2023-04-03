@@ -1,0 +1,53 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: relative;
+  font-family: "Roboto", sans-serif;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 10px;
+  text-align: center;
+  z-index: 1;
+}
+
+.illustration {
+  width: 150px;
+  height: auto;
+}
+
+.illustration--img {
+  display: block;
+  max-width: 100%;
+}
+
+.message--heading {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: #fff;
+}
+
+.message--text {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #fff6df;
+}
+
+svg {
+  max-width: 320px;
+  position: absolute;
+  width: 120%;
+  height: 100%;
+  top: 50%;
+  left: 45%;
+  transform: translate(-50%, -50%) scale(1) rotate(180deg);
+  z-index: 0;
+}

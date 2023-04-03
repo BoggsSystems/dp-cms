@@ -28,7 +28,7 @@ const routes: Routes = [
   {
     path: 'verify',
     component: EmailVerificationComponent,
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
   },
   {
     path: 'cms',
