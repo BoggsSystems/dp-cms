@@ -66,7 +66,7 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     this.canToggle = false;
     this.videosCount = Array(this.videosLimit).fill(0).map((x, i) => i);
     this.categoryVideosCount = 0;
-    this.selectedCategories = ['Cosmetics']; // Set default category
+    this.selectedCategories = ['Cosmetics']; // Set default category Cosmetics
   }
 
   ngOnInit(): void {
@@ -82,8 +82,6 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
       if (message.trigger === 'tour') {
         this.videoTour = message.value;
       } else if (message.trigger === 'quizAnswer') {
-        console.log(this.projectId);
-        console.log(message.value.project);
         if (this.projectId !== message.value.project) { return; }
         this.handlePostQuiz(message.value);
       }
