@@ -108,8 +108,5 @@ const routes: Routes = [
   ],
   providers: [],
 })
-export class XchaneModule {
-  constructor() {
 
-  }
-}
+export class XchaneModule {}
