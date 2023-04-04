@@ -9,7 +9,7 @@ import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {Observable} from 'rxjs';
 import {map, shareReplay} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, NavigationEnd} from '@angular/router';
 import {SpinnerService} from './shared/services/spinner.service';
 import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
@@ -24,7 +24,7 @@ import {
 } from './shared/services/xchane-auth-service.service';
 import {WebsocketService} from './shared/services/websocket.service';
 import {DataService} from './xchane/services/data.service';
-
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'digit-pop-root',
@@ -58,12 +58,21 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
   isVerified: boolean;
   notificationMessage: string;
   @ViewChild(HomeComponent) child: HomeComponent;
+  hideNavbar = false;
 
   // tslint:disable-next-line:max-line-length
   constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private webSocket: WebsocketService, public data: DataService) {
 
     router.events.subscribe(() => {
       this.getSections();
+    });
+
+    // subscribe to the router events to detect when the route changes
+    router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      // check if the current route is the one where you want to hide the navbar
+      this.hideNavbar = event.url === '/verify';
     });
 
     if (this.route != null && this.route.queryParams != null) {

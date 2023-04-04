@@ -2,7 +2,7 @@
 <mat-toolbar *ngIf="currentUser && !disableNotification" class="notification">
   <p>{{data.getNotification.message}}</p>
 </mat-toolbar>
-<mat-toolbar color="secondary">
+<mat-toolbar color="secondary" *ngIf="!hideNavbar">
     <div id="main_logo">
         <svg viewBox="0 0 180 60">
             <use xlink:href="/assets/img/app_assets.svg#logo"></use>
