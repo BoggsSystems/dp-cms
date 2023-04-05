@@ -59,6 +59,7 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
   notificationMessage: string;
   @ViewChild(HomeComponent) child: HomeComponent;
   hideNavbar = false;
+  hideNotification = true;
 
   // tslint:disable-next-line:max-line-length
   constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private webSocket: WebsocketService, public data: DataService) {
@@ -74,24 +75,6 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
       // check if the current route is the one where you want to hide the navbar
       this.hideNavbar = event.url.includes('/verify');
     });
-
-    if (this.route != null && this.route.queryParams != null) {
-      const x = this.route.queryParams;
-      x.subscribe(params => {
-        if (params.verified) {
-          this.data
-            .setNotification(true, params.verified);
-          this.notificationMessage = params.verified;
-          this.disableNotification = false;
-
-          this.router.navigate(['/home']);
-
-          setTimeout(() => {
-            this.disableNotification = true;
-          }, 4000);
-        }
-      });
-    }
   }
 
   ngOnInit() {
@@ -100,9 +83,8 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
     if (this.authService.currentUserValue) {
       this.videoTour = this.authService.currentUserValue.tour;
       this.isVerified = this.authService.currentUserValue.verified;
+      this.hideNotification = this.isVerified;
     }
-
-    this.disableNotification = this.isVerified;
 
     if (localStorage.getItem('trial')) {
       localStorage.removeItem('trial');
@@ -119,6 +101,7 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
         this.videoTour = message.value;
       } else if (message.trigger === 'verified' && message.value) {
         this.isVerified = true;
+        this.data.setVerified(true);
         this.notificationMessage = 'Email verified successfully.';
 
         setTimeout(() => {

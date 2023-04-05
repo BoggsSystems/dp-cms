@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {DataService} from '../xchane/services/data.service';
 
 @Component({
   selector: 'digit-pop-email-verification',
@@ -7,7 +8,7 @@ import {Component, OnInit} from '@angular/core';
 })
 export class EmailVerificationComponent implements OnInit {
 
-  constructor() {
+  constructor(private data: DataService) {
   }
 
   ngOnInit(): void {
