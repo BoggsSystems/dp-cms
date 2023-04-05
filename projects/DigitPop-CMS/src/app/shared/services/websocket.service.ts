@@ -34,6 +34,7 @@ export class WebsocketService {
         return JSON.parse(response.data);
       })
     ).subscribe((message: Message) => {
+      console.log(message);
       this.messages.next(message);
     });
 
