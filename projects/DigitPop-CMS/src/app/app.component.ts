@@ -83,7 +83,7 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
     if (this.authService.currentUserValue) {
       this.videoTour = this.authService.currentUserValue.tour;
       this.isVerified = this.authService.currentUserValue.verified;
-      this.hideNotification = this.isVerified;
+      this.hideNotification = !this.isVerified;
     }
 
     if (localStorage.getItem('trial')) {
