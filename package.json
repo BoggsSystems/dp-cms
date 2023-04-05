@@ -39,6 +39,7 @@
     "ngx-guided-tour": "^1.1.10",
     "ngx-image-zoom": "^0.6.0",
     "ngx-material-file-input": "^2.1.1",
+    "node-localstorage": "^2.2.1",
     "path": "^0.12.7",
     "resize-observer-polyfill": "^1.5.1",
     "rxjs": "~6.5.4",
