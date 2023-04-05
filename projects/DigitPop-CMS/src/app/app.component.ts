@@ -97,8 +97,6 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
 
   wsConnection = () => {
     this.webSocket.messages.subscribe(message => {
-      console.log('debug message');
-      console.log(message);
       if (message.trigger === 'tour') {
         this.videoTour = message.value;
       } else if (message.trigger === 'verified' && message.value) {

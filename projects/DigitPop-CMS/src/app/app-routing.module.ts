@@ -1,27 +1,34 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {NameGuard} from './shared/services/campaign.service';
-import {RegisterComponent} from './register/register.component';
-import {HomeComponent} from './home/home.component';
-import {AuthGuard} from './shared/guards/auth-guard.service';
-import {LoginComponent} from './login/login.component';
-import {
-  UserDashboardComponent
-} from './user-dashboard/user-dashboard.component';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+import { EmailVerificationComponent } from './email-verification/email-verification.component';
+
+import { AuthGuard } from './shared/guards/auth-guard.service';
+import { NameGuard } from './shared/services/campaign.service';
 
 const routes: Routes = [
   {
     path: '',
+    redirectTo: '/home',
+    pathMatch: 'full',
+  },
+  {
+    path: 'home',
     component: HomeComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'dashboard',
-    component: UserDashboardComponent
+    component: UserDashboardComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'verify',
-    component: HomeComponent
+    component: EmailVerificationComponent,
+    // canActivate: [AuthGuard],
   },
   {
     path: 'cms',
@@ -32,25 +39,25 @@ const routes: Routes = [
     loadChildren: () => import('./xchane/xchane.module').then((m) => m.XchaneModule)
   },
   {
-    path: 'login',
-    component: LoginComponent,
-  },
-  {
-    path: 'home',
-    component: HomeComponent,
-  },
-  {
     path: 'register',
     component: RegisterComponent,
+    canActivate: [AuthGuard],
   },
-  {path: '**', redirectTo: ''},
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: '**',
+    redirectTo: '/home',
+    pathMatch: 'full',
+  },
 ];
-export const appRoutingModule = RouterModule.forRoot(routes);
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {useHash: false})],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [NameGuard],
+  providers: [AuthGuard, NameGuard],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}
