@@ -155,8 +155,7 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
   ngAfterViewChecked() {
     this.webSocket.messages.subscribe(message => {
       if (message.trigger === 'login') {
-        this.loggedIn = true;
-        this.data.setLogin(true);
+        this.data.setLogin(message.value);
       }
     });
   }
