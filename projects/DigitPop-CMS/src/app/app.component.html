@@ -1,5 +1,5 @@
 <mat-spinner class="spinner" [diameter]="50" *ngIf="spinnerService.visibility | async"></mat-spinner>
-<mat-toolbar *ngIf="!hideNotification || !hideNavbar || !this.data.getVerified" class="notification">
+<mat-toolbar *ngIf="!hideNotification || !hideNavbar" class="notification">
   <p>{{data.getNotification.message}}</p>
 </mat-toolbar>
 <mat-toolbar color="secondary" *ngIf="!hideNavbar">
