@@ -1,12 +1,14 @@
 <div class="container">
-  <div class="illustration">
-    <img alt="Email verified illustration"
-         class="illustration--img"
-         src="assets/img/email-verified-illustration.svg"/>
-  </div>
-  <div class="message">
-    <h1 class="message--heading">Email verified!</h1>
-    <p class="message--text">Your email has been successfully verified.</p>
-    <button class="button button--primary">Login</button>
-  </div>
+	<div class="illustration">
+		<img alt="Email verified illustration"
+				 class="illustration--img"
+				 src="assets/img/email-verified-illustration.svg"/>
+	</div>
+	<div class="message">
+		<h1 class="message--heading">Email verified!</h1>
+		<p class="message--text">Your email has been successfully verified.</p>
+		<button (click)="openLoginDialog()" *ngIf="isLoggedIn"
+						class="button button--primary">Login
+		</button>
+	</div>
 </div>
