@@ -10,5 +10,8 @@
 		<button (click)="openLoginDialog()" *ngIf="isLoggedIn"
 						class="button button--primary">Login
 		</button>
+		<button (click)="redirectToHome()" *ngIf="!isLoggedIn"
+						class="button button--primary">Start Earning
+		</button>
 	</div>
 </div>

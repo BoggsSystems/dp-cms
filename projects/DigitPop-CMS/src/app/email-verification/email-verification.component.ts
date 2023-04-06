@@ -31,9 +31,13 @@ export class EmailVerificationComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       if (this.auth.currentUserValue) {
-        this.router.navigate(['/home']);
+        this.redirectToHome();
       }
     });
+  }
+
+  redirectToHome() {
+    this.router.navigate(['/home']);
   }
 
 }
