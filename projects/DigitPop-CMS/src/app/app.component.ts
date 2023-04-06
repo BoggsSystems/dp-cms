@@ -83,8 +83,12 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
     if (this.authService.currentUserValue) {
       this.videoTour = this.authService.currentUserValue.tour;
       this.isVerified = this.authService.currentUserValue.verified;
-      this.hideNotification = !this.isVerified;
+      this.hideNotification = this.isVerified;
     }
+
+    this.data.getVerified().subscribe(verified => {
+      this.hideNotification = verified;
+    });
 
     if (localStorage.getItem('trial')) {
       localStorage.removeItem('trial');
@@ -174,7 +178,10 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      console.log('The dialog was closed');
+      if (this.authService.currentUserValue) {
+        this.isVerified = this.authService.currentUserValue.verified;
+        this.hideNotification = this.isVerified;
+      }
     });
   }
 
@@ -195,7 +202,7 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
 
     dialogRef.afterClosed().subscribe((loggedOut: boolean) => {
       if (loggedOut) {
-        this.disableNotification = true;
+        this.hideNotification = true;
       }
     });
   }
