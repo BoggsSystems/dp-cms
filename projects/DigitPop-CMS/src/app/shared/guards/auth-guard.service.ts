@@ -3,6 +3,9 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from
 import { AuthenticationService } from '../services/auth-service.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from '../../login/login.component';
+import {
+  XchaneAuthenticationService
+} from '../services/xchane-auth-service.service';
 
 @Injectable({ providedIn: 'root' })
 /**
@@ -11,7 +14,7 @@ import { LoginComponent } from '../../login/login.component';
 export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService,
+    private authenticationService: XchaneAuthenticationService,
     private dialog: MatDialog
   ) {}
 
