@@ -14,7 +14,8 @@ import {
 export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
-    private authenticationService: XchaneAuthenticationService,
+    private xAuthenticationService: XchaneAuthenticationService,
+    private authenticationService: AuthenticationService,
     private dialog: MatDialog
   ) {}
 
@@ -26,7 +27,8 @@ export class AuthGuard implements CanActivate {
    * @returns A boolean value indicating whether the user is authorized
    */
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const currentUser = this.authenticationService.currentUserValue;
+    const currentUser = this.xAuthenticationService.currentUserValue || this.authenticationService.currentUserValue;
+    console.log(currentUser);
     if (currentUser) {
       if (route.data.roles && route.data.roles.indexOf(currentUser.role) === -1) {
         this.router.navigate(['/']);
