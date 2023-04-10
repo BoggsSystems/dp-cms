@@ -521,7 +521,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       if (result === true) {
         element.active = !element.active;
         this.projectService.updateProject(element).subscribe((res) => {
-          console.log(res);
+          this.updateCache(res);
         }, (error) => {
           console.log(error);
         });
@@ -531,4 +531,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  updateCache = (project: Project) => {
+    const cachedResponse: any = sessionStorage.getItem('my-projects');
+    const data: Project[] = JSON.parse(cachedResponse);
+    const projectId: string = project._id;
+
+    const index: number = data.findIndex(obj => obj._id === projectId);
+
+    if (index !== -1) {
+      const newObj: Project = {...project};
+      data.splice(index, 1, newObj);
+    }
+
+    sessionStorage.setItem('my-projects', JSON.stringify(data)); // update the cached response
+  }
+
 }
