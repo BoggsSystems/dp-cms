@@ -48,8 +48,8 @@
           </span>
           </th>
           <td *matCellDef="let element" mat-cell>
-            <div *ngIf="element.thumbnail?.url != null" class="thumbnail">
-              <img [src]="element.thumbnail?.url" loading="lazy"/>
+            <div *ngIf="element.thumbnail?.url != null || element.thumbnail?.secure_url != null" class="thumbnail">
+              <img [src]="element.thumbnail?.url || element.thumbnail?.secure_url" loading="lazy"/>
             </div>
           </td>
         </ng-container>
