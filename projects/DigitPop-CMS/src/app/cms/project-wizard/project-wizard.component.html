@@ -378,13 +378,15 @@
                       <div>
                         <mat-form-field>
                           <mat-label>Price</mat-label>
-                          <input
-                              formControlName="price"
-                              matInput
-                              placeholder="Enter product price here"
-                              required
-                          />
-                          <div class="product-price-placeholder">$ (USD)</div>
+                          <div fxLayout="row" fxLayoutAlign="space-between center">
+                            <input
+                                formControlName="price"
+                                matInput
+                                placeholder="Enter product price here"
+                                required
+                            />
+                            <span class="product-price-placeholder" style="white-space: nowrap">$ (USD)</span>
+                          </div>
                         </mat-form-field>
                       </div>
                       <div>
