@@ -17,8 +17,9 @@ export class PreviewComponent implements OnInit {
   onAdd = new EventEmitter();
 
   constructor(public dialogRef: MatDialogRef<PreviewComponent>, @Inject(MAT_DIALOG_DATA) data: any) {
+    this.isPreview = data.isPreview ? data.isPreview : false;
     const uuid = sessionStorage.getItem('uuid');
-    this.iFrameSrc = `${environment.playerUrl}/ad/${data.id}/preview/true/userId/${data.userId !== false ? data.userId : uuid}`;
+    this.iFrameSrc = `${environment.playerUrl}/ad/${data.id}/preview/${this.isPreview}/userId/${data.userId !== false ? data.userId : uuid}`;
 
     addEventListener('message', (event) => {
       if (event.data.action === 'getCampaignId') {
