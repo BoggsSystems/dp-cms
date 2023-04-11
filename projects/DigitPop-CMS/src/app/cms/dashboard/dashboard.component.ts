@@ -544,7 +544,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       data.splice(index, 1, newObj);
     }
 
-    sessionStorage.setItem('my-projects', JSON.stringify(data)); // update the cached response
+    sessionStorage.setItem('my-projects', JSON.stringify(data));
+    this.renderProjects(data);
   }
 
 }

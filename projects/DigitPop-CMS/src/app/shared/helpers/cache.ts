@@ -67,7 +67,7 @@ export const Cache = {
     try {
       projects = await projectService.populateMyProject(args) as [{}];
       const currentTable: any = args.filtered && args.filter !== '' ? sessionStorage.getItem('cached-results') : sessionStorage.getItem('my-projects');
-      let data: any = JSON.parse(currentTable);
+      const data: any = JSON.parse(currentTable);
       /* Sort retrieved sessionStorage data in sync with table sort
        * default sort: sort by updatedBy, desc
       */
