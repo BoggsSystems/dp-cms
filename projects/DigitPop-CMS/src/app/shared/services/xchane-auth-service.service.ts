@@ -152,4 +152,5 @@ export class XchaneAuthenticationService {
     localStorage.setItem('token', token);
     localStorage.setItem('expires_at', JSON.stringify(expiresAt.valueOf()));
   }
+
 }
