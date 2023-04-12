@@ -64,6 +64,7 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
   // tslint:disable-next-line:max-line-length
   constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private webSocket: WebsocketService, public data: DataService) {
     if (localStorage.getItem('currentRole') === 'Business') {
+      this.hideNotification = true;
       this.router.navigate(['/cms/dashboard']);
     }
 
