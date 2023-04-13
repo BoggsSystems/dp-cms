@@ -33,6 +33,9 @@ export class LogoutComponent implements OnInit {
     localStorage.removeItem('expires_at');
     localStorage.removeItem('token');
     sessionStorage.removeItem('currentRole');
+    sessionStorage.removeItem('currentUser');
+    sessionStorage.removeItem('XchaneCurrentUser');
+
 
     this.router.navigate(['/']);
     this.dialogRef.close(true);
