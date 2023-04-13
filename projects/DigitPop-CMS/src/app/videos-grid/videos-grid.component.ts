@@ -59,6 +59,7 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   isUser: string | boolean;
   popupOpened = false;
   dialogOpen = false;
+  loggedIn = false;
 
   // tslint:disable-next-line:max-line-length
   constructor(private videosService: VideosGridService, private engagementService: EngagementService, private authService: XchaneAuthenticationService, private dialog: MatDialog, private router: Router, private webSocket: WebsocketService, private data: DataService) {
@@ -67,6 +68,14 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     this.videosCount = Array(this.videosLimit).fill(0).map((x, i) => i);
     this.categoryVideosCount = 0;
     this.selectedCategories = ['Clothing']; // Set default category Cosmetics
+
+    if (sessionStorage.getItem('XchaneCurrentUser') || localStorage.getItem('XchaneCurrentUser')) {
+      this.loggedIn = true;
+    }
+
+    this.data.getLogin().subscribe(state => {
+      this.loggedIn = state.loggedIn;
+    });
   }
 
   ngOnInit(): void {
@@ -130,7 +139,11 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   }
 
   getVideos: (isAppend?: boolean) => void = async (isAppend: boolean = false) => {
-    const currentUserId = localStorage.getItem('XchaneCurrentUser') ? JSON.parse(localStorage.getItem('XchaneCurrentUser'))._id : false;
+    let currentUserId = localStorage.getItem('XchaneCurrentUser') ? JSON.parse(localStorage.getItem('XchaneCurrentUser'))._id : false;
+
+    if (!currentUserId) {
+      currentUserId = sessionStorage.getItem('XchaneCurrentUser') ? JSON.parse(sessionStorage.getItem('XchaneCurrentUser'))._id : false;
+    }
 
     return this.videosService
       .getVideos(this.selectedCategories, this.page, this.videosLimit, currentUserId)

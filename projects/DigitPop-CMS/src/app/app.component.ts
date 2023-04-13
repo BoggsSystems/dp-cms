@@ -133,10 +133,6 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
     this.isTrial = localStorage.getItem('trial');
     this.currentRole = localStorage.getItem('currentRole') || sessionStorage.getItem('currentRole');
 
-    if (localStorage.getItem('token')) {
-      this.isLogin = true;
-    }
-
     if (localStorage.getItem('currentuser')) {
       this.currentUser = JSON.parse(localStorage.getItem('currentuser'));
     }
@@ -144,6 +140,11 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
     if (localStorage.getItem('XchaneCurrentUser')) {
       this.currentUser = JSON.parse(localStorage.getItem('XchaneCurrentUser'));
     }
+
+    if (sessionStorage.getItem('XchaneCurrentUser')) {
+      this.currentUser = JSON.parse(sessionStorage.getItem('XchaneCurrentUser'));
+    }
+
 
     if (this.currentRole) {
       this.isLogin = true;

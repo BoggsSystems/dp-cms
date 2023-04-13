@@ -12,7 +12,7 @@
 <div *ngIf="videosLoaded" [hidden]="!videosLoaded"
      [ngClass]="{'justify-start' : categoryVideosCount < 6}"
      class="videos-grid">
-  <div *ngFor="let video of videos" [class]="video.watched ? 'dim' : ''"
+  <div *ngFor="let video of videos" [class]="video.watched && loggedIn ? 'dim' : ''"
        class="video-element"
        fxFlex="100%"
        fxLayout="column"

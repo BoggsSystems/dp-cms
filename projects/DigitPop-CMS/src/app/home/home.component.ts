@@ -90,8 +90,7 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     private xchaneAuthService: XchaneAuthenticationService,
     private data: DataService
   ) {
-
-    if (this.xchaneAuthService?.currentUserValue?._id && localStorage.getItem('currentRole') && localStorage.getItem('currentRole') !== 'Business') {
+    if (this.xchaneAuthService?.currentUserValue?._id && localStorage.getItem('currentRole') !== 'Business') {
       this.loggedIn = true;
     }
 

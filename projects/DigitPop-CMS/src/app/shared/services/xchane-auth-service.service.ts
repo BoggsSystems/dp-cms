@@ -27,7 +27,6 @@ export class XchaneAuthenticationService {
 
   storeUser(user: XchaneUser) {
     user.token = this.currentUserValue.token;
-    localStorage.setItem('XchaneCurrentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 
@@ -92,8 +91,7 @@ export class XchaneAuthenticationService {
       .pipe(map((res) => {
         if (res.token) {
           res.user.token = res.token;
-          this.setSession(res.token, res.expiresIn)
-          localStorage.setItem('XchaneCurrentUser', JSON.stringify(res.user));
+          this.setSession(res.token, res.expiresIn);
           this.currentUserSubject.next(res.user);
         } else {
           alert(res.msg);
