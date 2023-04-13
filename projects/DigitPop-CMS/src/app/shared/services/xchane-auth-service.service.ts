@@ -19,7 +19,7 @@ export class XchaneAuthenticationService {
   constructor(@Inject(HTTP_XCHANE_AUTH) private httpClient: HttpClient) {
     if (localStorage.getItem('XchaneCurrentUser')) {
       this.currentUserSubject = new BehaviorSubject<XchaneUser>(JSON.parse(localStorage.getItem('XchaneCurrentUser')));
-    } else if (sessionStorage.getItem('XchaneCurrentUser')) {
+    } else {
       this.currentUserSubject = new BehaviorSubject<XchaneUser>(JSON.parse(sessionStorage.getItem('XchaneCurrentUser')));
     }
     this.currentUser = this.currentUserSubject.asObservable();
