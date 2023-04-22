@@ -1,7 +1,9 @@
 import {Router} from '@angular/router';
 import {ProjectService} from '../services/project.service';
+import {CampaignService} from '../services/campaign.service';
 import * as _ from 'lodash';
 import {Project} from '../models/project';
+import {first} from 'rxjs/operators';
 
 export interface RequestArguments {
   page: number;
@@ -44,8 +46,7 @@ export const Cache = {
   },
 
   createProjectDetails: async (projectService: ProjectService, args: RequestArguments = {
-    page: 0,
-    pageSize: 5,
+    page: 0, pageSize: 5,
   }) => {
     let projects;
     let sortedProjects;
@@ -92,6 +93,21 @@ export const Cache = {
   invokeCache: (key: string = 'my-projects') => {
     sessionStorage.removeItem('my-campaigns');
     sessionStorage.removeItem(key);
+  },
+
+  updateCampaignsCache: async (campaignService: CampaignService) => {
+    campaignService
+      .getMyCampaigns()
+      .pipe(first())
+      .subscribe((campaigns: any) => {
+        sessionStorage.setItem('my-campaigns', JSON.stringify(campaigns));
+      }, (error) => {
+        console.error(error);
+      });
+  },
+
+  invokeCampaignsCache: () => {
+    sessionStorage.removeItem('my-campaigns');
   },
 
   exitTrial: (router: Router) => {

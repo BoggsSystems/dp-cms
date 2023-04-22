@@ -10,6 +10,7 @@ import { CampaignService } from '../../shared/services/campaign.service';
 import { Router } from '@angular/router';
 import { Project } from '../../shared/models/project';
 import { Campaign } from '../../shared/models/campaign';
+import { Cache } from '../../shared/helpers/cache';
 
 @Component({
   selector: 'DigitPop-campaign-wizard',
@@ -248,7 +249,9 @@ export class CampaignWizardComponent implements OnInit {
 
   updateCampaign() {
     this.campaignService.updateCampaign(this.campaign).subscribe(
-      (res) => {
+      (res: Campaign) => {
+        if (!res._id) { return false; }
+        Cache.updateCampaignsCache(this.campaignService);
         return res;
       },
       (err) => {
