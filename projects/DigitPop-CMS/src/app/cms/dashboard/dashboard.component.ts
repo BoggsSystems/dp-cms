@@ -7,7 +7,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ThemePalette} from '@angular/material/core';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Project} from '../../shared/models/project';
 import {ProductGroup} from '../../shared/models/productGroup';
 import {BillsbyService} from '../../shared/services/billsby.service';
@@ -510,14 +510,29 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   updateProjectSubFunc(element: Project, e: any) {
-    const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Change Status',
-        message: 'Are you sure you want to change the status of the project?',
-      },
-    });
+    let confirmDialogRef: MatDialogRef<ConfirmDialogComponent>;
 
-    confirmDialog.afterClosed().subscribe((result) => {
+    const closeDialog = () => {
+      if (confirmDialogRef) {
+        confirmDialogRef.close();
+        confirmDialogRef = null;
+      }
+    };
+
+    closeDialog();
+
+    const data = {
+      title: 'Change Status',
+      message: 'Are you sure you want to change the status of the project?',
+    };
+
+    console.log(element);
+
+    confirmDialogRef = this.dialog.open(ConfirmDialogComponent, { data });
+
+    confirmDialogRef.afterClosed().subscribe((result) => {
+      closeDialog();
+
       if (result === true) {
         element.active = !element.active;
         this.projectService.updateProject(element).subscribe((res) => {
@@ -529,8 +544,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         e.source.checked = element.active;
         console.log('toggle should not change if I click the cancel button');
       }
+
     });
   }
+
 
   updateCache = (project: Project) => {
     const cachedResponse: any = sessionStorage.getItem('my-projects');
@@ -545,7 +562,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
 
     sessionStorage.setItem('my-projects', JSON.stringify(data));
-    this.renderProjects(data);
   }
 
 }
