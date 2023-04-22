@@ -74,7 +74,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   campaignsPageSize = 5;
   isFiltered = false;
   filterValue = '';
-  sortBy = 'updatedAt';
+  sortBy = 'createdAt';
   sortDirection = 'desc';
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;

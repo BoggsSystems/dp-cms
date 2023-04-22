@@ -21,7 +21,7 @@ interface SortOptions {
   sortDirection?: number;
 }
 
-const sortBy = 'updatedAt';
+const sortBy = 'createdAt';
 const sortDirection = -1;
 
 const sortData = (data: any, sortOptions: SortOptions = {
