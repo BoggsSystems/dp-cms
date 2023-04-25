@@ -54,6 +54,7 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
 import {XchaneModule} from './xchane/xchane.module';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { EmailVerificationComponent } from './email-verification/email-verification.component';
+import { SubscriptionPlansComponent } from './subscription-plans/subscription-plans.component';
 
 export const HTTP_CMS_AUTH = new InjectionToken('http_cms_auth');
 export const HTTP_XCHANE_AUTH = new InjectionToken('http_xchane_auth');
@@ -73,7 +74,8 @@ export const HTTP_NO_INTERCEPTORS = new InjectionToken('http_no_interceptors');
     VisitorPopupComponent,
     UserRewardsComponent,
     UserDashboardComponent,
-    EmailVerificationComponent
+    EmailVerificationComponent,
+    SubscriptionPlansComponent
   ],
   imports: [
     BrowserModule,
