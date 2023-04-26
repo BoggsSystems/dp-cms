@@ -1,55 +1,23 @@
 <section class="pricing">
-	<div class="card pricing--free">
+
+	<div *ngFor="let plan of plans" class="card pricing--{{ plan.name }}">
 		<div class="card__title">
-			<h1 class="card__heading">Free</h1>
-			<sup class="card__sup"><img class="card__icon" alt="" src="../../assets/img/plan-free-badge.svg"></sup>
-			<h3 class="card__subheading">Always Free</h3>
-			<p class="card__description">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
-				consectetur.</p>
-		</div>
-
-		<div class="card__features">
-			<h2 class="card__features-heading">Features</h2>
-			<ul class="card__list">
-				<li class="card__item">
-					<img class="card__icon" alt="Diamond icon" src="../../assets/img/feature-diamond.svg">
-					At vero eos et accusamus et iusto odio.
-				</li>
-				<li class="card__item">
-					<img class="card__icon" alt="Diamond icon" src="../../assets/img/feature-diamond.svg">
-					Lorem Ipsum is <span class="card__highlight">simply</span> dummy.
-				</li>
-				<li class="card__item">
-					<img class="card__icon" alt="Diamond icon" src="../../assets/img/feature-diamond.svg">
-					Lorem Ipsum is simply dummy text of the
-					printing and typesetting industry.
-				</li>
-				<li class="card__item">
-					<img class="card__icon" alt="Diamond icon" src="../../assets/img/feature-diamond.svg">
-					Lorem Ipsum is simply dummy.
-				</li>
-			</ul>
-		</div>
-
-		<button class="card__btn">Choose Plan</button>
-	</div>
-
-	<div class="card pricing--starter">
-		<div class="card__title">
-			<h1 class="card__heading">Starter</h1>
-			<p class="card__description">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
-				consectetur.</p>
+			<h1 class="card__heading">{{ plan.displayName }}</h1>
+			<sup class="card__sup"><img class="card__icon" alt="" src="../../assets/img/plan-{{ plan.name }}-badge.svg"></sup>
+			<h3 *ngIf="plan.name === 'free'" class="card__subheading">Always Free</h3>
+			<p class="card__description">{{ plan.description }}</p>
 			<div class="card__background"></div>
 		</div>
 
-		<div class="card__subtitle">
+		<div *ngIf="plan.name !== 'free'" class="card__subtitle">
 			<h3 class="card__subheading"><img class="card__icon" alt="arrow" src="../../assets/img/plan-arrow.svg"> Every thing in free plan plus:</h3>
 			<h4 class="card__price">
-				<span class="card__currency">&#36;</span>50<span class="card__period">/month</span>
+				<span class="card__currency">&#36;</span>{{ plan.cycles[0].pricingModel.priceFormatted }}<span class="card__period">/month</span>
 			</h4>
 		</div>
 
 		<div class="card__features">
+			<h2 *ngIf="plan.name === 'free'" class="card__features-heading">Features</h2>
 			<ul class="card__list">
 				<li class="card__item">
 					<img class="card__icon" alt="Diamond icon" src="../../assets/img/feature-diamond.svg">
@@ -71,46 +39,7 @@
 			</ul>
 		</div>
 
-		<button class="card__btn">Choose Plan</button>
+		<button class="card__btn" data-billsby-type="checkout" [attr.data-billsby-product]="plan.productId" [attr.data-billsby-plan]="plan.planId" [attr.data-billsby-cycle]="plan.cycles[plan.cycles.length - 1].cycleId">choose plan</button>
 	</div>
 
-	<div class="card pricing--growth">
-		<div class="card__title">
-			<h1 class="card__heading">Growth</h1>
-			<sup class="card__sup"><img class="card__icon" alt="" src="../../assets/img/plan-growth-badge.svg"></sup>
-			<p class="card__description">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
-				consectetur.</p>
-		</div>
-
-		<div class="card__subtitle">
-			<h3 class="card__subheading"><img class="card__icon" alt="arrow" src="../../assets/img/plan-arrow.svg">Every thing in free plan plus:</h3>
-			<h4 class="card__price">
-				<span class="card__currency">&#36;</span>150<span class="card__period">/month</span>
-			</h4>
-		</div>
-
-		<div class="card__features">
-			<ul class="card__list">
-				<li class="card__item">
-					<img class="card__icon" alt="Diamond icon" src="../../assets/img/feature-diamond.svg">
-					At vero eos et accusamus et iusto odio.
-				</li>
-				<li class="card__item">
-					<img class="card__icon" alt="Diamond icon" src="../../assets/img/feature-diamond.svg">
-					Lorem Ipsum is <span class="card__highlight">simply</span> dummy.
-				</li>
-				<li class="card__item">
-					<img class="card__icon" alt="Diamond icon" src="../../assets/img/feature-diamond.svg">
-					Lorem Ipsum is simply dummy text of the
-					printing and typesetting industry.
-				</li>
-				<li class="card__item">
-					<img class="card__icon" alt="Diamond icon" src="../../assets/img/feature-diamond.svg">
-					Lorem Ipsum is simply dummy.
-				</li>
-			</ul>
-		</div>
-
-		<button class="card__btn">Choose Plan</button>
-	</div>
 </section>

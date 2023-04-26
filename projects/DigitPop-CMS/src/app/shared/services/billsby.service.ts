@@ -1,39 +1,69 @@
-import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { AuthenticationService } from './auth-service.service';
 import { environment } from 'projects/DigitPop-CMS/src/environments/environment';
-import { HTTP_BILLS } from '../../app.module'
-import { HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class BillsbyService {
-  constructor(private httpClient: HttpClient,
+  private readonly billsByUrl = environment.billsbyUrl;
+  private readonly billsByKey = environment.billsbyKey;
+
+  constructor(
+    private httpClient: HttpClient,
     private authService: AuthenticationService
-  ) {
+  ) {}
 
-    var x = "test";
-  }
-  // constructor(private httpClient: HttpClient) {}
-
-  getCustomerDetails(id: any) {
-    console.log(`${environment.billsbyKey}`);
-    const headers= new HttpHeaders()
-        .set('apikey', `${environment.billsbyKey}`);
-    return this.httpClient.get(`${environment.billsbyUrl}/customers/` + id, { 'headers': headers });
+  getProductPlans(): Observable<any> {
+    const productId = '1142';
+    return this.httpClient.get(`${this.billsByUrl}/products/${productId}/plans`);
   }
 
-  getSubscriptionDetails() {
-    return this.httpClient.get(
-      `${environment.billsbyUrl}/subscriptions/` + '4EDK89XEW7'
-        // this.authService.currentUserValue._id
-    );
+  subscribeToPlan(
+    planId: string,
+    customerId: string,
+    quantity: number,
+    billingCycleCount: number,
+    billingCycleType: string,
+    startDate: string,
+    couponCode?: string
+  ): Observable<any> {
+    const body = {
+      customerUniqueId: customerId,
+      productPlanId: planId,
+      quantity,
+      billingCycleCount,
+      billingCycleType,
+      startDate,
+      couponCode
+    };
+    return this.httpClient.post(`${this.billsByUrl}/subscriptions`, body);
   }
 
-  cancelSubscription() {
-    return this.httpClient.delete(`${environment.billsbyUrl}/subscriptions/` + this.authService.currentUserValue.sid, {params: {customerUniqueId: this.authService.currentUserValue.cid }});
+
+  getCustomerDetails(id: any): Observable<any> {
+    return this.httpClient.get(`${this.billsByUrl}/customers/${id}`);
   }
 
-  pauseSubscription() {
-    return this.httpClient.put(`${environment.billsbyUrl}/subscriptions/` + this.authService.currentUserValue.sid + '\?cid' + this.authService.currentUserValue.cid, {params: {pauseSubscription: true, pauseSubscriptionCycleCount : 1}});
+  getSubscriptionDetails(): Observable<any> {
+    const subscriptionId = '4EDK89XEW7'; // replace with dynamic value if needed
+    return this.httpClient.get(`${this.billsByUrl}/subscriptions/${subscriptionId}`);
+  }
+
+  cancelSubscription(): Observable<any> {
+    const customerId = this.authService.currentUserValue.cid;
+    const subscriptionId = this.authService.currentUserValue.sid;
+    const params = new HttpParams().set('customerUniqueId', customerId);
+    return this.httpClient.delete(`${this.billsByUrl}/subscriptions/${subscriptionId}`, { params });
+  }
+
+  pauseSubscription(): Observable<any> {
+    const customerId = this.authService.currentUserValue.cid;
+    const subscriptionId = this.authService.currentUserValue.sid;
+    const body = { pauseSubscription: true, pauseSubscriptionCycleCount: 1 };
+    const params = new HttpParams().set('cid', customerId);
+    return this.httpClient.put(`${this.billsByUrl}/subscriptions/${subscriptionId}`, body, { params });
   }
 }
