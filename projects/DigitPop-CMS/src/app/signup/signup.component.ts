@@ -15,6 +15,7 @@ import {
 } from 'rxjs/internal/observable/throwError';
 import {DataService} from '../xchane/services/data.service';
 import {WebsocketService} from '../shared/services/websocket.service';
+import {SubscriptionService} from '../shared/services/subscription.service';
 import {environment} from '../../environments/environment';
 
 interface customWindow extends Window {
@@ -52,7 +53,8 @@ export class SignupComponent implements OnInit, OnDestroy {
     private authService: XchaneAuthenticationService,
     private bizAuthService: AuthenticationService,
     private data: DataService,
-    private webSocket: WebsocketService
+    private webSocket: WebsocketService,
+    private subscriptionService: SubscriptionService,
   ) {
     if (this.fromQuiz) {
       this.validRole = Role.Consumer;
@@ -127,6 +129,9 @@ export class SignupComponent implements OnInit, OnDestroy {
 
       if (res) {
         localStorage.setItem('currentRole', 'Business');
+        if (this.fromPlans) {
+          return this.createSubscription(res.user._id);
+        }
         this.dialogRef.close();
         this.router.navigate(['/cms/dashboard']);
       }
@@ -172,8 +177,16 @@ export class SignupComponent implements OnInit, OnDestroy {
       });
   }
 
-  createSubscription = () => {
-
+  createSubscription = (userId: string) => {
+    this.subscriptionService.createSubscription({
+      user: userId,
+      plan: 'free',
+      subscriptionDate: new Date(),
+      renewalDate: new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000)) // 30 days from now
+    }).subscribe(response => {
+      this.dialogRef.close();
+      this.router.navigate(['/cms/dashboard']);
+    });
   }
 
   refreshHomepage = () => {

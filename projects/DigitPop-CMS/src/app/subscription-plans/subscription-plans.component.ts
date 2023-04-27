@@ -17,7 +17,6 @@ export class SubscriptionPlansComponent implements OnInit {
 
   constructor(private billsByService: BillsbyService, private dialog: MatDialog) {
     this.billsByService.getProductPlans().subscribe((res: Plan[]) => {
-      console.log(res);
       this.plans = res;
     });
   }
@@ -40,6 +39,7 @@ export class SubscriptionPlansComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(() => {
+      this.popupOpened = false;
     });
   }
 

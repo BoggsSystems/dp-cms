@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { SubscriptionData } from '../interfaces/subscription-data.json';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -12,7 +13,7 @@ export class SubscriptionService {
 
   constructor(private http: HttpClient) { }
 
-  createSubscription(subscriptionData: any): Observable<any> {
+  createSubscription(subscriptionData: SubscriptionData): Observable<any> {
     return this.http.post<any>(this.endpoint, subscriptionData);
   }
 }

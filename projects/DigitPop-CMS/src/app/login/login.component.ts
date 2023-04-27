@@ -15,6 +15,7 @@ import {
 import {XchaneUser} from '../shared/models/xchane.user';
 import {environment} from '../../environments/environment';
 import {WebsocketService} from '../shared/services/websocket.service';
+import {SubscriptionService} from '../shared/services/subscription.service';
 
 @Component({
   selector: 'digit-pop-login',
@@ -38,8 +39,17 @@ export class LoginComponent implements OnInit {
   validRole: any;
   keepMeSignedIn = false;
 
-  // tslint:disable-next-line:max-line-length
-  constructor(public dialogRef: MatDialogRef<LoginComponent>, private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private xchaneAuthenticationService: XchaneAuthenticationService, private billsbyService: BillsbyService, private webSocket: WebsocketService) {
+  constructor(
+    public dialogRef: MatDialogRef<LoginComponent>,
+    private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authenticationService: AuthenticationService,
+    private xchaneAuthenticationService: XchaneAuthenticationService,
+    private billsbyService: BillsbyService,
+    private webSocket: WebsocketService,
+    private subscriptionService: SubscriptionService,
+  ) {
     if (this.authenticationService.currentUserValue) {
       this.router.navigate(['/']);
     }
@@ -136,34 +146,16 @@ export class LoginComponent implements OnInit {
         .login(this.f.email.value, this.f.password.value)
         .pipe(first())
         .subscribe((res: any) => {
-          console.log('LOGIN RESULT : ', this.authenticationService.currentUserValue);
-          // this.billsbyService.getSubscriptionDetails().subscribe(
-          //   (res: any) => {
-          //     if (res.status != 'Cancelled') {
-          //       this.router.navigate(['/cms/dashboard']);
-          //     } else {
-          //       this.authenticationService.logout();
-          //     }
-          //     console.log('Update response : ', res.toString());
-          //   },
-          //   (err: any) => {
-          //     console.log('Update error : ', err.toString());
-          //   }
-          // );
-
           localStorage.setItem('currentRole', 'Business');
+
+          if (this.fromPlans) {
+            return this.createSubscription(
+              this.authenticationService.currentUserValue._id.toString()
+            );
+          }
+
           this.dialogRef.close();
           this.router.navigate(['/cms/dashboard']);
-
-          // if(res.role == "Business"){
-          //   console.log(res.role);
-          //   this.dialogRef.close();
-          //   this.router.navigate(['/cms/dashboard']);
-          // } else if (res.role == "consumer") {
-          //   alert("This email is not registered as Business.")
-          //   this.dialogRef.close();
-          // }
-
         }, (error: any) => {
           this.error = error;
           this.loading = false;
@@ -172,6 +164,19 @@ export class LoginComponent implements OnInit {
     } else {
       alert('Please select login user type');
     }
+  }
+
+  createSubscription = (userId: string) => {
+    this.subscriptionService.createSubscription({
+      user: userId,
+      plan: 'free',
+      subscriptionDate: new Date(),
+      renewalDate: new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000)) // 30 days from now
+    }).subscribe(response => {
+      console.log(response);
+      this.dialogRef.close();
+      this.router.navigate(['/cms/dashboard']);
+    });
   }
 
   storeUser = (response: XchaneUser) => {
