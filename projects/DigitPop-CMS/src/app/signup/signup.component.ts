@@ -33,6 +33,7 @@ declare const window: customWindow;
 export class SignupComponent implements OnInit, OnDestroy {
   @Input() hideCloseButton = false;
   @Input() fromQuiz = false;
+  @Input() fromPlans = false;
   @Input() campaignId: string;
   @Input() projectId: string;
 
@@ -43,13 +44,25 @@ export class SignupComponent implements OnInit, OnDestroy {
   validRole: any;
   errorMessage: string;
 
-  // tslint:disable-next-line:max-line-length
-  constructor(public dialogRef: MatDialogRef<SignupComponent>, fb: FormBuilder, private route: ActivatedRoute, private router: Router, private authService: XchaneAuthenticationService, private bizAuthService: AuthenticationService, private data: DataService, private webSocket: WebsocketService) {
-    this.validRole = Role.Consumer;
-    //  window['billsbyData'] = {
-    //   email: "fake@eamil.net",
-    //   fname: "fake"
-    // };
+  constructor(
+    public dialogRef: MatDialogRef<SignupComponent>,
+    fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authService: XchaneAuthenticationService,
+    private bizAuthService: AuthenticationService,
+    private data: DataService,
+    private webSocket: WebsocketService
+  ) {
+    if (this.fromQuiz) {
+      this.validRole = Role.Consumer;
+    } else {
+      this.validRole = Role.Business;
+    }
+     /* window['billsbyData'] = {
+      email: "fake@eamil.net",
+      fname: "fake"
+      }; */
     this.signUpForm = fb.group({
       email: ['', Validators.required],
       password: ['', [Validators.required]],
@@ -59,6 +72,9 @@ export class SignupComponent implements OnInit, OnDestroy {
     });
 
   }
+
+
+  ngOnInit(): void {}
 
   get f() {
     return this.signUpForm.controls;
@@ -119,9 +135,6 @@ export class SignupComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
-  }
-
   handleXchaneSignUp = (user: XchaneUser) => {
     this.errorMessage = undefined;
     user.email = this.signUpForm.controls.email.value;
@@ -157,6 +170,10 @@ export class SignupComponent implements OnInit, OnDestroy {
       }, error => {
         return observableThrowError(error);
       });
+  }
+
+  createSubscription = () => {
+
   }
 
   refreshHomepage = () => {

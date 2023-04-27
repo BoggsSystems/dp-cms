@@ -4,15 +4,16 @@
   fxLayoutAlign="center end"
 >
   <h1 class="visitor-popup-heading">
-    <span class="visitor-popup-action">Signup/login,</span> <br>
-    <span class="visitor-popup-reason">to save</span> <br>
-    <span class="visitor-popup-points">your points</span>
+    <span class="visitor-popup-action">{{ templateAction }}</span> <br>
+    <span class="visitor-popup-reason">{{ templateReason }}</span> <br>
+    <span class="visitor-popup-points">{{ templateBenefit }}</span>
   </h1>
   <mat-tab-group animationDuration="0ms">
     <mat-tab label="Sign Up">
       <digit-pop-signup
         [campaignId]="campaignId"
-        [fromQuiz]="true"
+        [fromQuiz]="source && source === 'quiz'"
+        [fromPlans]="source && source === 'plans'"
         [hideCloseButton]="true"
         [projectId]="projectId">
       </digit-pop-signup>
@@ -20,7 +21,8 @@
     <mat-tab label="Already A Member">
       <digit-pop-login
         [campaignId]="campaignId"
-        [fromQuiz]="true"
+        [fromQuiz]="source && source === 'quiz'"
+        [fromPlans]="source && source === 'plans'"
         [hideCloseButton]="true"
         [projectId]="projectId">
       </digit-pop-login>

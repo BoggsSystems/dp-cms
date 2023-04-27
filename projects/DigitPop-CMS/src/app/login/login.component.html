@@ -7,7 +7,7 @@
     <div class="form-group">
       <mat-radio-group
         (change)="onChange($event)"
-        *ngIf="!fromQuiz"
+        *ngIf="!fromQuiz && !fromPlans"
         aria-label="Select an option"
         name="role"
       >

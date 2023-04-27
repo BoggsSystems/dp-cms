@@ -12,7 +12,7 @@
 		<div *ngIf="plan.name !== 'free'" class="card__subtitle">
 			<h3 class="card__subheading"><img class="card__icon" alt="arrow" src="../../assets/img/plan-arrow.svg"> Every thing in free plan plus:</h3>
 			<h4 class="card__price">
-				<span class="card__currency">&#36;</span>{{ plan.cycles[0].pricingModel.priceFormatted }}<span class="card__period">/month</span>
+				<span class="card__currency">&#36; </span>{{ removeCurrencyChar(plan.cycles[0].pricingModel.priceFormatted) }}<span class="card__period">/month</span>
 			</h4>
 		</div>
 
@@ -39,7 +39,8 @@
 			</ul>
 		</div>
 
-		<button class="card__btn" data-billsby-type="checkout" [attr.data-billsby-product]="plan.productId" [attr.data-billsby-plan]="plan.planId" [attr.data-billsby-cycle]="plan.cycles[plan.cycles.length - 1].cycleId">choose plan</button>
+		<button *ngIf="plan.name !== 'free'" class="card__btn" data-billsby-type="checkout" [attr.data-billsby-product]="plan.productId" [attr.data-billsby-plan]="plan.planId" [attr.data-billsby-cycle]="plan.cycles[plan.cycles.length - 1].cycleId">choose plan</button>
+		<button *ngIf="plan.name === 'free'" class="card__btn" (click)="openVisitorPopup()">choose plan</button>
 	</div>
 
 </section>

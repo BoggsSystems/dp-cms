@@ -10,13 +10,13 @@
   <form (ngSubmit)="submit()" [formGroup]="signUpForm" fxLayout="column"
         fxLayoutAlign="center start" fxLayoutGap="30px">
     <mat-radio-group
-      *ngIf="!fromQuiz"
+      *ngIf="!fromQuiz && !fromPlans"
       (change)="onChange($event)"
       aria-label="Select an option"
       name="role">
-      <mat-radio-button checked class="check" value="1">As a consumer
+      <mat-radio-button class="check" value="1">As a consumer
       </mat-radio-button>
-      <mat-radio-button class="check" value="2">As a business</mat-radio-button>
+      <mat-radio-button checked class="check" value="2">As a business</mat-radio-button>
     </mat-radio-group>
 
     <div class="form-group email">

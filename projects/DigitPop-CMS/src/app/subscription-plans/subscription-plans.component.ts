@@ -1,6 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {BillsbyService} from '../shared/services/billsby.service';
-import {Plan} from '../shared/interfaces/plan.json';
+import { Component, OnInit } from '@angular/core';
+import { BillsbyService } from '../shared/services/billsby.service';
+import { Plan } from '../shared/interfaces/plan.json';
+import {VisitorPopupComponent} from '../visitor-popup/visitor-popup.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'digit-pop-subscription-plans',
@@ -11,49 +13,34 @@ import {Plan} from '../shared/interfaces/plan.json';
 export class SubscriptionPlansComponent implements OnInit {
 
   plans: Plan[];
+  popupOpened = false;
 
-  constructor(private billsByService: BillsbyService) {
-    billsByService.getProductPlans().subscribe((res: Plan[]) => {
+  constructor(private billsByService: BillsbyService, private dialog: MatDialog) {
+    this.billsByService.getProductPlans().subscribe((res: Plan[]) => {
       console.log(res);
       this.plans = res;
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  removeCurrencyChar(formattedPrice: string): string {
+    const newString = formattedPrice.substring(1);
+    return newString;
   }
 
+  openVisitorPopup = () => {
+    if (this.popupOpened) { return; }
+    this.popupOpened = true;
+    const dialogRef = this.dialog.open(VisitorPopupComponent, {
+      maxWidth: '90%',
+      data: {
+        source: 'plans'
+      }, panelClass: 'dpop-modal'
+    });
 
-  // firstName
-  // string
-  // required
-  // The customer's first name
-  //
-  // lastName
-  // string
-  // required
-  // The customer's last name
-  //
-  // email
-  // string
-  // required
-  // The customer's email address
-  //
-  // cycleId
-  // int32
-  // required
-  // The unique identifier of the cycle in Billsby
-  //
-  // Units
-  // int32
-  // required
-  // The number of units included in the subscription (min. 1)
-  //
-  // address
-  // object
-  // required
-
-  subscribeToPlan(planId: string) {
-
+    dialogRef.afterClosed().subscribe(() => {
+    });
   }
 
 }

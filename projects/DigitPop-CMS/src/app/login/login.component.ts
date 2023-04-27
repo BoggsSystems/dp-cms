@@ -25,6 +25,7 @@ import {WebsocketService} from '../shared/services/websocket.service';
 export class LoginComponent implements OnInit {
   @Input() hideCloseButton = false;
   @Input() fromQuiz = false;
+  @Input() fromPlans = false;
   @Input() campaignId: string;
   @Input() projectId: string;
   loginForm: FormGroup;
@@ -93,7 +94,7 @@ export class LoginComponent implements OnInit {
     }
 
     this.loading = true;
-    if (this.validRole === 'consumer') {
+    if (this.validRole === 'consumer' && !this.fromPlans) {
       this.xchaneAuthenticationService
         .loginXchaneUser(this.f.email.value, this.f.password.value)
         .pipe(first())
@@ -130,7 +131,7 @@ export class LoginComponent implements OnInit {
         }, (err) => {
           console.log('Update error : ' + err.toString());
         });
-    } else if (this.validRole === 'Business') {
+    } else if (this.validRole === 'Business' || this.fromPlans) {
       this.authenticationService
         .login(this.f.email.value, this.f.password.value)
         .pipe(first())
