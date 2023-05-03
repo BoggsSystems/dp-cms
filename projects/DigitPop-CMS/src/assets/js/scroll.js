@@ -18,8 +18,8 @@
 			$("html, body").animate({scrollTop: 0}, 'slow');
 		});
 		
-		$(window).on('scroll', function() {
-			if ($(this).scrollTop() >= Math.floor($('.dpop-sect-top').next().offset().top)) {
+		$(window).on('scroll', function () {
+			if ($('.dpop-sect-top').length && $(this).scrollTop() >= Math.floor($('.dpop-sect-top').next().offset().top)) {
 				$('#top').fadeIn();
 			} else {
 				$('#top').fadeOut();
