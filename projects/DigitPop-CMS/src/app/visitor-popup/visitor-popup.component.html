@@ -14,8 +14,11 @@
         [campaignId]="campaignId"
         [fromQuiz]="source && source === 'quiz'"
         [fromPlans]="source && source === 'plans'"
+        [fromSubscribe]="source && source === 'subscribe'"
         [hideCloseButton]="true"
-        [projectId]="projectId">
+        [projectId]="projectId"
+        [cid]="cid"
+        [sid]="sid">
       </digit-pop-signup>
     </mat-tab>
     <mat-tab label="Already A Member">
@@ -23,8 +26,11 @@
         [campaignId]="campaignId"
         [fromQuiz]="source && source === 'quiz'"
         [fromPlans]="source && source === 'plans'"
+        [fromSubscribe]="source && source === 'subscribe'"
         [hideCloseButton]="true"
-        [projectId]="projectId">
+        [projectId]="projectId"
+        [cid]="cid"
+        [sid]="sid">
       </digit-pop-login>
     </mat-tab>
   </mat-tab-group>

@@ -35,8 +35,11 @@ export class SignupComponent implements OnInit, OnDestroy {
   @Input() hideCloseButton = false;
   @Input() fromQuiz = false;
   @Input() fromPlans = false;
+  @Input() fromSubscribe = false;
   @Input() campaignId: string;
   @Input() projectId: string;
+  @Input() cid: string;
+  @Input() sid: string;
 
   signUpForm: FormGroup;
   submitted = false;
@@ -76,7 +79,8 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   get f() {
     return this.signUpForm.controls;
@@ -129,7 +133,7 @@ export class SignupComponent implements OnInit, OnDestroy {
 
       if (res) {
         localStorage.setItem('currentRole', 'Business');
-        if (this.fromPlans) {
+        if (this.fromPlans || this.fromSubscribe) {
           return this.createSubscription(res.user._id);
         }
         this.dialogRef.close();

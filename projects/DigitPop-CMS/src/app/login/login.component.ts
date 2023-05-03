@@ -27,8 +27,12 @@ export class LoginComponent implements OnInit {
   @Input() hideCloseButton = false;
   @Input() fromQuiz = false;
   @Input() fromPlans = false;
+  @Input() fromSubscribe = false;
   @Input() campaignId: string;
   @Input() projectId: string;
+  @Input() cid: string;
+  @Input() sid: string;
+
   loginForm: FormGroup;
   loading = false;
   submitted = false;
@@ -104,7 +108,7 @@ export class LoginComponent implements OnInit {
     }
 
     this.loading = true;
-    if (this.validRole === 'consumer' && !this.fromPlans) {
+    if (this.validRole === 'consumer' && !this.fromPlans && !this.fromSubscribe) {
       this.xchaneAuthenticationService
         .loginXchaneUser(this.f.email.value, this.f.password.value)
         .pipe(first())
@@ -141,14 +145,14 @@ export class LoginComponent implements OnInit {
         }, (err) => {
           console.log('Update error : ' + err.toString());
         });
-    } else if (this.validRole === 'Business' || this.fromPlans) {
+    } else if (this.validRole === 'Business' || this.fromPlans || this.fromSubscribe) {
       this.authenticationService
         .login(this.f.email.value, this.f.password.value)
         .pipe(first())
         .subscribe((res: any) => {
           localStorage.setItem('currentRole', 'Business');
 
-          if (this.fromPlans) {
+          if (this.fromPlans || this.fromSubscribe) {
             return this.createSubscription(
               this.authenticationService.currentUserValue._id.toString()
             );
