@@ -168,11 +168,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     page: 0, pageSize: 5
   }) {
     let projectsDetails;
+    let projectsTableSettings;
+
+    projectsTableSettings = JSON.parse(sessionStorage.getItem('projectsTable'));
+
     if (arguments.length && Object.keys(args).length) {
       projectsDetails = await Cache.createProjectDetails(this.projectService, args);
       return this.renderProjects(projectsDetails);
     }
-    projectsDetails = await Cache.createProjectDetails(this.projectService);
+
+    if (projectsTableSettings) {
+      projectsDetails = await Cache.createProjectDetails(this.projectService, projectsTableSettings);
+    } else {
+      projectsDetails = await Cache.createProjectDetails(this.projectService);
+    }
     return this.renderProjects(projectsDetails);
   }
 
