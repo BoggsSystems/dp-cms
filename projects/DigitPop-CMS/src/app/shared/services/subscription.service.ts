@@ -16,4 +16,6 @@ export class SubscriptionService {
   createSubscription(subscriptionData: SubscriptionData): Observable<any> {
     return this.http.post<any>(this.endpoint, subscriptionData);
   }
+
+  
 }
