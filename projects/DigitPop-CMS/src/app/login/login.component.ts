@@ -152,9 +152,15 @@ export class LoginComponent implements OnInit {
         .subscribe((res: any) => {
           localStorage.setItem('currentRole', 'Business');
 
-          if (this.fromPlans || this.fromSubscribe) {
+          if (this.fromPlans) {
             return this.createSubscription(
               this.authenticationService.currentUserValue._id.toString()
+            );
+          } else if (this.fromSubscribe && this.cid && this.sid) {
+            return this.createSubscription(
+              this.authenticationService.currentUserValue._id.toString(),
+              this.cid,
+              this.sid
             );
           }
 
@@ -170,13 +176,20 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  createSubscription = (userId: string) => {
-    this.subscriptionService.createSubscription({
-      user: userId,
-      plan: 'free',
-      subscriptionDate: new Date(),
-      renewalDate: new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000)) // 30 days from now
-    }).subscribe(response => {
+  createSubscription = (userId: string, cid?: string, sid?: string) => {
+    const data: any = {};
+    data.user = userId;
+    data.subscriptionDate = new Date();
+    data.renewalDate = new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000)) // 30 days from now
+
+    if (cid && sid) {
+      data.billsByCid = cid;
+      data.billsBySid = sid;
+    } else {
+      data.plan = 'free';
+    }
+    
+    this.subscriptionService.createSubscription(data).subscribe(response => {
       console.log(response);
       this.dialogRef.close();
       this.router.navigate(['/cms/dashboard']);

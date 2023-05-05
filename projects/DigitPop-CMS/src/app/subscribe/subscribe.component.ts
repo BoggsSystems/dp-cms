@@ -14,8 +14,6 @@ import { VisitorPopupComponent } from '../visitor-popup/visitor-popup.component'
   
 export class SubscribeComponent implements OnInit {
 
-  popupOpened = false;
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -48,27 +46,9 @@ export class SubscribeComponent implements OnInit {
     });
   }
 
-  openVisitorPopup = (cid: string, sid: string) => {
-    if (this.popupOpened) { return; }
-    this.popupOpened = true;
-    const dialogRef = this.dialog.open(VisitorPopupComponent, {
-      maxWidth: '90%',
-      data: {
-        source: 'subscribe',
-        cid: cid,
-        sid: sid
-      }, panelClass: 'dpop-modal'
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.popupOpened = false;
-    });
-  }
-
   redirectToHomePopup = (cid: string, sid: string) => {
     const navigationExtras: NavigationExtras = {
       state: {
-        test: 'yes',
         cid: cid,
         sid: sid
       },

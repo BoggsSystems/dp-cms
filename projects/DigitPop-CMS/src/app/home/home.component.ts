@@ -38,6 +38,7 @@ import {
 import {Metric} from '../shared/models/metric';
 import {WebsocketService} from '../shared/services/websocket.service';
 import {DataService} from '../xchane/services/data.service';
+import { VisitorPopupComponent } from '../visitor-popup/visitor-popup.component';
 
 interface CustomWindow extends Window {
   billsbyData: any;
@@ -77,6 +78,9 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
   users: User[];
   loggedIn = false;
   welcomed = false;
+  cid = 0;
+  sid = 0;
+  popupOpened = false;
   @ViewChild('embeddedFrame') embeddedFrame: ElementRef;
   @ViewChild('embeddedIFrame') embeddedIFrame: ElementRef;
 
@@ -90,6 +94,21 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     private xchaneAuthService: XchaneAuthenticationService,
     private data: DataService
   ) {
+    const nav = this.router.getCurrentNavigation();
+
+    if (
+      nav != null &&
+      nav.extras != null &&
+      nav.extras.state != null &&
+      nav.extras.state.cid != null &&
+      nav.extras.state.sid != null
+    ) {
+      this.cid = nav.extras.state.cid;
+      this.sid = nav.extras.state.sid;
+
+      this.openVisitorPopup(this.cid.toString(), this.sid.toString());
+    }
+
     if (this.xchaneAuthService?.currentUserValue?._id && localStorage.getItem('currentRole') !== 'Business') {
       this.loggedIn = true;
     }
@@ -156,6 +175,23 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       if (message.trigger === 'login') {
         this.data.setLogin(message.value);
       }
+    });
+  }
+
+    openVisitorPopup = (cid: string, sid: string) => {
+    if (this.popupOpened) { return; }
+    this.popupOpened = true;
+    const dialogRef = this.dialog.open(VisitorPopupComponent, {
+      maxWidth: '90%',
+      data: {
+        source: 'subscribe',
+        cid: cid,
+        sid: sid
+      }, panelClass: 'dpop-modal'
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.popupOpened = false;
     });
   }
 
