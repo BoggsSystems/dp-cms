@@ -66,7 +66,6 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
 
     if (localStorage.getItem('currentRole') === 'Business') {
       this.hideNotification = true;
-      this.router.navigate(['/cms/dashboard']);
     }
 
 

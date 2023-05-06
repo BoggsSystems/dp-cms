@@ -94,6 +94,10 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     private xchaneAuthService: XchaneAuthenticationService,
     private data: DataService
   ) {
+    if (localStorage.getItem('currentRole') === 'Business') {
+      this.router.navigate(['/cms/dashboard']);
+    }
+    
     const nav = this.router.getCurrentNavigation();
 
     if (
