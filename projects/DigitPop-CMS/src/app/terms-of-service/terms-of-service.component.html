@@ -7,24 +7,23 @@
   <aside class="sidebar">
     <h1 class="sidebar__title">Table Of Contents</h1>
     <ol class="sidebar__list" type="01">
-      <li class="sidebar__item"><a href="#link1" class="sidebar__link">Lorem ipsum</a></li>
-      <li class="sidebar__item"><a href="#link2" class="sidebar__link sidebar__link--active">Neque porro quisquam est
-          qui</a></li>
-      <li class="sidebar__item"><a href="#link3" class="sidebar__link">Lorem ipsum dolorem</a></li>
-      <li class="sidebar__item"><a href="#link4" class="sidebar__link">adipiscing elit ipsum</a></li>
-      <li class="sidebar__item"><a href="#link5" class="sidebar__link">Lorem ipsum</a></li>
+      <li *ngFor="let section of sections" class="sidebar__item">
+        <a (click)="scrollToSection($event, section.id)" [href]="'#' + section.id" [class.sidebar__link--active]="section.id === currentSectionId" class="sidebar__link">
+          {{ section.title }}
+        </a>
+      </li>
     </ol>
   </aside>
 
   <div class="content">
-    <section class="section" id="link1">
+    <section class="section" [class.section--current]="sections[0].id === currentSectionId" id="link1">
       <h1 class="section__title">01. Lorem ipsum</h1>
       <p class="section__text">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit accusamus atque, soluta non tempore laudantium reprehenderit sint doloremque, autem fuga reiciendis architecto fugit dolorem assumenda, rerum praesentium ducimus deleniti! Reiciendis.
       </p>
     </section>
 
-    <section class="section section--current" id="link2">
+    <section class="section" [class.section--current]="sections[1].id === currentSectionId" id="link2">
       <h1 class="section__title">02.Neque porro quisquam est qui</h1>
       <p class="section__text">
         Neque aliquam vestibulum morbi blandit cursus. Adipiscing commodo elit at imperdiet dui accumsan. Neque viverra justo nec ultrices. At volutpat diam ut venenatis. In egestas erat imperdiet sed euismod. Viverra nibh cras pulvinar mattis nunc sed blandit libero volutpat. Magna ac placerat vestibulum lectus mauris ultrices eros in. Vitae elementum curabitur vitae nunc sed velit. Tortor at risus viverra adipiscing at in. Condimentum mattis pellentesque id nibh tortor id.
@@ -34,21 +33,21 @@
       </p>
     </section>
 
-    <section class="section" id="link3">
+    <section class="section" [class.section--current]="sections[2].id === currentSectionId" id="link3">
       <h1 class="section__title">03. Lorem ipsum dolorem</h1>
       <p class="section__text">
         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
       </p>
     </section>
 
-    <section class="section" id="link4">
+    <section class="section" [class.section--current]="sections[3].id === currentSectionId" id="link4">
       <h1 class="section__title">04. adipiscing elit ipsum</h1>
       <p class="section__text">
         Convallis tellus id interdum velit laoreet id donec ultrices. Vestibulum mattis ullamcorper velit sed ullamcorper. Auctor elit sed vulputate mi sit. At quis risus sed vulputate odio ut enim blandit volutpat. Justo laoreet sit ametcursus sit. Tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada. At risus viverra adipiscing at. Ut morbi tincidunt augue interdum velit. Lectus vestibulum mattis ullamcorper velit. Neque convallis a cras semper auctor neque.At in tellus integer feugiat scelerisque varius morbi enim nunc.
       </p>
     </section>
 
-    <section class="section" id="link5">
+    <section class="section" [class.section--current]="sections[4].id === currentSectionId" id="link5">
       <h1 class="section__title">05. Lorem ipsum</h1>
       <p class="section__text">
         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standarddummy text ever since the 500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
