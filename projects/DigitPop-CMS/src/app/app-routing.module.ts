@@ -7,6 +7,7 @@ import { RegisterComponent } from './register/register.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { EmailVerificationComponent } from './email-verification/email-verification.component';
 import { SubscribeComponent } from './subscribe/subscribe.component';
+import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 
 import { AuthGuard } from './shared/guards/auth-guard.service';
 import { NameGuard } from './shared/services/campaign.service';
@@ -51,6 +52,10 @@ const routes: Routes = [
     path: 'login',
     component: LoginComponent,
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'terms',
+    component: TermsOfServiceComponent,
   },
   {
     path: '**',
