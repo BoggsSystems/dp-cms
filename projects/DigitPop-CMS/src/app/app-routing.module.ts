@@ -2,15 +2,16 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
+import { EmailVerificationComponent } from './email-verification/email-verification.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
-import { EmailVerificationComponent } from './email-verification/email-verification.component';
 import { SubscribeComponent } from './subscribe/subscribe.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 
 import { AuthGuard } from './shared/guards/auth-guard.service';
 import { NameGuard } from './shared/services/campaign.service';
+import { UserRoleCheckResolver } from './shared/resolvers/user-role-check.resolver';
 
 const routes: Routes = [
   {
@@ -21,6 +22,9 @@ const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+    resolve: {
+      userRoleCheck: UserRoleCheckResolver
+    }
   },
   {
     path: 'dashboard',

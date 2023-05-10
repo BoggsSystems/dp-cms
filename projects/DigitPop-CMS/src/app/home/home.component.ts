@@ -8,7 +8,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import {
   HashLocationStrategy,
   Location,
@@ -87,6 +87,7 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
 
   constructor(
     private _builder: AnimationBuilder,
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     location: Location,
     private metricsService: MetricsService,
@@ -96,8 +97,16 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     private data: DataService,
     private subscriptionService: SubscriptionService
   ) {
+    const nav = this.route.snapshot.data.userRoleCheck;
+    if (!nav) {
+      return;
+    }
+
     this.extractNavigationExtras();
-    this.checkUserRole();
+
+    if (this.xchaneAuthService?.currentUserValue?._id) {
+      this.loggedIn = true;
+    }
 
     this.data.getLogin().subscribe(loginState => {
       this.loggedIn = loginState.loggedIn;
@@ -128,41 +137,6 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
       const isBussinessUser = localStorage.getItem('currentRole') === 'Business' || sessionStorage.getItem('currentRole');
       if(!isBussinessUser) this.openVisitorPopup(this.cid.toString(), this.sid.toString());
     }
-  }
-
-  private checkUserRole() {
-    if (localStorage.getItem('currentRole') === 'Business' || sessionStorage.getItem('currentRole')) {
-      const user = localStorage.getItem('currentuser') || sessionStorage.getItem('currentuser');
-      if (user && this.cid && this.sid) {
-        const userId = JSON.parse(user)._id;
-        return this.createSubscription(userId, this.cid, this.sid);
-      }
-      return this.router.navigate(['/cms/dashboard']);
-    }
-
-    if (this.xchaneAuthService?.currentUserValue?._id) {
-      this.loggedIn = true;
-    }
-
-    return;
-  }
-
-  createSubscription = (userId: string, cid?: string, sid?: string) => {
-    const data: any = {};
-    data.user = userId;
-    data.subscriptionDate = new Date();
-    data.renewalDate = new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000))
-
-    if (cid && sid) {
-      data.billsByCid = cid;
-      data.billsBySid = sid;
-    } else {
-      data.plan = 'free';
-    }
-
-    this.subscriptionService.createSubscription(data).subscribe(response => {
-      return this.router.navigate(['/cms/dashboard']);
-    });
   }
 
   @HostListener('window:orientationchange', ['$event']) onOrientationChange(event: any) {
