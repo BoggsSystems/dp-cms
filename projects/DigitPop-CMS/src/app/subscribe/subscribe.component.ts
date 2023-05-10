@@ -26,27 +26,10 @@ export class SubscribeComponent implements OnInit {
     const cid = this.route.snapshot.queryParamMap.get('cid');
     const sid = this.route.snapshot.queryParamMap.get('sid');
     
-    if (!this.auth.currentUserValue) {
-      return this.redirectToHomePopup(cid, sid);
-    }
-
-    return false;
+    return this.redirectToHome(cid, sid);
   }
 
-  createSubscription = (userId: string) => {
-    this.subscriptionService.createSubscription({
-      user: userId,
-      plan: 'starter',
-      subscriptionDate: new Date(),
-      renewalDate: new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000)) // 30 days from now
-    }).subscribe(response => {
-      // console.log(response);
-      // this.dialogRef.close();
-      // this.router.navigate(['/cms/dashboard']);
-    });
-  }
-
-  redirectToHomePopup = (cid: string, sid: string) => {
+  redirectToHome = (cid: string, sid: string) => {
     const navigationExtras: NavigationExtras = {
       state: {
         cid: cid,

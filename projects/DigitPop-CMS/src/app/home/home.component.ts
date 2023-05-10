@@ -39,6 +39,7 @@ import {Metric} from '../shared/models/metric';
 import {WebsocketService} from '../shared/services/websocket.service';
 import {DataService} from '../xchane/services/data.service';
 import { VisitorPopupComponent } from '../visitor-popup/visitor-popup.component';
+import { SubscriptionService } from '../shared/services/subscription.service';
 
 interface CustomWindow extends Window {
   billsbyData: any;
@@ -78,8 +79,8 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
   users: User[];
   loggedIn = false;
   welcomed = false;
-  cid = 0;
-  sid = 0;
+  cid = "";
+  sid = "";
   popupOpened = false;
   @ViewChild('embeddedFrame') embeddedFrame: ElementRef;
   @ViewChild('embeddedIFrame') embeddedIFrame: ElementRef;
@@ -92,42 +93,22 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
     private router: Router,
     private webSocket: WebsocketService,
     private xchaneAuthService: XchaneAuthenticationService,
-    private data: DataService
+    private data: DataService,
+    private subscriptionService: SubscriptionService
   ) {
-    if (localStorage.getItem('currentRole') === 'Business') {
-      this.router.navigate(['/cms/dashboard']);
-    }
-    
-    const nav = this.router.getCurrentNavigation();
-
-    if (
-      nav != null &&
-      nav.extras != null &&
-      nav.extras.state != null &&
-      nav.extras.state.cid != null &&
-      nav.extras.state.sid != null
-    ) {
-      this.cid = nav.extras.state.cid;
-      this.sid = nav.extras.state.sid;
-
-      this.openVisitorPopup(this.cid.toString(), this.sid.toString());
-    }
-
-    if (this.xchaneAuthService?.currentUserValue?._id && localStorage.getItem('currentRole') !== 'Business') {
-      this.loggedIn = true;
-    }
+    this.extractNavigationExtras();
+    this.checkUserRole();
 
     this.data.getLogin().subscribe(loginState => {
       this.loggedIn = loginState.loggedIn;
     });
 
-    this.location = location;
     this.iFrameSrc = `${environment.playerUrl}/ad/60518dfbe73b860004205e72`;
 
     this.fadeAnimation = animation(
       [
-        style({opacity: '{{ start }}'}),
-        animate('{{ time }}', style({opacity: '{{ end }}'})),
+        style({ opacity: '{{ start }}' }),
+        animate('{{ time }}', style({ opacity: '{{ end }}' })),
       ],
       {
         params: {
@@ -137,7 +118,51 @@ export class HomeComponent implements OnInit, AfterViewInit, AfterViewChecked, O
         },
       }
     );
+  }
 
+  private extractNavigationExtras() {
+    const nav = this.router.getCurrentNavigation();
+    if (nav?.extras?.state?.cid && nav?.extras?.state?.sid) {
+      this.cid = nav.extras.state.cid;
+      this.sid = nav.extras.state.sid;
+      const isBussinessUser = localStorage.getItem('currentRole') === 'Business' || sessionStorage.getItem('currentRole');
+      if(!isBussinessUser) this.openVisitorPopup(this.cid.toString(), this.sid.toString());
+    }
+  }
+
+  private checkUserRole() {
+    if (localStorage.getItem('currentRole') === 'Business' || sessionStorage.getItem('currentRole')) {
+      const user = localStorage.getItem('currentuser') || sessionStorage.getItem('currentuser');
+      if (user && this.cid && this.sid) {
+        const userId = JSON.parse(user)._id;
+        return this.createSubscription(userId, this.cid, this.sid);
+      }
+      return this.router.navigate(['/cms/dashboard']);
+    }
+
+    if (this.xchaneAuthService?.currentUserValue?._id) {
+      this.loggedIn = true;
+    }
+
+    return;
+  }
+
+  createSubscription = (userId: string, cid?: string, sid?: string) => {
+    const data: any = {};
+    data.user = userId;
+    data.subscriptionDate = new Date();
+    data.renewalDate = new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000))
+
+    if (cid && sid) {
+      data.billsByCid = cid;
+      data.billsBySid = sid;
+    } else {
+      data.plan = 'free';
+    }
+
+    this.subscriptionService.createSubscription(data).subscribe(response => {
+      return this.router.navigate(['/cms/dashboard']);
+    });
   }
 
   @HostListener('window:orientationchange', ['$event']) onOrientationChange(event: any) {
