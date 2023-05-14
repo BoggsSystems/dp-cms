@@ -5,6 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { EmailVerificationComponent } from './email-verification/email-verification.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { SignupRevampedComponent } from './signup-revamped/signup-revamped.component';
 import { SubscribeComponent } from './subscribe/subscribe.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
@@ -50,7 +51,10 @@ const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent,
-    canActivate: [AuthGuard],
+  },
+  {
+    path: 'signup',
+    component: SignupRevampedComponent,
   },
   {
     path: 'login',

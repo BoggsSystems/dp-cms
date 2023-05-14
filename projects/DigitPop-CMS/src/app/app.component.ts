@@ -78,7 +78,7 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
       // check if the current route is the one where you want to hide the navbar
-      this.hideNavbar = event.url.includes('/verify');
+      this.hideNavbar = event.url.includes('/verify') || event.url.includes('/signup');
     });
   }
 

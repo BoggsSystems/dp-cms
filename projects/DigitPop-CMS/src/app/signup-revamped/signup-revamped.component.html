@@ -1,0 +1,141 @@
+<div class="container">
+  <div class="sidebar">
+    <h1 class="sidebar__title">
+      A <span class="sidebar__title-emphasis">Different</span><br> online ad<br> network<br>
+      <span class="sidebar__subtitle">increase your <span class="sidebar__subtitle-emphasis">roi</span></span>
+    </h1>
+  </div>
+  <div class="signup">
+    <h1 class="signup__title">
+      <span class="signup__title-opacity--25">Join </span>
+      <span class="signup__title-opacity--50">Digitpop </span><br>
+      <span class="signup__title-opacity--75">As </span>
+      <span class="signup__title-color--accent">Business</span>
+    </h1>
+    <div class="signup__content">
+      <ul class="signup__steps">
+        <li class="signup__step" [ngClass]="{'signup__step--active': currentStep === 1}">
+          <span class="signup__step-text" [hidden]="currentStep > 1">01</span>
+          <span class="signup__step-text" *ngIf="currentStep > 1">
+            <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
+          </span>
+        </li>
+        <li class="signup__line"></li>
+        <li class="signup__step" [ngClass]="{'signup__step--active': currentStep === 2}">
+          <span class="signup__step-text" [hidden]="currentStep > 2">02</span>
+          <span class="signup__step-text" *ngIf="currentStep > 2">
+            <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
+          </span>        </li>
+        <li class="signup__line"></li>
+        <li class="signup__step" [ngClass]="{'signup__step--active': currentStep === 3}">
+          <span class="signup__step-text" [hidden]="currentStep > 3">03</span>
+          <span class="signup__step-text" *ngIf="currentStep > 3">
+            <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
+          </span>        </li>
+      </ul>
+      <form class="signup__form" [formGroup]="signupForm">
+
+        <div *ngIf="currentStep === 1" class="signup__inputs">
+          <div class="signup__form-field">
+            <label class="signup__form-label">First Name</label>
+            <input type="text" formControlName="firstName" class="signup__form-input" autocomplete="off">
+            <div
+              *ngIf="signupForm.controls['firstName'].invalid && (signupForm.controls['firstName'].dirty || signupForm.controls['firstName'].touched)">
+              <div class="signup__form-error">Please enter your first name.</div>
+            </div>
+          </div>
+          <div class="signup__form-field">
+            <label class="signup__form-label">Last Name</label>
+            <input type="text" formControlName="lastName" class="signup__form-input" autocomplete="off">
+            <div
+              *ngIf="signupForm.controls['lastName'].invalid && (signupForm.controls['lastName'].dirty || signupForm.controls['lastName'].touched)">
+              <div class="signup__form-error">Please enter your last name.</div>
+            </div>
+          </div>
+          <div class="signup__form-field">
+            <label class="signup__form-label">Email</label>
+            <input type="email" formControlName="email" id="email" class="signup__form-input" autocomplete="off">
+            <div
+              *ngIf="signupForm.controls['email'].invalid && (signupForm.controls['email'].dirty || signupForm.controls['email'].touched)">
+              <div class="signup__form-error">Please enter your email.</div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 2" class="signup__inputs">
+          <div class="signup__form-field">
+            <label class="signup__form-label">Password</label>
+            <input type="password" formControlName="password" class="signup__form-input" autocomplete="off">
+            <div
+              *ngIf="signupForm.controls['password'].invalid && (signupForm.controls['password'].dirty || signupForm.controls['password'].touched)">
+              <div class="signup__form-error">Please enter your password.</div>
+            </div>
+          </div>
+          <div class="signup__form-field">
+            <label class="signup__form-label">Confirm Password</label>
+            <input type="password" formControlName="confirmPassword" class="signup__form-input" autocomplete="off">
+            <div
+              *ngIf="signupForm.controls['confirmPassword'].invalid && (signupForm.controls['confirmPassword'].dirty || signupForm.controls['confirmPassword'].touched)">
+              <div class="signup__form-error">Please confirm your password.</div>
+            </div>
+          </div>
+          <div class="signup__terms">
+            <div class="signup__terms-checkbox">
+              <div class="signup__terms-checkbox-input" formControlName="agreeToTerms" id="agreeToTerms"></div>
+              <label class="signup__terms-checkbox-label" for="agreeToTerms">
+                <span class="signup__terms-checkbox-icon"></span>
+                <span class="signup__terms-checkbox-text">
+                  I agree to<a class="signup__terms-checkbox-text-bold"> Terms and Conditions</a>
+                </span>
+              </label>
+            </div>
+            <div class="signup__terms-error"
+              *ngIf="signupForm.controls['agreeToTerms'].invalid && (signupForm.controls['agreeToTerms'].dirty || signupForm.controls['agreeToTerms'].touched)">
+              <div class="signup__terms-error-text">Please agree to the terms and conditions.</div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 3" class="signup__inputs signup__step--plan">
+          <h2 class="signup__step-title">Choose your plan</h2>
+          <div class="signup__plan-cards">
+            <div class="signup__plan-card signup__plan-card--free signup__plan-card--active">
+              <div class="signup__plan-title">
+                <h3 class="signup__plan-name">Free</h3>
+                <img src="assets/img/icons/freePlanIcon.svg" alt="free icon" class="signup__plan-icon">
+              </div>
+              <p class="signup__plan-description">
+                <span class="signup__plan-highlight">10GB</span> of streaming, <span class="signup__plan-highlight">1000
+                  views</span> of a 1 minute video.
+              </p>
+            </div>
+            <div class="signup__plan-card signup__plan-card--starter">
+              <div class="signup__plan-title">
+                <h3 class="signup__plan-name">Starter</h3>
+              </div>
+              <p class="signup__plan-description">
+                <span class="signup__plan-highlight">25GB</span> of streaming, <span class="signup__plan-highlight">2500
+                  views</span> of a 1 minute video.
+              </p>
+            </div>
+            <div class="signup__plan-card signup__plan-card--growth">
+              <div class="signup__plan-title">
+                <h3 class="signup__plan-name">Growth</h3>
+                <img src="assets/img/icons/growthPlanIcon.svg" alt="growth icon" class="signup__plan-icon">
+              </div>
+              <p class="signup__plan-description">
+                <span class="signup__plan-highlight">50GB</span> of streaming, <span class="signup__plan-highlight">5000
+                  views</span> of a 1 minute video.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </form>
+      <a href="#" class="btn signup__btn" (click)="goToNextStep($event)" *ngIf="currentStep <= 3">
+        <span *ngIf="currentStep !== 3">Next <img src="assets/img/icons/nextArrow.svg" alt=""></span>
+        <span *ngIf="currentStep === 3">Create Account</span>
+      </a>
+    </div>
+  </div>
+</div>
