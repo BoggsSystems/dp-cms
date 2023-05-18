@@ -81,7 +81,7 @@ export class SignupRevampedComponent implements OnInit {
           tap((response: any) => {
             if (response && response.success !== false) {
               console.log('User created successfully:', response);
-              return this.router.navigate(['/home']);
+              this.router.navigate(['/home']);
             }
           }),
           catchError((error) => {
