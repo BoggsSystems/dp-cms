@@ -38,7 +38,7 @@
         <div *ngIf="currentStep === 1" class="signup__inputs">
           <div class="signup__form-field">
             <label class="signup__form-label">First Name</label>
-            <input type="text" formControlName="firstName" class="signup__form-input" autocomplete="off">
+            <input type="text" formControlName="firstName" id="firstname" class="signup__form-input" autocomplete="off">
             <div
               *ngIf="signupForm.controls['firstName'].invalid && (signupForm.controls['firstName'].dirty || signupForm.controls['firstName'].touched)">
               <div class="signup__form-error">Please enter your first name.</div>
@@ -65,7 +65,7 @@
         <div *ngIf="currentStep === 2" class="signup__inputs">
           <div class="signup__form-field">
             <label class="signup__form-label">Password</label>
-            <input type="password" formControlName="password" class="signup__form-input" autocomplete="off">
+            <input type="password" formControlName="password" id="password" class="signup__form-input" autocomplete="off">
             <div
               *ngIf="signupForm.controls['password'].invalid && (signupForm.controls['password'].dirty || signupForm.controls['password'].touched)">
               <div class="signup__form-error">Please enter your password.</div>
@@ -73,7 +73,7 @@
           </div>
           <div class="signup__form-field">
             <label class="signup__form-label">Confirm Password</label>
-            <input type="password" formControlName="confirmPassword" class="signup__form-input" autocomplete="off">
+            <input type="password" formControlName="confirmPassword" id="confirmPassword" class="signup__form-input" autocomplete="off">
             <div
               *ngIf="signupForm.controls['confirmPassword'].invalid && (signupForm.controls['confirmPassword'].dirty || signupForm.controls['confirmPassword'].touched)">
               <div class="signup__form-error">Please confirm your password.</div>
@@ -132,10 +132,11 @@
         </div>
 
       </form>
-      <a href="#" class="btn signup__btn" (click)="goToNextStep($event)" *ngIf="currentStep <= 3">
-        <span *ngIf="currentStep !== 3">Next <img src="assets/img/icons/nextArrow.svg" alt=""></span>
+      <button class="btn signup__btn" (click)="handleButtonClick($event)" *ngIf="currentStep <= 3">
+        <span *ngIf="currentStep !== 3">Next <img src="assets/img/icons/nextArrow.svg"
+            alt=""></span>
         <span *ngIf="currentStep === 3">Create Account</span>
-      </a>
+        </button>
     </div>
   </div>
 </div>

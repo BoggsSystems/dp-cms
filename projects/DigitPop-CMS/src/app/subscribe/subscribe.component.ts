@@ -11,7 +11,7 @@ import { VisitorPopupComponent } from '../visitor-popup/visitor-popup.component'
   templateUrl: './subscribe.component.html',
   styleUrls: ['./subscribe.component.scss']
 })
-  
+
 export class SubscribeComponent implements OnInit {
 
   constructor(
@@ -25,7 +25,7 @@ export class SubscribeComponent implements OnInit {
   ngOnInit() {
     const cid = this.route.snapshot.queryParamMap.get('cid');
     const sid = this.route.snapshot.queryParamMap.get('sid');
-    
+
     return this.redirectToHome(cid, sid);
   }
 
@@ -37,7 +37,7 @@ export class SubscribeComponent implements OnInit {
       },
     };
 
-    return this.router.navigate(['/home'], navigationExtras);
+    return this.router.navigate(['/signup'], navigationExtras);
   }
 
 }

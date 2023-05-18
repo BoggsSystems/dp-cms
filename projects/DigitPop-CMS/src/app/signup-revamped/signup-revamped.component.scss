@@ -91,6 +91,12 @@
   &__form {
     display: flex;
     flex-grow: 1;
+
+    &-error {
+      color: red;
+      font-size: 0.85rem;
+      font-weight: 300;
+    }
   }
 
   &__content {
@@ -174,6 +180,10 @@
     height: 40px;
     outline: none;
     padding: 10px;
+
+    &:focus {
+      border: 1px solid;
+    }
   }
 
   #firstname,
@@ -292,11 +302,14 @@
 
 .signup__btn {
   background: #ff2169;
+  border: none;
   border-radius: 5px;
   color: #fff;
+  cursor: pointer;
   font-size: 16px;
   font-weight: 500;
   margin-top: auto;
+  outline: none;
   padding: 10px;
   text-align: center;
 
