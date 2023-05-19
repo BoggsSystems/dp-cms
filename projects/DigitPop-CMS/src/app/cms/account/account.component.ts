@@ -112,7 +112,7 @@ export class AccountComponent implements OnInit {
   }
 
   getSubscription() {
-    this.billsByService.getSubscriptionDetails().subscribe(
+    /* this.billsByService.getSubscriptionDetails().subscribe(
       (res) => {
         this.subscription = res;
         this.getUsage();
@@ -121,7 +121,7 @@ export class AccountComponent implements OnInit {
       (err) => {
         console.log('Update error : ' + err.toString());
       }
-    );
+    ); */
   }
 
   accountHelp() {

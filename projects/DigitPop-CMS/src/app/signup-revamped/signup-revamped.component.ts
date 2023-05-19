@@ -1,16 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BusinessUserService } from '../shared/services/accounts/business-user.service';
-import { tap, catchError } from 'rxjs/operators';
+import { BillsbyService } from '../shared/services/billsby.service';
+import { tap, catchError, filter } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
+import { Plan } from '../shared/interfaces/plan.json';
 
 @Component({
   selector: 'digit-pop-signup-revamped',
   templateUrl: './signup-revamped.component.html',
   styleUrls: ['./signup-revamped.component.scss'],
 })
-export class SignupRevampedComponent implements OnInit {
+export class SignupRevampedComponent implements OnInit, AfterViewInit {
   @Input() fromQuiz = false;
   @Input() fromPlans = false;
   @Input() fromSubscribe = false;
@@ -21,11 +23,14 @@ export class SignupRevampedComponent implements OnInit {
 
   public signupForm!: FormGroup;
   public currentStep = 1;
+  public plans: Plan[];
+  public planName: string;
 
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
-    private businessUserService: BusinessUserService
+    private businessUserService: BusinessUserService,
+    private billsByService: BillsbyService,
   ) {
     this.extractNavigationExtras();
 
@@ -40,7 +45,24 @@ export class SignupRevampedComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    of(this.cid)
+      .pipe(
+        filter((cid) => !!cid),
+        tap((cid) => this.getUserDetails(cid))
+      )
+      .subscribe();
+  }
+
+  ngAfterViewInit(): void {
+    of(this.sid)
+      .pipe(
+        filter((sid) => !!sid),
+        tap((sid) => this.getSubscriptionDetails(sid))
+      )
+      .subscribe();
+    this.getPlans();
+  }
 
   private extractNavigationExtras(): void {
     const nav = this.router.getCurrentNavigation();
@@ -54,17 +76,60 @@ export class SignupRevampedComponent implements OnInit {
     updateValues({ cid, sid });
   }
 
+  private getUserDetails(cid: string) {
+    this.billsByService
+      .getCustomerDetails(cid)
+      .pipe(
+        filter((res) => res.firstName && res.lastName && res.email),
+        tap((res) => {
+          this.signupForm.patchValue({
+            firstName: res.firstName,
+            lastName: res.lastName,
+            email: res.email
+          });
+        }),
+        catchError((error) => {
+          console.error('Error getting user details:', error);
+          return of(error);
+        })
+      )
+      .subscribe();
+  }
+
+
+  private getSubscriptionDetails(sid: string) {
+    this.billsByService
+      .getSubscriptionDetails(sid)
+      .pipe(
+        filter((res) => res.planName),
+        tap((res) => {
+          this.planName = res.planName;
+        }),
+        catchError((error) => {
+          console.error('Error getting subscription details:', error);
+          return of(error);
+        })
+      )
+      .subscribe();
+  }
+
+  private getPlans() {
+    this.billsByService.getProductPlans().subscribe((res: Plan[]) => {
+      this.plans = res;
+    });
+  }
+
   public handleButtonClick(e: Event): void {
     e.preventDefault();
     const action = this.currentStep < 3 ? this.goToNextStep : this.submitData;
     action.call(this);
   }
 
-  public goToNextStep(): void {
+  private goToNextStep(): void {
     this.currentStep++;
   }
 
-  public goToPrevStep(): void {
+  private goToPrevStep(): void {
     this.currentStep--;
   }
 
@@ -92,4 +157,5 @@ export class SignupRevampedComponent implements OnInit {
         .subscribe();
     }
   }
+
 }

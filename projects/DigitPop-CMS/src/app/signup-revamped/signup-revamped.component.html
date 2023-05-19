@@ -97,35 +97,15 @@
         </div>
 
         <div *ngIf="currentStep === 3" class="signup__inputs signup__step--plan">
-          <h2 class="signup__step-title">Choose your plan</h2>
+          <h2 class="signup__step-title" *ngIf="!cid && !sid">Choose your plan</h2>
           <div class="signup__plan-cards">
-            <div class="signup__plan-card signup__plan-card--free signup__plan-card--active">
+            <div *ngFor="let plan of plans" class="signup__plan-card signup__plan-card--{{ plan.name }}" [ngClass]="{'signup__plan-card--active': (!planName && plan.name === 'free') || (planName && plan.name === planName)}">
               <div class="signup__plan-title">
-                <h3 class="signup__plan-name">Free</h3>
-                <img src="assets/img/icons/freePlanIcon.svg" alt="free icon" class="signup__plan-icon">
+                <h3 class="signup__plan-name">{{ plan.displayName }}</h3>
+                <img src="assets/img/icons/{{ plan.name }}PlanIcon.svg" alt="{{plan.name}} icon" class="signup__plan-icon">
               </div>
               <p class="signup__plan-description">
-                <span class="signup__plan-highlight">10GB</span> of streaming, <span class="signup__plan-highlight">1000
-                  views</span> of a 1 minute video.
-              </p>
-            </div>
-            <div class="signup__plan-card signup__plan-card--starter">
-              <div class="signup__plan-title">
-                <h3 class="signup__plan-name">Starter</h3>
-              </div>
-              <p class="signup__plan-description">
-                <span class="signup__plan-highlight">25GB</span> of streaming, <span class="signup__plan-highlight">2500
-                  views</span> of a 1 minute video.
-              </p>
-            </div>
-            <div class="signup__plan-card signup__plan-card--growth">
-              <div class="signup__plan-title">
-                <h3 class="signup__plan-name">Growth</h3>
-                <img src="assets/img/icons/growthPlanIcon.svg" alt="growth icon" class="signup__plan-icon">
-              </div>
-              <p class="signup__plan-description">
-                <span class="signup__plan-highlight">50GB</span> of streaming, <span class="signup__plan-highlight">5000
-                  views</span> of a 1 minute video.
+                {{ plan.description }}
               </p>
             </div>
           </div>

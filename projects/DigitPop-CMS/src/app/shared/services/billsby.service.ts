@@ -43,13 +43,12 @@ export class BillsbyService {
   }
 
 
-  getCustomerDetails(id: any): Observable<any> {
-    return this.httpClient.get(`${this.billsByUrl}/customers/${id}`);
+  getCustomerDetails(cid: any): Observable<any> {
+    return this.httpClient.get(`${this.billsByUrl}/customers/${cid}`);
   }
 
-  getSubscriptionDetails(): Observable<any> {
-    const subscriptionId = '4EDK89XEW7'; // replace with dynamic value if needed
-    return this.httpClient.get(`${this.billsByUrl}/subscriptions/${subscriptionId}`);
+  getSubscriptionDetails(sid: string): Observable<any> {
+    return this.httpClient.get(`${this.billsByUrl}/subscriptions/${sid}`);
   }
 
   cancelSubscription(): Observable<any> {
