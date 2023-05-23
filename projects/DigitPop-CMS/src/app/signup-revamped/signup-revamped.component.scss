@@ -46,7 +46,7 @@
 .signup {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   padding: 30px;
   row-gap: 15px;
   width: 100%;
@@ -91,6 +91,12 @@
   &__form {
     display: flex;
     flex-grow: 1;
+
+    &-expiry {
+      column-gap: 7px;
+      display: flex;
+      justify-content: space-between;
+    }
 
     &-error {
       color: red;
@@ -298,6 +304,10 @@
       font-size: 14px;
     }
   }
+}
+
+.card__btn {
+  display: none;
 }
 
 .signup__btn {

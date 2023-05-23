@@ -1,11 +1,20 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BusinessUserService } from '../shared/services/accounts/business-user.service';
 import { BillsbyService } from '../shared/services/billsby.service';
+// import { ScriptLoaderService } from '../shared/services/utils/script-loader.service';
 import { tap, catchError, filter } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
+import { flowRight as compose } from 'lodash';
 import { Plan } from '../shared/interfaces/plan.json';
+
+declare global {
+  interface Window {
+    scanDomBillsby: () => void;
+    billsbyTokens: any;
+  }
+}
 
 @Component({
   selector: 'digit-pop-signup-revamped',
@@ -25,12 +34,15 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   public currentStep = 1;
   public plans: Plan[];
   public planName: string;
+  public cycleId: number;
 
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
     private businessUserService: BusinessUserService,
     private billsByService: BillsbyService,
+    private elRef: ElementRef,
+    private renderer: Renderer2,
   ) {
     this.extractNavigationExtras();
 
@@ -41,6 +53,8 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
+      expirationMonth: ['', Validators.required],
+      expirationYear: ['', Validators.required],
       // agreeToTerms: [false, Validators.requiredTrue],
     });
   }
@@ -64,7 +78,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     this.getPlans();
   }
 
-  private extractNavigationExtras(): void {
+  private extractNavigationExtras = (): void => {
     const nav = this.router.getCurrentNavigation();
     const { cid, sid } = nav?.extras?.state || {};
 
@@ -76,7 +90,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     updateValues({ cid, sid });
   }
 
-  private getUserDetails(cid: string) {
+  private getUserDetails = (cid: string) => {
     this.billsByService
       .getCustomerDetails(cid)
       .pipe(
@@ -97,7 +111,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   }
 
 
-  private getSubscriptionDetails(sid: string) {
+  private getSubscriptionDetails = (sid: string) => {
     this.billsByService
       .getSubscriptionDetails(sid)
       .pipe(
@@ -113,33 +127,116 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  private getPlans() {
+  private getPlans = () => {
     this.billsByService.getProductPlans().subscribe((res: Plan[]) => {
       this.plans = res;
     });
   }
 
-  public handleButtonClick(e: Event): void {
+  public setPlanName(plan: string, cycleId: number) {
+    this.planName = plan;
+    this.cycleId = cycleId;
+  }
+
+  private subscribeToPlan = (token: string) => {
+    const { firstName, lastName, email, expirationMonth, expirationYear } = this.signupForm.value;
+    const fullName = `${firstName} ${lastName}`;
+
+    const subscriptionData = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      cycleId: this.cycleId,
+      Units: 1,
+      address: {
+        addressLine1: '123 Main St',
+        addressLine2: 'Apt 4',
+        state: 'CA',
+        city: 'Los Angeles',
+        country: 'USA',
+        postCode: '90001'
+      },
+      cardDetails: {
+        fullName: fullName,
+        paymentCardToken: token,
+        expiryMonth: +expirationMonth,
+        expiryYear: +expirationYear,
+        cardType: 'visa',
+        last4Digits: '1111'
+      }
+    };
+
+    this.billsByService.subscribeToPlan(subscriptionData).subscribe(res => {
+      console.log(res);
+    });
+  }
+
+  private reloadBillsBy = () =>
+    compose(
+      this.removeScript,
+      this.addScript,
+      this.scanDomBillsby
+    )();
+
+  private removeScript = () => {
+    const originalScript = document.querySelector(
+      'script[src="https://checkoutlib.billsby.com/checkout.min.js"]'
+    );
+    originalScript.parentNode.removeChild(originalScript);
+  };
+
+  private addScript = () => {
+    const newScript = document.createElement('script');
+    newScript.src = "https://checkoutlib.billsby.com/checkout.min.js";
+    newScript.setAttribute('data-billsby-company', 'stagingdigitpop');
+    document.head.appendChild(newScript);
+  };
+
+  private scanDomBillsby = () => {
+    window.scanDomBillsby();
+    this.simulateButtonClick();
+  };
+
+  private simulateButtonClick = () => {
+    const buttonElement = this.elRef.nativeElement.querySelector(`.card__btn__${this.planName}`);
+    this.renderer.selectRootElement(buttonElement).click();
+  };
+
+  public handleButtonClick = (e: Event): void => {
     e.preventDefault();
-    const action = this.currentStep < 3 ? this.goToNextStep : this.submitData;
+    const action = this.currentStep < 4 ? this.goToNextStep : this.submitPaymentForm;
     action.call(this);
   }
 
-  private goToNextStep(): void {
+  private goToNextStep = (): void => {
     this.currentStep++;
+    if (this.currentStep === 4) {
+      this.loadBillsbyTokenizerScript()
+        .then(() => {
+          this.initTokenizer();
+        })
+        .catch((error) => {
+          console.error('Failed to load Billsby tokenizer script:', error);
+        });
+    }
   }
 
-  private goToPrevStep(): void {
+  private goToPrevStep = (): void => {
     this.currentStep--;
   }
 
-  public submitData(): void {
+  public submitData = (): void => {
     if (this.signupForm.valid) {
       const userData = {
         ...this.signupForm.value,
         ...(this.cid && { cid: this.cid }),
         ...(this.sid && { sid: this.sid }),
       };
+
+      if (this.planName) {
+        userData['planName'] = this.planName;
+      }
+
       this.businessUserService
         .createUser(userData)
         .pipe(
@@ -156,6 +253,77 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
         )
         .subscribe();
     }
+  }
+
+  private loadBillsbyTokenizerScript(): Promise<void> {
+    const src = 'https://tokenlib.billsby.com/tokenizer.min.js';
+    const attributes = {
+      'data-billsby-company': 'stagingdigitpop'
+    };
+
+    return this.loadScript(src, attributes);
+  }
+
+  private initTokenizer = () => {
+    const logToken = (token: string, pmData: any) => {
+      this.subscribeToPlan(token);
+    };
+
+    const logErrors = (errors: any) => {
+      errors.forEach((error: any) => {
+        console.log(error);
+      });
+    };
+
+    const watchForToken = () => {
+      window.billsbyTokens.on("paymentMethod", logToken);
+    };
+
+    const listForTokenErrors = () => {
+      window.billsbyTokens.on("errors", logErrors);
+    };
+
+    const listenBillsByTokenizer = compose(listForTokenErrors, watchForToken);
+
+    window.billsbyTokens.init("billsby-number", "billsby-cvv");
+    listenBillsByTokenizer();
+  };
+
+  private submitPaymentForm = () => {
+    const { firstName, lastName, expirationMonth, expirationYear } = this.signupForm.value;
+    const fullName = firstName + ' ' + lastName;
+
+    const requiredFields: any = {};
+
+    requiredFields["full_name"] = fullName;
+    requiredFields["month"] = +expirationMonth;
+    requiredFields["year"] = +expirationYear;
+
+    window.billsbyTokens.tokenizeCreditCard(requiredFields);
+  }
+
+  private loadScript(src: string, attributes: { [key: string]: string }): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = src;
+
+      // Set attributes
+      for (const attr in attributes) {
+        if (attributes.hasOwnProperty(attr)) {
+          script.setAttribute(attr, attributes[attr]);
+        }
+      }
+
+      script.onload = () => {
+        resolve();
+      };
+
+      script.onerror = () => {
+        reject(new Error(`Failed to load script: ${src}`));
+      };
+
+      document.head.appendChild(script);
+    });
   }
 
 }

@@ -49,16 +49,24 @@
           data-billsby-company="stagingdigitpop"></script>
 
   <script>
+    window.billsbyData = {
+        firstName: "Mad",
+        lastName: "Aae",
+        email: "madsaaeq@gmail.com",
+      };
+
     document.addEventListener('DOMContentLoaded', function() {
       // Remove the original script tag
-      var originalScript = document.querySelector('script[src="https://checkoutlib.billsby.com/checkout.min.js"]');
+      const originalScript = document.querySelector('script[src="https://checkoutlib.billsby.com/checkout.min.js"]');
       originalScript.parentNode.removeChild(originalScript);
 
       // Create a new script tag with the same source URL and add it to the header
-      var newScript = document.createElement('script');
+      const newScript = document.createElement('script');
       newScript.src = "https://checkoutlib.billsby.com/checkout.min.js";
       newScript.setAttribute('data-billsby-company', 'stagingdigitpop');
       document.head.appendChild(newScript);
+
+      window.scanDomBillsby();
     });
   </script>
 </head>
@@ -66,5 +74,6 @@
   <digit-pop-root></digit-pop-root>
   <noscript>Please enable JavaScript to continue using this application.
   </noscript>
+  <script src="https://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.7.2.js"></script>
 </body>
 </html>

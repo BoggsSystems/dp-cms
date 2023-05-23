@@ -32,7 +32,15 @@
           <span class="signup__step-text" *ngIf="currentStep > 3">
             <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
           </span>        </li>
+        <li class="signup__line"></li>
+        <li class="signup__step" [ngClass]="{'signup__step--active': currentStep === 4}">
+          <span class="signup__step-text" [hidden]="currentStep > 4">04</span>
+          <span class="signup__step-text" *ngIf="currentStep > 4">
+            <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
+          </span>
+        </li>
       </ul>
+
       <form class="signup__form" [formGroup]="signupForm">
 
         <div *ngIf="currentStep === 1" class="signup__inputs">
@@ -99,7 +107,7 @@
         <div *ngIf="currentStep === 3" class="signup__inputs signup__step--plan">
           <h2 class="signup__step-title" *ngIf="!cid && !sid">Choose your plan</h2>
           <div class="signup__plan-cards">
-            <div *ngFor="let plan of plans" class="signup__plan-card signup__plan-card--{{ plan.name }}" [ngClass]="{'signup__plan-card--active': (!planName && plan.name === 'free') || (planName && plan.name === planName)}">
+            <div *ngFor="let plan of plans" class="signup__plan-card signup__plan-card--{{ plan.name }}" [ngClass]="{'signup__plan-card--active': (!planName && plan.name === 'free') || (planName && plan.name === planName)}" (click)="setPlanName(plan.name, plan.cycles[plan.cycles.length - 1].cycleId)">
               <div class="signup__plan-title">
                 <h3 class="signup__plan-name">{{ plan.displayName }}</h3>
                 <img src="assets/img/icons/{{ plan.name }}PlanIcon.svg" alt="{{plan.name}} icon" class="signup__plan-icon">
@@ -111,11 +119,36 @@
           </div>
         </div>
 
+        <div *ngIf="currentStep === 4" id="payment-form" class="signup__inputs">
+          <input type="hidden" name="payment_method_token" id="payment_method_token">
+
+          <div class="signup__form-field">
+            <label class="signup__form-label">Credit Card Number</label>
+            <div id="billsby-number" class="signup__form-input"></div>
+          </div>
+
+          <div class="signup__form-field">
+            <label class="signup__form-label">Expiration Date</label>
+            <div class="signup__form-expiry">
+              <input type="text" id="month" name="month" maxlength="2" class="signup__form-input" style="flex-grow: 1;"
+                placeholder="Month" formControlName="expirationMonth">
+              <input type="text" id="year" name="year" maxlength="4" class="signup__form-input" style="flex-grow: 1;"
+                placeholder="Year" formControlName="expirationYear">
+            </div>
+          </div>
+
+          <div class="signup__form-field">
+            <label class="signup__form-label">CVV</label>
+            <div id="billsby-cvv" class="signup__form-input"></div>
+          </div>
+        </div>
+
       </form>
-      <button class="btn signup__btn" (click)="handleButtonClick($event)" *ngIf="currentStep <= 3">
-        <span *ngIf="currentStep !== 3">Next <img src="assets/img/icons/nextArrow.svg"
+
+      <button class="btn signup__btn" (click)="handleButtonClick($event)" *ngIf="currentStep <= 4">
+        <span *ngIf="currentStep !== 4">Next <img src="assets/img/icons/nextArrow.svg"
             alt=""></span>
-        <span *ngIf="currentStep === 3">Create Account</span>
+        <span *ngIf="currentStep === 4">Create Account</span>
         </button>
     </div>
   </div>

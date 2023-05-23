@@ -4,6 +4,34 @@ import { AuthenticationService } from './auth-service.service';
 import { environment } from 'projects/DigitPop-CMS/src/environments/environment';
 import { Observable } from 'rxjs';
 
+interface Address {
+  addressLine1: string;
+  addressLine2: string;
+  state: string;
+  city: string;
+  country: string;
+  postCode: string;
+}
+
+interface cardDetails {
+  fullName: string;
+  paymentCardToken: string;
+  expiryMonth: number;
+  expiryYear: number;
+  cardType: string;
+  last4Digits: string;
+}
+
+interface SubscriptionData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  cycleId: number;
+  Units: number;
+  address: Address;
+  cardDetails: cardDetails
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,34 +42,27 @@ export class BillsbyService {
   constructor(
     private httpClient: HttpClient,
     private authService: AuthenticationService
-  ) {}
+  ) { }
 
   getProductPlans(): Observable<any> {
     const productId = '5511';
     return this.httpClient.get(`${this.billsByUrl}/products/${productId}/plans`);
   }
 
-  subscribeToPlan(
-    planId: string,
-    customerId: string,
-    quantity: number,
-    billingCycleCount: number,
-    billingCycleType: string,
-    startDate: string,
-    couponCode?: string
-  ): Observable<any> {
+  subscribeToPlan(data: SubscriptionData): Observable<any> {
+    const { firstName, lastName, email, cycleId, Units, address, cardDetails } = data;
+
     const body = {
-      customerUniqueId: customerId,
-      productPlanId: planId,
-      quantity,
-      billingCycleCount,
-      billingCycleType,
-      startDate,
-      couponCode
+      firstName,
+      lastName,
+      email,
+      cycleId,
+      Units,
+      address,
+      cardDetails
     };
     return this.httpClient.post(`${this.billsByUrl}/subscriptions`, body);
   }
-
 
   getCustomerDetails(cid: any): Observable<any> {
     return this.httpClient.get(`${this.billsByUrl}/customers/${cid}`);
