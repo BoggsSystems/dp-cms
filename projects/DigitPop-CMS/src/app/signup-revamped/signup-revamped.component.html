@@ -39,6 +39,13 @@
             <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
           </span>
         </li>
+        <li class="signup__line"></li>
+        <li class="signup__step" [ngClass]="{'signup__step--active': currentStep === 5}">
+          <span class="signup__step-text" [hidden]="currentStep > 5">05</span>
+          <span class="signup__step-text" *ngIf="currentStep > 5">
+            <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
+          </span>
+        </li>
       </ul>
 
       <form class="signup__form" [formGroup]="signupForm">
@@ -119,12 +126,80 @@
           </div>
         </div>
 
-        <div *ngIf="currentStep === 4" id="payment-form" class="signup__inputs">
+        <div *ngIf="currentStep === 4" class="signup__inputs">
+          <div class="signup__form-two-fields">
+            <div class="signup__form-field signup__form-field-half">
+              <label class="signup__form-label">Address Line 1</label>
+              <input type="text" formControlName="addressLine1" id="addressLine1" class="signup__form-input" autocomplete="off">
+              <div
+                *ngIf="signupForm.controls['addressLine1'].invalid && (signupForm.controls['addressLine1'].dirty || signupForm.controls['addressLine1'].touched)">
+                <div class="signup__form-error">Please enter your address Line 1.</div>
+              </div>
+            </div>
+
+            <div class="signup__form-field signup__form-field-half">
+              <label class="signup__form-label">Address Line 2</label>
+              <input type="text" formControlName="addressLine2" class="signup__form-input" autocomplete="off">
+              <div
+                *ngIf="signupForm.controls['addressLine2'].invalid && (signupForm.controls['addressLine2'].dirty || signupForm.controls['addressLine2'].touched)">
+                <div class="signup__form-error">Please enter your address Line 2.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="signup__form-two-fields">
+            <div class="signup__form-field signup__form-field-half">
+              <label class="signup__form-label">City</label>
+              <input type="text" formControlName="city" class="signup__form-input" autocomplete="off">
+              <div
+                *ngIf="signupForm.controls['city'].invalid && (signupForm.controls['city'].dirty || signupForm.controls['city'].touched)">
+                <div class="signup__form-error">Please enter your city.</div>
+              </div>
+            </div>
+
+            <div class="signup__form-field signup__form-field-half">
+              <label class="signup__form-label">State / Province / County</label>
+              <input type="text" formControlName="state" class="signup__form-input" autocomplete="off">
+              <div
+                *ngIf="signupForm.controls['state'].invalid && (signupForm.controls['state'].dirty || signupForm.controls['state'].touched)">
+                <div class="signup__form-error">Please enter your state / province / county.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="signup__form-field">
+            <label class="signup__form-label">ZIP / Postal Code</label>
+            <input type="text" formControlName="postalCode" class="signup__form-input" autocomplete="off">
+            <div
+              *ngIf="signupForm.controls['postalCode'].invalid && (signupForm.controls['postalCode'].dirty || signupForm.controls['postalCode'].touched)">
+              <div class="signup__form-error">Please enter your ZIP / postal code.</div>
+            </div>
+          </div>
+
+          <div class="signup__form-field">
+            <label class="signup__form-label">Country</label>
+            <select formControlName="country" class="signup__form-input" autocomplete="off">
+              <option value="">Select Country</option>
+              <option *ngFor="let country of countries" [value]="country.code">{{ country.name }}</option>
+            </select>
+            <div
+              *ngIf="signupForm.controls['country'].invalid && (signupForm.controls['country'].dirty || signupForm.controls['country'].touched)">
+              <div class="signup__form-error">Please select your country.</div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 5" id="payment-form" class="signup__inputs signup__inputs-payment-form">
           <input type="hidden" name="payment_method_token" id="payment_method_token">
 
           <div class="signup__form-field">
             <label class="signup__form-label">Credit Card Number</label>
             <div id="billsby-number" class="signup__form-input"></div>
+          </div>
+
+          <div class="signup__form-field">
+            <label class="signup__form-label">CVV</label>
+            <div id="billsby-cvv" class="signup__form-input"></div>
           </div>
 
           <div class="signup__form-field">
@@ -136,19 +211,14 @@
                 placeholder="Year" formControlName="expirationYear">
             </div>
           </div>
-
-          <div class="signup__form-field">
-            <label class="signup__form-label">CVV</label>
-            <div id="billsby-cvv" class="signup__form-input"></div>
-          </div>
         </div>
 
       </form>
 
-      <button class="btn signup__btn" (click)="handleButtonClick($event)" *ngIf="currentStep <= 4">
-        <span *ngIf="currentStep !== 4">Next <img src="assets/img/icons/nextArrow.svg"
+      <button class="btn signup__btn" (click)="handleButtonClick($event)" *ngIf="currentStep <= 5">
+        <span *ngIf="currentStep !== 5">Next <img src="assets/img/icons/nextArrow.svg"
             alt=""></span>
-        <span *ngIf="currentStep === 4">Create Account</span>
+        <span *ngIf="currentStep === 5">Create Account</span>
         </button>
     </div>
   </div>

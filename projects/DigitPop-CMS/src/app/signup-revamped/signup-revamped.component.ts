@@ -1,13 +1,13 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BusinessUserService } from '../shared/services/accounts/business-user.service';
 import { BillsbyService } from '../shared/services/billsby.service';
-// import { ScriptLoaderService } from '../shared/services/utils/script-loader.service';
 import { tap, catchError, filter } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { flowRight as compose } from 'lodash';
 import { Plan } from '../shared/interfaces/plan.json';
+import countriesData from './countries';
 
 declare global {
   interface Window {
@@ -35,14 +35,13 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   public plans: Plan[];
   public planName: string;
   public cycleId: number;
+  public countries: { code: string; name: string; }[] = [];
 
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
     private businessUserService: BusinessUserService,
     private billsByService: BillsbyService,
-    private elRef: ElementRef,
-    private renderer: Renderer2,
   ) {
     this.extractNavigationExtras();
 
@@ -53,6 +52,12 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
+      addressLine1: ['', Validators.required],
+      addressLine2: [''],
+      city: ['', Validators.required],
+      state: ['', Validators.required],
+      postalCode: ['', Validators.required],
+      country: ['', Validators.required],
       expirationMonth: ['', Validators.required],
       expirationYear: ['', Validators.required],
       // agreeToTerms: [false, Validators.requiredTrue],
@@ -66,6 +71,8 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
         tap((cid) => this.getUserDetails(cid))
       )
       .subscribe();
+
+    this.countries = countriesData;
   }
 
   ngAfterViewInit(): void {
@@ -139,7 +146,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   }
 
   private subscribeToPlan = (token: string) => {
-    const { firstName, lastName, email, expirationMonth, expirationYear } = this.signupForm.value;
+    const { firstName, lastName, email, addressLine1, addressLine2, city, country, postalCode, expirationMonth, expirationYear } = this.signupForm.value;
     const fullName = `${firstName} ${lastName}`;
 
     const subscriptionData = {
@@ -149,12 +156,12 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       cycleId: this.cycleId,
       Units: 1,
       address: {
-        addressLine1: '123 Main St',
-        addressLine2: 'Apt 4',
+        addressLine1: addressLine1,
+        addressLine2: addressLine2,
         state: 'CA',
-        city: 'Los Angeles',
-        country: 'USA',
-        postCode: '90001'
+        city: city,
+        country: country,
+        postCode: postalCode
       },
       cardDetails: {
         fullName: fullName,
@@ -167,50 +174,21 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     };
 
     this.billsByService.subscribeToPlan(subscriptionData).subscribe(res => {
-      console.log(res);
+      this.cid = res.customerUniqueId;
+      this.sid = res.subscriptionUniqueId;
+      this.submitData();
     });
   }
 
-  private reloadBillsBy = () =>
-    compose(
-      this.removeScript,
-      this.addScript,
-      this.scanDomBillsby
-    )();
-
-  private removeScript = () => {
-    const originalScript = document.querySelector(
-      'script[src="https://checkoutlib.billsby.com/checkout.min.js"]'
-    );
-    originalScript.parentNode.removeChild(originalScript);
-  };
-
-  private addScript = () => {
-    const newScript = document.createElement('script');
-    newScript.src = "https://checkoutlib.billsby.com/checkout.min.js";
-    newScript.setAttribute('data-billsby-company', 'stagingdigitpop');
-    document.head.appendChild(newScript);
-  };
-
-  private scanDomBillsby = () => {
-    window.scanDomBillsby();
-    this.simulateButtonClick();
-  };
-
-  private simulateButtonClick = () => {
-    const buttonElement = this.elRef.nativeElement.querySelector(`.card__btn__${this.planName}`);
-    this.renderer.selectRootElement(buttonElement).click();
-  };
-
   public handleButtonClick = (e: Event): void => {
     e.preventDefault();
-    const action = this.currentStep < 4 ? this.goToNextStep : this.submitPaymentForm;
+    const action = this.currentStep < 5 ? this.goToNextStep : this.submitPaymentForm;
     action.call(this);
   }
 
   private goToNextStep = (): void => {
     this.currentStep++;
-    if (this.currentStep === 4) {
+    if (this.currentStep === 5) {
       this.loadBillsbyTokenizerScript()
         .then(() => {
           this.initTokenizer();

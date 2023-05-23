@@ -159,12 +159,38 @@
     flex-direction: column;
     flex-grow: 1;
     row-gap: 25px;
+
+    &-payment-form {
+      .signup__form-input {
+        background-color: #fff;
+
+        &:focus {
+          border: none;
+        }
+      }
+    }
+  }
+
+  &__form-two-fields {
+    display: flex;
+    flex-direction: column;
+    row-gap: 25px;
+
+    @media (min-width: 992px) {
+      flex-direction: row;
+      justify-content: space-between;
+      column-gap: 7px;
+    }
   }
 
   &__form-field {
     display: flex;
     flex-direction: column;
     row-gap: 7px;
+
+    &-half {
+      flex-grow: 1;
+    }
   }
 
   &__form-label {
@@ -174,7 +200,7 @@
     text-transform: capitalize;
 
     @media (min-width: 992px) {
-      font-size: 16px;
+      // font-size: 16px;
     }
   }
 
@@ -264,6 +290,7 @@
     border-radius: 5px;
     cursor: pointer;
     padding: 10px 15px;
+    user-select: none;
 
     &--active {
       border: 1px solid #ff2169;
