@@ -51,6 +51,35 @@
   row-gap: 15px;
   width: 100%;
 
+  .progress__bar {
+    align-items: center;
+    background-color: #fff;
+    border-radius: 5px;
+    color: #333;
+    column-gap: 7px;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+
+    .spinner {
+      display: inline-block;
+      height: 100%;
+      width: auto;
+    }
+
+    &-message {
+      margin: 0;
+      text-transform: capitalize;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    &-action {
+      opacity: 0.5;
+      font-style: italic;
+    }
+  }
+
   @media (min-width: 992px) {
     padding: 50px;
     row-gap: 30px;

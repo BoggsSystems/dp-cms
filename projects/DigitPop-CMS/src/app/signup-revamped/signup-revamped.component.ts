@@ -31,11 +31,15 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   @Input() sid!: string;
 
   public signupForm!: FormGroup;
+  public addressForm !: FormGroup;
+  public cardDetailsForm !: FormGroup;
   public currentStep = 1;
   public plans: Plan[];
   public planName: string;
   public cycleId: number;
   public countries: { code: string; name: string; }[] = [];
+  public isSubmitting = false;
+  public submissionMessage: string;
 
   constructor(
     private router: Router,
@@ -52,16 +56,26 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
+    });
+
+    this.addressForm = this.formBuilder.group({
       addressLine1: ['', Validators.required],
       addressLine2: [''],
       city: ['', Validators.required],
       state: ['', Validators.required],
       postalCode: ['', Validators.required],
       country: ['', Validators.required],
-      expirationMonth: ['', Validators.required],
-      expirationYear: ['', Validators.required],
-      // agreeToTerms: [false, Validators.requiredTrue],
     });
+
+    this.cardDetailsForm = this.formBuilder.group({
+      paymentCardToken: ['', Validators.required],
+      expiryMonth: ['', Validators.required],
+      expiryYear: ['', Validators.required],
+      cardType: [''],
+      last4Digits: ['']
+    })
+
+    this.submissionMessage = "we're creating your account";
   }
 
   ngOnInit(): void {
@@ -146,7 +160,11 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   }
 
   private subscribeToPlan = (token: string) => {
-    const { firstName, lastName, email, addressLine1, addressLine2, city, country, postalCode, expirationMonth, expirationYear } = this.signupForm.value;
+    this.submissionProgress(true, "We're subscribing you to the plan.");
+
+    const { firstName, lastName, email } = this.signupForm.value;
+    const { addressLine1, addressLine2, city, country, postalCode } = this.addressForm.value;
+    const { expiryMonth, expiryYear, cardType, last4Digits } = this.cardDetailsForm.value;
     const fullName = `${firstName} ${lastName}`;
 
     const subscriptionData = {
@@ -166,14 +184,15 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       cardDetails: {
         fullName: fullName,
         paymentCardToken: token,
-        expiryMonth: +expirationMonth,
-        expiryYear: +expirationYear,
-        cardType: 'visa',
-        last4Digits: '1111'
+        expiryMonth: +expiryMonth,
+        expiryYear: +expiryYear,
+        cardType: cardType,
+        last4Digits: last4Digits
       }
     };
 
     this.billsByService.subscribeToPlan(subscriptionData).subscribe(res => {
+      this.submissionProgress(true, "Successfuly subscribed to plan");
       this.cid = res.customerUniqueId;
       this.sid = res.subscriptionUniqueId;
       this.submitData();
@@ -204,11 +223,19 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   }
 
   public submitData = (): void => {
+    this.submissionProgress(true, "We're creating your account");
+
     if (this.signupForm.valid) {
       const userData = {
         ...this.signupForm.value,
         ...(this.cid && { cid: this.cid }),
         ...(this.sid && { sid: this.sid }),
+        address: {
+          ...this.addressForm.value
+        },
+        cardDetails: {
+          ...this.cardDetailsForm.value
+        }
       };
 
       if (this.planName) {
@@ -220,12 +247,14 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
         .pipe(
           tap((response: any) => {
             if (response && response.success !== false) {
-              console.log('User created successfully:', response);
+              // console.log('User created successfully:', response);
+              this.submissionProgress(true, "You're account created, redirecting to home!");
               this.router.navigate(['/home']);
             }
           }),
           catchError((error) => {
-            console.error('Error creating user:', error);
+            // console.error('Error creating user:', error);
+            this.submissionProgress(true, "There is an error creating your account.");
             return of(error);
           })
         )
@@ -244,11 +273,19 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
 
   private initTokenizer = () => {
     const logToken = (token: string, pmData: any) => {
+      this.submissionProgress(true, "Credit Card Verified!");
+      this.cardDetailsForm.patchValue({
+        ...this.cardDetailsForm.value,
+        paymentCardToken: pmData.token,
+        last4Digits: pmData.last_four_digits,
+        cardType: pmData.card_type
+      });
       this.subscribeToPlan(token);
     };
 
     const logErrors = (errors: any) => {
       errors.forEach((error: any) => {
+        this.submissionProgress(false, "Error verifying the credit card.");
         console.log(error);
       });
     };
@@ -268,14 +305,17 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   };
 
   private submitPaymentForm = () => {
-    const { firstName, lastName, expirationMonth, expirationYear } = this.signupForm.value;
+    this.submissionProgress(true, "We're verifying your credit card");
+
+    const { firstName, lastName } = this.signupForm.value;
+    const { expiryMonth, expiryYear } = this.cardDetailsForm.value;
     const fullName = firstName + ' ' + lastName;
 
     const requiredFields: any = {};
 
     requiredFields["full_name"] = fullName;
-    requiredFields["month"] = +expirationMonth;
-    requiredFields["year"] = +expirationYear;
+    requiredFields["month"] = +expiryMonth;
+    requiredFields["year"] = +expiryYear;
 
     window.billsbyTokens.tokenizeCreditCard(requiredFields);
   }
@@ -302,6 +342,11 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
 
       document.head.appendChild(script);
     });
+  }
+
+  private submissionProgress = (submitting: boolean, message: string) => {
+    this.isSubmitting = submitting;
+    this.submissionMessage = message;
   }
 
 }
