@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BusinessUserService } from '../shared/services/accounts/business-user.service';
 import { BillsbyService } from '../shared/services/billsby.service';
@@ -46,6 +46,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private businessUserService: BusinessUserService,
     private billsByService: BillsbyService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.extractNavigationExtras();
 
@@ -347,6 +348,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   private submissionProgress = (submitting: boolean, message: string) => {
     this.isSubmitting = submitting;
     this.submissionMessage = message;
+    this.changeDetectorRef.detectChanges();
   }
 
 }
