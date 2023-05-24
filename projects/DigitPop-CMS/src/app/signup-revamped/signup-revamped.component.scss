@@ -384,3 +384,10 @@
     margin-top: 0;
   }
 }
+
+.signup__btn.disabled {
+  opacity: 0.5;
+  background: #fff;
+  color: #303030;
+  cursor: not-allowed;
+}

@@ -39,15 +39,15 @@
           <span class="signup__step-text" *ngIf="currentStep > 3">
             <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
           </span>        </li>
-        <li class="signup__line"></li>
-        <li class="signup__step" [ngClass]="{'signup__step--active': currentStep === 4}">
+        <li class="signup__line" *ngIf="planName !== 'free'"></li>
+        <li class="signup__step" *ngIf="planName !== 'free'" [ngClass]="{'signup__step--active': currentStep === 4}">
           <span class="signup__step-text" [hidden]="currentStep > 4">04</span>
           <span class="signup__step-text" *ngIf="currentStep > 4">
             <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
           </span>
         </li>
-        <li class="signup__line"></li>
-        <li class="signup__step" [ngClass]="{'signup__step--active': currentStep === 5}">
+        <li class="signup__line" *ngIf="planName !== 'free'"></li>
+        <li class="signup__step" *ngIf="planName !== 'free'" [ngClass]="{'signup__step--active': currentStep === 5}">
           <span class="signup__step-text" [hidden]="currentStep > 5">05</span>
           <span class="signup__step-text" *ngIf="currentStep > 5">
             <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
@@ -222,11 +222,11 @@
 
       </form>
 
-      <button class="btn signup__btn" (click)="handleButtonClick($event)" *ngIf="currentStep <= 5">
-        <span *ngIf="currentStep !== 5">Next <img src="assets/img/icons/nextArrow.svg"
+      <button class="btn signup__btn" [disabled]="isNextButtonDisabled" [class.disabled]="isNextButtonDisabled" (click)="handleButtonClick($event)" *ngIf="currentStep <= 5">
+        <span *ngIf="currentStep !== 5 && planName !== 'free'">Next <img src="assets/img/icons/nextArrow.svg"
             alt=""></span>
-        <span *ngIf="currentStep === 5">Create Account</span>
-        </button>
+        <span *ngIf="currentStep === 5 || planName === 'free'">Create Account</span>
+      </button>
     </div>
   </div>
 </div>

@@ -38,6 +38,8 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   public planName: string;
   public cycleId: number;
   public countries: { code: string; name: string; }[] = [];
+  public isNextButtonDisabled: boolean;
+  public nextStepTitle: string;
   public isSubmitting = false;
   public submissionMessage: string;
 
@@ -76,6 +78,8 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       last4Digits: ['']
     })
 
+    this.isNextButtonDisabled = true;
+    this.nextStepTitle = "Security";
     this.submissionMessage = "we're creating your account";
   }
 
@@ -88,6 +92,10 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       .subscribe();
 
     this.countries = countriesData;
+
+    this.signupForm.valueChanges.subscribe(() => {
+      this.updateNextButtonState();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -200,10 +208,68 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     });
   }
 
+  private updateNextButtonState() {
+    switch (this.currentStep) {
+      case 1:
+        this.isNextButtonDisabled = !this.signupForm.get('firstName').valid ||
+          !this.signupForm.get('lastName').valid ||
+          !this.signupForm.get('email').valid;
+        break;
+      case 2:
+        this.isNextButtonDisabled = !this.signupForm.get('password').valid ||
+          !this.signupForm.get('confirmPassword').valid;
+        break;
+      case 3:
+        this.isNextButtonDisabled = false;
+        break;
+      case 4:
+        this.isNextButtonDisabled = !this.addressForm.valid;
+        break;
+      case 5:
+        this.isNextButtonDisabled = !this.cardDetailsForm.valid;
+        break;
+      default:
+        this.isNextButtonDisabled = false; // Set a default value if needed
+        break;
+    }
+  }
+
   public handleButtonClick = (e: Event): void => {
+    if (this.isNextButtonDisabled) { return };
     e.preventDefault();
-    const action = this.currentStep < 5 ? this.goToNextStep : this.submitPaymentForm;
+    const action =
+      this.currentStep < 3
+        ? this.goToNextStep
+        : this.currentStep === 3 && this.planName === 'free'
+          ? this.submitData
+          : this.currentStep === 5
+            ? this.submitPaymentForm
+            : this.goToNextStep;
     action.call(this);
+  }
+
+  private setNextStepTitle() {
+    switch (this.currentStep) {
+      case 1:
+        this.nextStepTitle = 'Security';
+        break;
+      case 2:
+        this.nextStepTitle = 'Choose Plan';
+        break;
+      case 3:
+        if (this.planName === 'free') {
+          this.nextStepTitle = 'Create Account';
+        } else {
+          this.nextStepTitle = 'Address';
+        }
+        break;
+      case 4:
+        this.nextStepTitle = 'Payment Details';
+        break;
+      default:
+        this.nextStepTitle = ''; // Set a default value if needed
+        break;
+    }
   }
 
   private goToNextStep = (): void => {
@@ -216,6 +282,12 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
         .catch((error) => {
           console.error('Failed to load Billsby tokenizer script:', error);
         });
+    }
+
+    if (this.currentStep === 3) {
+      if (!this.planName) {
+        this.planName = 'free';
+      }
     }
   }
 
