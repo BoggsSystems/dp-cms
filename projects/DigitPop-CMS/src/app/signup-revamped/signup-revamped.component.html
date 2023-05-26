@@ -123,8 +123,14 @@
           <div class="signup__plan-cards">
             <div *ngFor="let plan of plans" class="signup__plan-card signup__plan-card--{{ plan.name }}" [ngClass]="{'signup__plan-card--active': (!planName && plan.name === 'free') || (planName && plan.name === planName)}" (click)="setPlanName(plan.name, plan.cycles[plan.cycles.length - 1].cycleId)">
               <div class="signup__plan-title">
-                <h3 class="signup__plan-name">{{ plan.displayName }}</h3>
-                <img src="assets/img/icons/{{ plan.name }}PlanIcon.svg" alt="{{plan.name}} icon" class="signup__plan-icon">
+                <div>
+                  <h3 class="signup__plan-name">{{ plan.displayName }}</h3>
+                  <img src="assets/img/icons/{{ plan.name }}PlanIcon.svg" alt="{{plan.name}} icon" class="signup__plan-icon">
+                </div>
+                <h4 class="signup__plan-price">
+                  <span class="signup__plan-currency">&#36; </span>{{ removeCurrencyChar(plan.cycles[0].pricingModel.priceFormatted) }}<span
+                    class="signup__plan-period">/month</span>
+                </h4>
               </div>
               <p class="signup__plan-description">
                 {{ plan.description }}

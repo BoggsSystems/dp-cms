@@ -3,7 +3,8 @@ import {ProjectService} from '../services/project.service';
 import {CampaignService} from '../services/campaign.service';
 import * as _ from 'lodash';
 import {Project} from '../models/project';
-import {first} from 'rxjs/operators';
+import { first } from 'rxjs/operators';
+import { AuthenticationService } from '../services/auth-service.service';
 
 export interface RequestArguments {
   page: number;
@@ -41,6 +42,15 @@ const sortData = (data: any, sortOptions: SortOptions = {
 };
 
 export const Cache = {
+  async createUserCache(user: any, role: string = 'Business', storageType: 'session' | 'local' = 'session') {
+    const currentUser = sessionStorage.getItem('currentuser') || localStorage.getItem('currentuser');
+
+    localStorage.setItem('currentRole', role);
+    localStorage.setItem('currentuser', JSON.stringify(user));
+  },
+
+
+
   createCache: (data: any, key: string = 'my-projects') => {
     sessionStorage.setItem(key, data);
   },

@@ -7,6 +7,8 @@ import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { flowRight as compose } from 'lodash';
 import { Plan } from '../shared/interfaces/plan.json';
+import { AuthenticationService } from '../shared/services/auth-service.service';
+import { Cache } from '../shared/helpers/cache';
 import countriesData from './countries';
 
 declare global {
@@ -48,6 +50,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private businessUserService: BusinessUserService,
     private billsByService: BillsbyService,
+    private auth: AuthenticationService,
     private changeDetectorRef: ChangeDetectorRef
   ) {
     this.extractNavigationExtras();
@@ -161,6 +164,11 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     this.billsByService.getProductPlans().subscribe((res: Plan[]) => {
       this.plans = res;
     });
+  }
+
+  public removeCurrencyChar(formattedPrice: string): string {
+    const newString = formattedPrice.substring(1);
+    return newString;
   }
 
   public setPlanName(plan: string, cycleId: number) {
@@ -318,11 +326,17 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       this.businessUserService
         .createUser(userData)
         .pipe(
-          tap((response: any) => {
+          tap(async (response: any) => {
             if (response && response.success !== false) {
-              // console.log('User created successfully:', response);
-              this.submissionProgress(true, "You're account created, redirecting to home!");
-              this.router.navigate(['/home']);
+              this.submissionProgress(true, "You're account created, redirecting to dashboard!");
+
+              const user = response.data.user;
+              user.token = response.data.token;
+
+              this.auth.storeUser(user);
+              await Cache.createUserCache(user, 'Business', 'local').then(() => {
+                this.router.navigate(['/cms/dashboard']);
+              });
             }
           }),
           catchError((error) => {
