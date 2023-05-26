@@ -37,13 +37,14 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   public cardDetailsForm !: FormGroup;
   public currentStep = 1;
   public plans: Plan[];
-  public planName: string = 'free';
+  public planName: string;
   public cycleId: number;
   public countries: { code: string; name: string; }[] = [];
   public isNextButtonDisabled: boolean;
   public nextStepTitle: string;
   public isSubmitting = false;
   public submissionMessage: string;
+  public termsCheckboxChecked: boolean = false;
 
   constructor(
     private router: Router,
@@ -60,8 +61,9 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(1)]],
       confirmPassword: ['', Validators.required],
+      agreeToTerms: [false, Validators.requiredTrue]
     }, { validators: this.passwordMatchValidator });
 
     this.addressForm = this.formBuilder.group({
@@ -146,6 +148,15 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     confirmPasswordControl.valueChanges.subscribe(() => {
       confirmPasswordControl.updateValueAndValidity();
     });
+  }
+
+  toggleTermsCheckbox() {
+    this.termsCheckboxChecked = !this.termsCheckboxChecked;
+    this.signupForm.patchValue({
+      agreeToTerms: this.termsCheckboxChecked,
+    });
+
+    this.updateNextButtonState();
   }
 
   private getUserDetails = (cid: string) => {
@@ -249,8 +260,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
           !this.signupForm.get('email').valid;
         break;
       case 2:
-        this.isNextButtonDisabled = !this.signupForm.get('password').valid ||
-          !this.signupForm.get('confirmPassword').valid;
+        this.isNextButtonDisabled = !this.signupForm.get('password').valid || !this.signupForm.get('confirmPassword').valid || !this.signupForm.get('agreeToTerms').value;
         break;
       case 3:
         this.isNextButtonDisabled = false;
@@ -265,6 +275,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
         this.isNextButtonDisabled = false; // Set a default value if needed
         break;
     }
+    this.changeDetectorRef.detectChanges();
   }
 
   public handleButtonClick = (e: Event): void => {
@@ -307,6 +318,8 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
 
   private goToNextStep = (): void => {
     this.currentStep++;
+    this.updateNextButtonState();
+
     if (this.currentStep === 5) {
       this.loadBillsbyTokenizerScript()
         .then(() => {

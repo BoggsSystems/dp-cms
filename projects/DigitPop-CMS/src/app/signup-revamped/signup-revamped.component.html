@@ -32,22 +32,24 @@
           <span class="signup__step-text" [hidden]="currentStep > 2">02</span>
           <span class="signup__step-text" *ngIf="currentStep > 2">
             <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
-          </span>        </li>
+          </span>
+        </li>
         <li class="signup__line"></li>
         <li class="signup__step" [ngClass]="{'signup__step--active': currentStep === 3}">
           <span class="signup__step-text" [hidden]="currentStep > 3">03</span>
           <span class="signup__step-text" *ngIf="currentStep > 3">
             <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
-          </span>        </li>
-        <li class="signup__line" *ngIf="planName !== 'free'"></li>
-        <li class="signup__step" *ngIf="planName !== 'free'" [ngClass]="{'signup__step--active': currentStep === 4}">
+          </span>
+        </li>
+        <li class="signup__line" *ngIf="currentStep >= 3 && planName !== 'free'"></li>
+        <li class="signup__step" *ngIf="currentStep >= 3 && planName !== 'free'" [ngClass]="{'signup__step--active': currentStep === 4}">
           <span class="signup__step-text" [hidden]="currentStep > 4">04</span>
           <span class="signup__step-text" *ngIf="currentStep > 4">
             <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
           </span>
         </li>
-        <li class="signup__line" *ngIf="planName !== 'free'"></li>
-        <li class="signup__step" *ngIf="planName !== 'free'" [ngClass]="{'signup__step--active': currentStep === 5}">
+        <li class="signup__line" *ngIf="currentStep >= 3 && planName !== 'free'"></li>
+        <li class="signup__step" *ngIf="currentStep >= 3 && planName !== 'free'" [ngClass]="{'signup__step--active': currentStep === 5}">
           <span class="signup__step-text" [hidden]="currentStep > 5">05</span>
           <span class="signup__step-text" *ngIf="currentStep > 5">
             <img src="assets/img/icons/checkIcon.svg" alt="checkmark icon">
@@ -101,10 +103,13 @@
             </div>
           </div>
           <div class="signup__terms">
-            <div class="signup__terms-checkbox">
-              <div class="signup__terms-checkbox-input" formControlName="agreeToTerms" id="agreeToTerms"></div>
+            <div class="signup__terms-checkbox" (click)="toggleTermsCheckbox()">
+              <div class="signup__terms-checkbox-input" [class.checked]="termsCheckboxChecked" formControlName="agreeToTerms" id="agreeToTerms">
+                  <span class="signup__terms-checkbox-icon">
+                    <span *ngIf="signupForm.controls['agreeToTerms'].value" class="checkmark">&#10004;</span>
+                  </span>
+              </div>
               <label class="signup__terms-checkbox-label" for="agreeToTerms">
-                <span class="signup__terms-checkbox-icon"></span>
                 <span class="signup__terms-checkbox-text">
                   I agree to<a class="signup__terms-checkbox-text-bold"> Terms and Conditions</a>
                 </span>
@@ -115,6 +120,7 @@
               <div class="signup__terms-error-text">Please agree to the terms and conditions.</div>
             </div>
           </div>
+
         </div>
 
         <div *ngIf="currentStep === 3" class="signup__inputs signup__step--plan">
@@ -138,7 +144,7 @@
           </div>
         </div>
 
-        <div *ngIf="currentStep === 4 && planName !== 'free'" class="signup__inputs" [formGroup]="addressForm">
+        <div *ngIf="currentStep === 4 && (planName !== 'free')" class="signup__inputs" [formGroup]="addressForm">
           <div class="signup__form-two-fields">
             <div class="signup__form-field signup__form-field-half">
               <label class="signup__form-label">Address Line 1</label>
@@ -201,7 +207,7 @@
           </div>
         </div>
 
-        <div *ngIf="currentStep === 5 && planName !== 'free'" id="payment-form" class="signup__inputs signup__inputs-payment-form" [formGroup]="cardDetailsForm">
+        <div *ngIf="currentStep === 5 " id="payment-form" class="signup__inputs signup__inputs-payment-form" [formGroup]="cardDetailsForm">
           <input type="hidden" name="payment_method_token" id="payment_method_token">
 
           <div class="signup__form-field">

@@ -273,12 +273,21 @@
     font-weight: 300;
     margin-top: auto;
 
+    &-checkbox {
+      align-items: center;
+      display: flex;
+    }
+
     &-checkbox-input {
+      user-select: none;
+      align-items: center;
       border: 1px solid #424242;
       border-radius: 2px;
       box-sizing: border-box;
-      display: inline-block;
+      cursor: pointer;
+      display: inline-flex;
       height: 15px;
+      justify-content: center;
       margin-right: 5px;
       width: 15px;
     }
