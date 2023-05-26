@@ -111,6 +111,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
       this.authService.welcome().subscribe((res) => {
         this.authService.currentUserValue.welcomed = true;
+        this.authService.storeUser(this.authService.currentUserValue);
       }, (error) => {
         this.error = error;
       });

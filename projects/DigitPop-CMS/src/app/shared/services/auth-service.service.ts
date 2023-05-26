@@ -114,7 +114,7 @@ export class AuthenticationService {
 
   welcome() {
     return this.http.put<any>(
-      `${environment.apiUrl}/api/users/` +
+      `${environment.apiUrl}/api/business-users/` +
       this.currentUserValue._id +
       '/welcome',
       {id: this.currentUserValue._id}
