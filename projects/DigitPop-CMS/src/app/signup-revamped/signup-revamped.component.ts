@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BusinessUserService } from '../shared/services/accounts/business-user.service';
 import { BillsbyService } from '../shared/services/billsby.service';
 import { tap, catchError, filter } from 'rxjs/operators';
@@ -37,7 +37,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   public cardDetailsForm !: FormGroup;
   public currentStep = 1;
   public plans: Plan[];
-  public planName: string;
+  public planName: string = 'free';
   public cycleId: number;
   public countries: { code: string; name: string; }[] = [];
   public isNextButtonDisabled: boolean;
@@ -62,7 +62,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
-    });
+    }, { validators: this.passwordMatchValidator });
 
     this.addressForm = this.formBuilder.group({
       addressLine1: ['', Validators.required],
@@ -81,6 +81,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       last4Digits: ['']
     })
 
+    this.setupFormChangeListeners();
     this.isNextButtonDisabled = true;
     this.nextStepTitle = "Security";
     this.submissionMessage = "we're creating your account";
@@ -121,6 +122,30 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     };
 
     updateValues({ cid, sid });
+  }
+
+  private passwordMatchValidator = (control: AbstractControl) => {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+    } else {
+      confirmPassword.setErrors(null);
+    }
+  }
+
+  private setupFormChangeListeners = () => {
+    const passwordControl = this.signupForm.get('password');
+    const confirmPasswordControl = this.signupForm.get('confirmPassword');
+
+    passwordControl.valueChanges.subscribe(() => {
+      confirmPasswordControl.updateValueAndValidity();
+    });
+
+    confirmPasswordControl.valueChanges.subscribe(() => {
+      confirmPasswordControl.updateValueAndValidity();
+    });
   }
 
   private getUserDetails = (cid: string) => {
