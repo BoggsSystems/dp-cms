@@ -475,4 +475,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  redirectToTerms() {
+    this.router.navigate(['/terms']);
+  }
 }
