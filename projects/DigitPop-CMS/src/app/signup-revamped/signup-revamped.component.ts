@@ -102,6 +102,14 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     this.signupForm.valueChanges.subscribe(() => {
       this.updateNextButtonState();
     });
+
+    this.addressForm.valueChanges.subscribe(() => {
+      this.updateNextButtonState();
+    });
+
+    this.cardDetailsForm.valueChanges.subscribe(() => {
+      this.updateNextButtonState();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -269,7 +277,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
         this.isNextButtonDisabled = !this.addressForm.valid;
         break;
       case 5:
-        this.isNextButtonDisabled = !this.cardDetailsForm.valid;
+        this.isNextButtonDisabled = !this.cardDetailsForm.get('expiryMonth').valid || !this.cardDetailsForm.get('expiryYear').valid;
         break;
       default:
         this.isNextButtonDisabled = false; // Set a default value if needed
@@ -476,6 +484,6 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
   }
 
   redirectToTerms() {
-    this.router.navigate(['/terms']);
+    window.open('/terms', '_blank');
   }
 }
