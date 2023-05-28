@@ -1,8 +1,8 @@
 export const environment = {
   production: false,
-  apiUrl: "https://dp-digitpop-server.herokuapp.com",
-  websocketURL: 'wss://dp-digitpop-server.herokuapp.com',
-  playerUrl: "https://dp-digitpop-player.herokuapp.com",
+  apiUrl: "https://dp-staging-server.herokuapp.com",
+  websocketURL: 'wss://dp-staging-server.herokuapp.com',
+  playerUrl: "https://dp-staging-player.herokuapp.com",
 
   cloudinaryUrl: "https://api.cloudinary.com/v1_1/",
   CLOUDINARY_CLOUD_NAME: "boggssystems",
