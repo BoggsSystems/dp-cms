@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Redemption } from '../../../../../DigitPop-Player/src/app/shared/models/redemption';
 import { Metric } from '../models/metric';
 import { environment } from 'projects/DigitPop-CMS/src/environments/environment';
 

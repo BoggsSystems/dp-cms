@@ -9,20 +9,15 @@ import {VideoService} from '../../shared/services/video.service';
 import {ImageService} from '../../shared/services/image.service';
 import {ProjectService} from '../../shared/services/project.service';
 import {ProductGroupService} from '../../shared/services/product-group.service';
-import {ProductService} from '../../shared/services/product.service';
-import {Project} from 'projects/DigitPop-Player/src/app/models/project';
+import { ProductService } from '../../shared/services/product.service';
+import { Project } from '../../shared/models/project';
 import {TitleHelpComponent} from '../help/title/title-help.component';
 import {
   ProjectWizardHelpComponent
 } from '../help/project/project-wizard-help.component';
-import {FileValidatorUtil} from '../../shared/utility/FileValidator';
-import {
-  ProductGroup
-} from 'projects/DigitPop-Player/src/app/models/productGroup';
-import {
-  Product,
-  ProductImage,
-} from 'projects/DigitPop-Player/src/app/models/product';
+import { FileValidatorUtil } from '../../shared/utility/FileValidator';
+import { ProductGroup } from '../../shared/models/productGroup';
+import { Product, ProductImage } from '../../shared/models/product';
 import {
   ConfirmDialogComponent
 } from '../confirm-dialog/confirm-dialog.component';
