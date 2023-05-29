@@ -68,7 +68,10 @@ export class BillsbyService {
     return this.httpClient.get(`${this.billsByUrl}/customers/${cid}`);
   }
 
-  getSubscriptionDetails(sid: string): Observable<any> {
+  getSubscriptionDetails(sid?: string): Observable<any> {
+    if (!sid) {
+      sid = this.authService.currentUserValue.sid;
+    }
     return this.httpClient.get(`${this.billsByUrl}/subscriptions/${sid}`);
   }
 

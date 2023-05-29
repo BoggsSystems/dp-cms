@@ -14,7 +14,7 @@
       <h5>Customer ID : {{ subscription.customerUniqueId }}</h5>
     </div>
     <div class="nextBillingAmount">
-      <h5>Next Billing Amount : {{ subscription.nextBillingAmount }}</h5>
+      <h5>Next Billing Amount : {{ subscription.nextBillingAmountFormatted }}</h5>
     </div>
     <div class="nextBillingDate">
       <h5>Next Billing Date: {{ subscription.nextBillingDate | date }}</h5>
@@ -57,12 +57,12 @@
       accept="image/*"
       (change)="onChangeFileInput()"
     />
-    <div class="iconImage" *ngIf="currentUser.icon?.url == null">
+    <div class="iconImage" *ngIf="currentUser.branding?.url == null">
       <h5>No icon selected</h5>
     </div>
-    <div class="iconImage" *ngIf="currentUser.icon?.url != null">
+    <div class="iconImage" *ngIf="currentUser.branding?.url != null">
       <div class="thumbnail">
-        <img [src]="currentUser.icon?.url" />
+        <img [src]="currentUser.branding?.url" />
       </div>
     </div>
     <div class="iconButton">

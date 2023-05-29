@@ -11,6 +11,9 @@ import { ImageService } from '../../shared/services/image.service';
 import { AccountHelpComponent } from '../help/account/account-help.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
+import { BusinessUserService } from '../../shared/services/accounts/business-user.service';
+import { BusinessUser } from '../../shared/interfaces/business-user.json';
+
 @Component({
   selector: 'DigitPop-account',
   templateUrl: './account.component.html',
@@ -23,7 +26,7 @@ export class AccountComponent implements OnInit {
   usage: any;
   icon:any;
   uploadStatus: any;
-  currentUser: User;
+  currentUser: BusinessUser;
 
   @ViewChild('fileInput')
   fileInput: { nativeElement: { click: () => void; files: { [key: string]: File; }; }; };
@@ -35,12 +38,12 @@ export class AccountComponent implements OnInit {
     private billsByService: BillsbyService,
     private imageService: ImageService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private businessUser: BusinessUserService
   ) {
-    this.authService.currentUser.subscribe(
-      (x) => (this.currentUser = x)
-    );
-
+    this.businessUser.currentUser.subscribe(user => {
+      this.currentUser = user;
+    });
   }
 
   ngOnInit(): void {
@@ -59,7 +62,8 @@ export class AccountComponent implements OnInit {
               ));
 
             case HttpEventType.Response:
-              this.currentUser.icon = event.body;
+              console.log(event.body);
+              this.currentUser.branding = event.body;
               this.updateUser();
               return true;
             default:
@@ -78,9 +82,9 @@ export class AccountComponent implements OnInit {
   }
 
   updateUser() {
-    this.authService.updateUser(this.currentUser).subscribe(
+    this.businessUser.updateUser().subscribe(
       (res) => {
-        return res;
+        this.businessUser.storeUser(res.data.user);
       },
       (err) => {
         console.log('Update error : ' + err.toString());
@@ -112,16 +116,16 @@ export class AccountComponent implements OnInit {
   }
 
   getSubscription() {
-    /* this.billsByService.getSubscriptionDetails().subscribe(
+    this.billsByService.getSubscriptionDetails().subscribe(
       (res) => {
         this.subscription = res;
         this.getUsage();
-        console.log('Update response : ' + res.toString());
+        console.log(res);
       },
       (err) => {
-        console.log('Update error : ' + err.toString());
+        console.error(err);
       }
-    ); */
+    );
   }
 
   accountHelp() {

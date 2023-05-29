@@ -47,6 +47,7 @@ export const Cache = {
 
     localStorage.setItem('currentRole', role);
     localStorage.setItem('currentuser', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
   },
 
 

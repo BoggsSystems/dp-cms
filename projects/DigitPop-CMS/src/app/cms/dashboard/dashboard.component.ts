@@ -28,7 +28,9 @@ import {
   NotificationDialogComponent
 } from "../notification-dialog/notification-dialog.component";
 import {Cache, RequestArguments} from '../../shared/helpers/cache';
-import {Cloudinary} from '../../shared/helpers/cloudinary';
+import { Cloudinary } from '../../shared/helpers/cloudinary';
+
+import { BusinessUserService } from '../../shared/services/accounts/business-user.service';
 
 interface TablesSettings {
   [key: string]: any;
@@ -82,7 +84,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild('campaignSorter') campaignSorter: MatSort;
 
-  constructor(private route: ActivatedRoute, private billsbyService: BillsbyService, private campaignService: CampaignService, private breakpointObserver: BreakpointObserver, private projectService: ProjectService, private productGroupService: ProductGroupService, private authService: AuthenticationService, private router: Router, public dialog: MatDialog,) {
+  constructor(private route: ActivatedRoute, private billsbyService: BillsbyService, private campaignService: CampaignService, private breakpointObserver: BreakpointObserver, private projectService: ProjectService, private productGroupService: ProductGroupService, private authService: AuthenticationService, private router: Router, public dialog: MatDialog,
+  private businessUser: BusinessUserService,
+  ) {
     this.height = 25;
     this.width = 150;
   }
@@ -106,10 +110,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   welcome() {
+    // TODO: Remove authService and only keep businessUser service
     if (!this.authService.currentUserValue.welcomed) {
       this.openWelcomeDialog();
 
       this.authService.welcome().subscribe((res) => {
+        this.businessUser.currentUserValue.welcomed = true;
+        this.businessUser.storeUser(this.businessUser.currentUserValue);
+
         this.authService.currentUserValue.welcomed = true;
         this.authService.storeUser(this.authService.currentUserValue);
       }, (error) => {
