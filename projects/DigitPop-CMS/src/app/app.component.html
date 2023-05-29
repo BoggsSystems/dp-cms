@@ -36,8 +36,9 @@
           <div mat-menu-item *ngIf="currentUser && currentRole === 'customer'" (click) = "$event.stopPropagation()" >
             <mat-slide-toggle color="primary" [(ngModel)]="videoTour" (change)="onTour()">Video Tour</mat-slide-toggle>
           </div>
-          <div *ngIf="currentUser && currentRole === 'customer'">
-            <a mat-menu-item href="#" routerLink="/dashboard" routerLinkActive="active">Account Dashboard</a>
+          <div *ngIf="currentUser">
+            <a *ngIf="currentRole === 'customer'" mat-menu-item href="#" routerLink="/dashboard" routerLinkActive="active">Account Dashboard</a>
+            <a *ngIf="currentRole === 'Business'" mat-menu-item href="#" routerLink="/cms/account" routerLinkActive="active">Account Dashboard</a>
           </div>
           <button mat-menu-item *ngIf="isLogin" (click)="openLogout()">Logout</button>
         </mat-menu>
