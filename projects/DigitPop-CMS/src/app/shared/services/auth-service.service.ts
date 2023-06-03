@@ -1,11 +1,13 @@
-import {Inject, Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
-import {User} from '../models/user';
-import {environment} from 'projects/DigitPop-CMS/src/environments/environment';
-import {HTTP_CMS_AUTH} from '../../app.module';
-import {DataService} from '../../xchane/services/data.service';
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, first } from 'rxjs/operators';
+import { Router } from '@angular/router';
+
+import { User } from '../models/user';
+import { environment } from 'projects/DigitPop-CMS/src/environments/environment';
+import { HTTP_CMS_AUTH } from '../../app.module';
+import { DataService } from '../../xchane/services/data.service';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'}),
@@ -18,7 +20,8 @@ export class AuthenticationService {
 
   constructor(
     @Inject(HTTP_CMS_AUTH) private http: HttpClient,
-    private data: DataService
+    private data: DataService,
+    private router: Router
   ) {
     this.currentUserSubject = new BehaviorSubject<User>(
       JSON.parse(localStorage.getItem('currentuser'))
@@ -64,29 +67,75 @@ export class AuthenticationService {
 
   login(email: string, password: string) {
     return this.http
-      .post<any>(`${environment.apiUrl}/auth/local`, {email, password})
+      .post<any>(`${environment.apiUrl}/auth/local`, { email, password })
       .pipe(
-        map((res) => {
-          if (res.token) {
-            res.user.token = res.token;
-            localStorage.setItem('currentuser', JSON.stringify(res.user));
-            this.currentUserSubject.next(res.user);
-          } else {
-            alert(res.message);
-          }
-          return res.user;
-        }),
-        catchError((err, caught) => {
+        switchMap((res) =>
+          res.token && res.refreshToken
+            ? this.handleLoginSuccess(res)
+            : this.handleLoginFailure(res)
+        ),
+        catchError((err) => {
           console.log(err);
-          return err;
+          return throwError(err);
         })
       );
   }
 
+  private handleLoginSuccess(res: any): Observable<User> {
+    this.storeTokens(res.token, res.refreshToken);
+    const user = { ...res.user, token: res.token };
+    localStorage.setItem('currentuser', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+    return of(res.user);
+  }
+
+  private handleLoginFailure(res: any): Observable<never> {
+    alert(res.message);
+    return throwError('Login failed');
+  }
+
   logout() {
     localStorage.removeItem('currentuser');
-    this.data.setLogin(false);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     this.currentUserSubject.next(null);
+    this.router.navigate(['/home']);
+  }
+
+  refreshToken(): Observable<string> {
+    return this.currentUserSubject.pipe(
+      first(),
+      switchMap((currentUser) => {
+        const refreshToken = localStorage.getItem('refreshToken');
+
+        if (!currentUser || !refreshToken) {
+          return throwError('No user or refresh token available.');
+        }
+
+        return this.http.post<any>(`${environment.apiUrl}/auth/local/refresh`, { refreshToken }).pipe(
+          catchError((err) => {
+            console.log(err);
+            return throwError(err);
+          }),
+          switchMap((res) => {
+            if (res.token && res.refreshToken) {
+              this.storeTokens(res.token, res.refreshToken);
+              const updatedUser = { ...currentUser, token: res.token };
+              localStorage.setItem('currentuser', JSON.stringify(updatedUser));
+              this.currentUserSubject.next(updatedUser);
+              return of(res.token);
+            } else {
+              return throwError('Failed to refresh token');
+            }
+          })
+        );
+      })
+    );
+  }
+
+  private storeTokens(accessToken: string, refreshToken: string) {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
   }
 
   projectWizardPopup() {
