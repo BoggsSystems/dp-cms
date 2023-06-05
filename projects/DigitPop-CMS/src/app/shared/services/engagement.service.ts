@@ -33,4 +33,10 @@ export class EngagementService {
   getEngagement(engagementId: string) {
     return this.http.get('/api/engagement/' + engagementId);
   }
+
+  verificationAnswer(answer: any, engagementId: any, campaignId: any, isUser: boolean = true, uuid: string = '') {
+    return this.http.post<any>(`${environment.apiUrl}/api/engagements/answer`, {
+      answer, engagementId, campaignId, isUser, uuid
+    }, httpOptions);
+  }
 }

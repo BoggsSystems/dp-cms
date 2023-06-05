@@ -1,162 +1,168 @@
-<main class="container container--error" *ngIf="errorMessage">
-  <h1 class="four-o-four">404</h1>
-  <div *ngIf="errorMessage" class="error-message">
-    <span class="error--background"></span>
-    <h2 class="error--text">{{errorMessage}}, <a class="go-home" href="https://digitpop.com">Go Home</a></h2>
-  </div>
-</main>
+<ng-container *ngIf="showQuiz">
+  <digit-pop-quiz [dialog]="dialogRef" [campaignId]="campaignId" [engagementId]="engagementId" [isUser]="isUser" [uuid]="uuid"></digit-pop-quiz>
+</ng-container>
 
-<main class="container" *ngIf="!errorMessage">
-  <img (click)="onShowProduct()" *ngIf="videoPlaying && enabledShoppableTour"
-    [tooltip]="'Click on product for more details'" alt="" class="shoppable-video-tutorial"
-    src="/assets/img/player/shoppable-video-touch.svg" tooltipPosition="above" />
-  <img (click)="onStartVideo()" [alt]="ad?.name" [hidden]="!showThumbnail || autoplay" [src]="ad?.thumbnail.secure_url"
-    class="video-thumbnail" />
+<ng-container *ngIf="!showQuiz">
+  <main class="container container--error" *ngIf="errorMessage">
+    <h1 class="four-o-four">404</h1>
+    <div *ngIf="errorMessage" class="error-message">
+      <span class="error--background"></span>
+      <h2 class="error--text">{{errorMessage}}, <a class="go-home" href="https://digitpop.com">Go Home</a></h2>
+    </div>
+  </main>
 
-  <nav style="position: absolute; z-index: 101; top: 30px; right: 30px;" [hidden]="showCanvas" *ngIf="!errorMessage">
-    <button (click)="toggleVideoMute()" *ngIf="showSoundIcon"
-      style="background-color: rgba(0, 0, 0, 0.25); border-radius: 50%; height: 48px; width: 48px; border: 2px solid white; cursor: pointer;">
-      <img [src]="videoMuted ? '/assets/img/player/muted_icon.svg' :'/assets/img/player/speaker_icon.svg'" class="sound-status"
-        [ngClass]="videoMuted ? 'muted' : ''" src="/assets/img/player/muted_icon.svg" />
-    </button>
-  </nav>
+  <main class="container" *ngIf="!errorMessage">
+    <img (click)="onShowProduct()" *ngIf="videoPlaying && enabledShoppableTour"
+      [tooltip]="'Click on product for more details'" alt="" class="shoppable-video-tutorial"
+      src="/assets/img/player/shoppable-video-touch.svg" tooltipPosition="above" />
+    <img (click)="onStartVideo()" [alt]="ad?.name" [hidden]="!showThumbnail || autoplay" [src]="ad?.thumbnail.secure_url"
+      class="video-thumbnail" />
 
-  <div (click)="onShowProduct()" class="video-player-overlay"></div>
-  <div class="video-player">
-    <span>
-      <video #videoPlayer (ended)="onEnded()" [hidden]="!showVideo" [src]="ad?.media.secure_url"
-        [style]="!videoPlaying ? 'opacity: 1; object-fit: cover;' : ''" class="play-ad-video" crossorigin="anonymous"
-        playsinline [autoplay]="autoplay" [muted]="videoMuted"
-        style="background-color: #202020; pointer-events: none"></video>
-    </span>
-  </div>
-  <div [hidden]="!showCanvas">
-    <canvas #canvas></canvas>
-  </div>
-
-  <div [hidden]="!showCanvas"
-    [style]="'-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); background: rgba(0,0,0,0.35)'"
-    class="main-product-grid">
-    <nav class="nav">
-      <div class="video-player-nav">
-        <button (click)="onResumeVideo()" class="button-resume-grid button-base button-resume">
-          <div></div>
-          Resume
-        </button>
-
-        <button (click)="startQuiz()" *ngIf="showQuizButton" class="button-quiz-grid button-base start-quiz"
-          id="go-to-quiz">
-          <span class="coin-shine"></span>
-          <img alt="coin icon" src="/assets/img/player/coin.svg" />
-          <span>Earn Points</span>
-        </button>
-
-        <button (click)="toggleVideoMute()" *ngIf="showSoundIcon" class="button-sound-grid button-base">
-          <div></div>
-          <img [src]="videoMuted ? '/assets/img/player/muted_icon.svg' :'/assets/img/player/speaker_icon.svg'"
-            class="sound-status" [ngClass]="videoMuted ? 'muted' : ''" src="/assets/img/player/muted_icon.svg" />
-          Toggle Sound
-        </button>
-
-        <button (click)="onSeekAndPlay()" *ngIf="viewState == 'ProductGroup'"
-          class="button-locate-grid button-base button-locate">
-          <div></div>
-          Seek and play
-        </button>
-
-        <button (click)="onPreviousProductGroup()" *ngIf="viewState == 'ProductGroup'"
-          [ngClass]="{ disabled: disablePrevious }" class="button-prev-grid button-base button-prev">
-          <div></div>
-          Previous
-        </button>
-
-        <button (click)="onAllProductGroupsClick()" *ngIf="viewState == 'ProductGroup'"
-          class="button-all-grid button-base button-all">
-          <div></div>
-          All groups
-        </button>
-
-        <button (click)="onNextProductGroup()" *ngIf="viewState == 'ProductGroup'" [ngClass]="{ disabled: disableNext }"
-          class="button-next-grid button-base button-next">
-          <div></div>
-          Next
-        </button>
-
-        <button (click)="onBackToGroup()" *ngIf="viewState == 'Product' && showBackToGroupButton() == true"
-          class="button-up-grid button-base button-up">
-          <div></div>
-          Back to group
-        </button>
-
-        <button (click)="onExit()" class="button-start-grid button-base button-start">
-          <div></div>
-          Close
-        </button>
-
-        <div class="button-help-grid">
-          <div>
-            <mat-icon (click)="help()">help</mat-icon>
-          </div>
-        </div>
-
-        <div *ngIf="viewState == 'ProductGroup'" class="title">
-          {{ currentProductGroup?.title }}
-        </div>
-        <div *ngIf="viewState == 'Product'" class="title">
-          {{ currentProduct.name }}
-        </div>
-      </div>
+    <nav style="position: absolute; z-index: 101; top: 30px; right: 30px;" [hidden]="showCanvas" *ngIf="!errorMessage">
+      <button (click)="toggleVideoMute()" *ngIf="showSoundIcon"
+        style="background-color: rgba(0, 0, 0, 0.25); border-radius: 50%; height: 48px; width: 48px; border: 2px solid white; cursor: pointer;">
+        <img [src]="videoMuted ? '/assets/img/player/muted_icon.svg' :'/assets/img/player/speaker_icon.svg'"
+          class="sound-status" [ngClass]="videoMuted ? 'muted' : ''" src="/assets/img/player/muted_icon.svg" />
+      </button>
     </nav>
 
-    <!-- Insert a section here to encapsulate the product screen and product group screen based on visibility -->
-    <section *ngIf="viewState == 'Product'" [attr.title]="currentProduct?.subtitle" class="product-subtitle">
-      {{ currentProduct?.subtitle | subtitle }}
-    </section>
-    <section *ngIf="viewState == 'Product'" class="product-price">
-      {{ currentProduct?.price | currency }}
-    </section>
-    <button (click)="onBuyNow()" *ngIf="viewState == 'Product'" class="product-buy-now" mat-raised-button>
-      Buy Now
-    </button>
-
-    <div *ngIf="viewState == 'Product'" class="product-description" data-simplebar>
-      <p class="product-description">{{ currentProduct?.description }}</p>
+    <div (click)="onShowProduct()" class="video-player-overlay"></div>
+    <div class="video-player">
+      <span>
+        <video #videoPlayer (ended)="onEnded()" [hidden]="!showVideo" [src]="ad?.media.secure_url"
+          [style]="!videoPlaying ? 'opacity: 1; object-fit: cover;' : ''" class="play-ad-video" crossorigin="anonymous"
+          playsinline [autoplay]="autoplay" [muted]="videoMuted"
+          style="background-color: #202020; pointer-events: none"></video>
+      </span>
+    </div>
+    <div [hidden]="!showCanvas">
+      <canvas #canvas></canvas>
     </div>
 
-    <img (click)="openDialog()" *ngIf="viewState == 'Product'" [src]="selectedImage?.url" class="product-main-image" />
+    <div [hidden]="!showCanvas"
+      [style]="'-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); background: rgba(0,0,0,0.35)'"
+      class="main-product-grid">
+      <nav class="nav">
+        <div class="video-player-nav">
+          <button (click)="onResumeVideo()" class="button-resume-grid button-base button-resume">
+            <div></div>
+            Resume
+          </button>
 
-    <div *ngIf="viewState == 'Product'" class="product-image-thumbnails">
-      <ul style="list-style-type: none">
-        <li *ngFor="let thumbnail of currentProduct?.images">
-          <img (click)="onClickThumbnail(thumbnail)" [src]="thumbnail?.url" class="product-thumbnail" />
-        </li>
-      </ul>
-    </div>
-    <div *ngIf="viewState == 'ProductGroup'" class="pg-products-list">
-      <cdk-virtual-scroll-viewport class="pg-products-list" itemSize="50" maxBufferPx="400" minBufferPx="200">
-        <div class="products-container">
-          <div (click)="onProductClick(pt)" *cdkVirtualFor="let pt of this.currentProductGroup?.products"
-            class="product-template">
-            <img [src]="pt.images[0]?.url" class="product-template-image" />
-            <span class="product-template-name">{{ pt.name }}</span>
-            <div class="product-template-description-container">
-              <p class="product-template-description">{{ pt.description }}</p>
+          <button (click)="startQuiz()" *ngIf="showQuizButton" class="button-quiz-grid button-base start-quiz"
+            id="go-to-quiz">
+            <span class="coin-shine"></span>
+            <img alt="coin icon" src="/assets/img/player/coin.svg" />
+            <span>Earn Points</span>
+          </button>
+
+          <button (click)="toggleVideoMute()" *ngIf="showSoundIcon" class="button-sound-grid button-base">
+            <div></div>
+            <img [src]="videoMuted ? '/assets/img/player/muted_icon.svg' :'/assets/img/player/speaker_icon.svg'"
+              class="sound-status" [ngClass]="videoMuted ? 'muted' : ''" src="/assets/img/player/muted_icon.svg" />
+            Toggle Sound
+          </button>
+
+          <button (click)="onSeekAndPlay()" *ngIf="viewState == 'ProductGroup'"
+            class="button-locate-grid button-base button-locate">
+            <div></div>
+            Seek and play
+          </button>
+
+          <button (click)="onPreviousProductGroup()" *ngIf="viewState == 'ProductGroup'"
+            [ngClass]="{ disabled: disablePrevious }" class="button-prev-grid button-base button-prev">
+            <div></div>
+            Previous
+          </button>
+
+          <button (click)="onAllProductGroupsClick()" *ngIf="viewState == 'ProductGroup'"
+            class="button-all-grid button-base button-all">
+            <div></div>
+            All groups
+          </button>
+
+          <button (click)="onNextProductGroup()" *ngIf="viewState == 'ProductGroup'" [ngClass]="{ disabled: disableNext }"
+            class="button-next-grid button-base button-next">
+            <div></div>
+            Next
+          </button>
+
+          <button (click)="onBackToGroup()" *ngIf="viewState == 'Product' && showBackToGroupButton() == true"
+            class="button-up-grid button-base button-up">
+            <div></div>
+            Back to group
+          </button>
+
+          <button (click)="onExit()" class="button-start-grid button-base button-start">
+            <div></div>
+            Close
+          </button>
+
+          <div class="button-help-grid">
+            <div>
+              <mat-icon (click)="help()">help</mat-icon>
             </div>
           </div>
-        </div>
-      </cdk-virtual-scroll-viewport>
-    </div>
 
-    <div *ngIf="viewState == 'AllProductGroups'" class="all-product-groups">
-      <cdk-virtual-scroll-viewport class="all-product-groups" itemSize="50" maxBufferPx="400" minBufferPx="200">
-        <div class="product-groups-container">
-          <div (click)="onProductGroupClick(pg)" *cdkVirtualFor="let pg of ad?.productGroupTimeLine"
-            class="product-group">
-            <img [src]="pg?.thumbnail?.url" class="product-group-thumbnail" />
-            <span class="product-group-title">{{ pg?.title }}</span>
+          <div *ngIf="viewState == 'ProductGroup'" class="title">
+            {{ currentProductGroup?.title }}
+          </div>
+          <div *ngIf="viewState == 'Product'" class="title">
+            {{ currentProduct.name }}
           </div>
         </div>
-      </cdk-virtual-scroll-viewport>
+      </nav>
+
+      <!-- Insert a section here to encapsulate the product screen and product group screen based on visibility -->
+      <section *ngIf="viewState == 'Product'" [attr.title]="currentProduct?.subtitle" class="product-subtitle">
+        {{ currentProduct?.subtitle | subtitle }}
+      </section>
+      <section *ngIf="viewState == 'Product'" class="product-price">
+        {{ currentProduct?.price | currency }}
+      </section>
+      <button (click)="onBuyNow()" *ngIf="viewState == 'Product'" class="product-buy-now" mat-raised-button>
+        Buy Now
+      </button>
+
+      <div *ngIf="viewState == 'Product'" class="product-description" data-simplebar>
+        <p class="product-description">{{ currentProduct?.description }}</p>
+      </div>
+
+      <img (click)="openDialog()" *ngIf="viewState == 'Product'" [src]="selectedImage?.url" class="product-main-image" />
+
+      <div *ngIf="viewState == 'Product'" class="product-image-thumbnails">
+        <ul style="list-style-type: none">
+          <li *ngFor="let thumbnail of currentProduct?.images">
+            <img (click)="onClickThumbnail(thumbnail)" [src]="thumbnail?.url" class="product-thumbnail" />
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="viewState == 'ProductGroup'" class="pg-products-list">
+        <cdk-virtual-scroll-viewport class="pg-products-list" itemSize="50" maxBufferPx="400" minBufferPx="200">
+          <div class="products-container">
+            <div (click)="onProductClick(pt)" *cdkVirtualFor="let pt of this.currentProductGroup?.products"
+              class="product-template">
+              <img [src]="pt.images[0]?.url" class="product-template-image" />
+              <span class="product-template-name">{{ pt.name }}</span>
+              <div class="product-template-description-container">
+                <p class="product-template-description">{{ pt.description }}</p>
+              </div>
+            </div>
+          </div>
+        </cdk-virtual-scroll-viewport>
+      </div>
+
+      <div *ngIf="viewState == 'AllProductGroups'" class="all-product-groups">
+        <cdk-virtual-scroll-viewport class="all-product-groups" itemSize="50" maxBufferPx="400" minBufferPx="200">
+          <div class="product-groups-container">
+            <div (click)="onProductGroupClick(pg)" *cdkVirtualFor="let pg of ad?.productGroupTimeLine"
+              class="product-group">
+              <img [src]="pg?.thumbnail?.url" class="product-group-thumbnail" />
+              <span class="product-group-title">{{ pg?.title }}</span>
+            </div>
+          </div>
+        </cdk-virtual-scroll-viewport>
+      </div>
     </div>
-  </div>
-</main>
+  </main>
+</ng-container>

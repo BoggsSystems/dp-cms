@@ -16,7 +16,6 @@ import {EngagementService} from '../shared/services/engagement.service';
 import {
   XchaneAuthenticationService
 } from '../shared/services/xchane-auth-service.service';
-import {PreviewComponent} from '../cms/preview/preview.component';
 import {ProjectMedia} from '../shared/models/ProjectMedia';
 import {Category} from '../shared/models/category';
 import {
@@ -28,7 +27,6 @@ import {VisitorPopupComponent} from '../visitor-popup/visitor-popup.component';
 import {XchaneUser} from '../shared/models/xchane.user';
 import {WebsocketService} from '../shared/services/websocket.service';
 import { DataService } from '../xchane/services/data.service';
-import { VideoHelpComponent } from '../cms/help/video/video-help.component';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 
 @Component({
@@ -89,14 +87,6 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.webSocket.messages.subscribe(message => {
-      if (message.trigger === 'tour') {
-        this.videoTour = message.value;
-      } else if (message.trigger === 'quizAnswer') {
-        if (this.projectId !== message.value.project) { return; }
-        this.handlePostQuiz(message.value);
-      }
-    });
   }
 
   buildGrid: () => void = async () => {
@@ -186,8 +176,27 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     this.categoryId = categoryId;
 
     const dialogConfig = new MatDialogConfig();
-    const isUser = !!localStorage.getItem('XchaneCurrentUser');
-    const userId = isUser ? JSON.parse(localStorage.getItem('XchaneCurrentUser'))._id : false;
+
+    const getUserId = (): string | boolean => {
+      let userId: string | boolean = false;
+
+      const sessionUser = sessionStorage.getItem('XchaneCurrentUser');
+      if (sessionUser) {
+        userId = JSON.parse(sessionUser)._id;
+      }
+
+      if (!userId) {
+        const localUser = localStorage.getItem('XchaneCurrentUser');
+        if (localUser) {
+          userId = JSON.parse(localUser)._id;
+        }
+      }
+
+      return userId;
+    };
+
+    const isUser = !!getUserId();
+    const userId = isUser ? getUserId() : false;
 
     this.isUser = isUser;
 
@@ -198,11 +207,16 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
       categoryId,
       videoTour: this.videoTour
     };
+
     dialogConfig.panelClass = 'video-player-dialog';
     this.previewDialogRef = this.dialog.open(VideoPlayerComponent, dialogConfig);
-    const sub = this.previewDialogRef.componentInstance.onAdd.subscribe(() => {
-      this.previewDialogRef.close();
+    this.previewDialogRef.afterClosed().subscribe((data) => {
+      this.handlePostQuiz(data);
     });
+
+    // const sub = this.previewDialogRef.componentInstance.onAdd.subscribe(() => {
+    //   this.previewDialogRef.close();
+    // });
   }
 
   loadMoreVideos = () => {
@@ -217,11 +231,7 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     return `${this.monthNames[date.getMonth()]}, ${date.getDate()} - ${date.getFullYear()}`;
   }
 
-  handlePostQuiz = (answer: any) => {
-    if (this.dialogOpen) { return; }
-    this.previewDialogRef.close();
-
-    const isCorrect = answer.correct;
+  handlePostQuiz = (isCorrect: boolean) => {
     let confirmDialog: any;
 
     if (!isCorrect && !this.dialogOpen) {
@@ -254,12 +264,11 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     });
 
     this.canToggle = true;
-    const isUser = 'uuid' in answer;
-    this.scoreBubbleToggle(isUser);
+    this.scoreBubbleToggle(this.isUser);
     this.canToggle = false;
   }
 
-  scoreBubbleToggle = (isUser: boolean) => {
+  scoreBubbleToggle = (isUser: boolean | string) => {
     if (this.canToggle) {
       this.scoreBubbleIsOpen = true;
 
@@ -267,7 +276,7 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
         const scoreBubbleTimer = timer(2000);
         scoreBubbleTimer.subscribe((x: any) => {
           this.scoreBubbleIsOpen = false;
-          if (isUser) {
+          if (!isUser) {
             return this.openVisitorPopup();
           }
           this.refreshUser();

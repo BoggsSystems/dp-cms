@@ -64,6 +64,7 @@ import { MainHelpComponent } from './video-player/main-help/main-help.component'
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { SubtitlePipe } from './video-player/utilities/SubtitlePipe';
 import { NgxImageZoomModule } from 'ngx-image-zoom';
+import { QuizComponent } from './video-player/quiz/quiz.component';
 
 export const HTTP_CMS_AUTH = new InjectionToken('http_cms_auth');
 export const HTTP_XCHANE_AUTH = new InjectionToken('http_xchane_auth');
@@ -91,7 +92,8 @@ export const HTTP_NO_INTERCEPTORS = new InjectionToken('http_no_interceptors');
     VideoPlayerComponent,
     ImageCarouselComponent,
     MainHelpComponent,
-    SubtitlePipe
+    SubtitlePipe,
+    QuizComponent
   ],
   imports: [
     BrowserModule,

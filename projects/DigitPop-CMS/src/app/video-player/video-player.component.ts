@@ -51,7 +51,7 @@ export class VideoPlayerComponent implements OnInit {
   adReady = false;
   showThumbnail = true;
   showCanvas = false;
-  showQuizButton = false;
+  showQuizButton = true;
   disablePrevious = true;
   disableNext = true;
   preview = false;
@@ -66,6 +66,7 @@ export class VideoPlayerComponent implements OnInit {
   uuid: string;
   autoplay = true;
   errorMessage: string;
+  showQuiz = false;
   onAdd = new EventEmitter();
   @ViewChild('videoPlayer', { static: false }) videoPlayer: ElementRef;
   @ViewChild('canvas') canvas: ElementRef;
@@ -80,12 +81,14 @@ export class VideoPlayerComponent implements OnInit {
     private engagementService: EngagementService,
     private billsByService: BillsbyService,
     private renderer: Renderer2,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<VideoPlayerComponent>
   ) {
     this.isUser = false;
   }
 
   ngOnInit(): void {
+    console.log(this.data);
     this.adId = this.data.id;
     this.isUser = this.data.userId && this.data.userId.length !== 8;
     this.userId = this.isUser ? this.data.userId : '';
@@ -358,15 +361,10 @@ export class VideoPlayerComponent implements OnInit {
       this.showQuizButton = false;
     }
     this.onShowProduct();
-    // if (this.params.engagementId != null && this.params.campaignId) {
-    //   this.showQuizButton = true;
-    //   this.onShowProduct();
-    // } else {
-    //   this.onShowProduct();
-    // }
   }
 
   startQuiz() {
+    this.showQuiz = true;
     this.showQuizButton = false;
     const navigationExtras: NavigationExtras = this.isUser ? {
       state: {
@@ -380,7 +378,6 @@ export class VideoPlayerComponent implements OnInit {
       state: { isUser: false, campaignId: this.campaignId, uuid: this.uuid },
     };
 
-    console.log(navigationExtras);
     return this.router.navigate(['/quiz'], navigationExtras);
 
   }

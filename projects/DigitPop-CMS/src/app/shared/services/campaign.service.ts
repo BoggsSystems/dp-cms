@@ -12,10 +12,16 @@ export class CampaignService {
     });
   }
 
-  getCampaign(campaign: Campaign) {
-    return this.httpClient.get(
-      `${environment.apiUrl}/api/campaigns/` + campaign._id + `/true`
-    );
+  getCampaign(campaignOrId: string | Campaign) {
+    let id: string;
+
+    if (typeof campaignOrId === 'string') {
+      id = campaignOrId;
+    } else {
+      id = campaignOrId._id;
+    }
+
+    return this.httpClient.get(`${environment.apiUrl}/api/campaigns/${id}/true`);
   }
 
   updateCampaign(campaign: Campaign) {
