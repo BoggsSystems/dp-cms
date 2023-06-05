@@ -324,3 +324,9 @@ mat-radio-group {
 .load-more {
   grid-column: 1/-1;
 }
+
+.video-player-dialog .mat-dialog-container {
+  border-radius: 20px;
+  padding: 0;
+  overflow: hidden;
+}

@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {environment} from 'projects/DigitPop-CMS/src/environments/environment';
+import { Component, EventEmitter, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { environment } from 'projects/DigitPop-CMS/src/environments/environment';
 
 @Component({
   selector: 'digit-pop-preview',
@@ -19,7 +19,10 @@ export class PreviewComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<PreviewComponent>, @Inject(MAT_DIALOG_DATA) data: any) {
     this.isPreview = data.isPreview ? data.isPreview : false;
     const uuid = sessionStorage.getItem('uuid');
-    this.iFrameSrc = `${environment.playerUrl}/ad/${data.id}/preview/${this.isPreview}/userId/${data.userId !== false ? data.userId : uuid}`;
+    // this.iFrameSrc = `${environment.playerUrl}/ad/${data.id}/preview/${this.isPreview}/userId/${data.userId !== false ? data.userId : uuid}`;
+    this.iFrameSrc = `${environment.playerUrl}/ad/${data.id}`;
+
+    this.sendMessage(environment.playerUrl, 'parentComponentLoaded');
 
     addEventListener('message', (event) => {
       if (event.data.action === 'getCampaignId') {
@@ -37,14 +40,24 @@ export class PreviewComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  sendMessage = (event: MessageEvent, message: any) => {
-    const targetOrigin = event ? event.origin : '*';
-    const iframe = document.querySelector('iframe.iframe') as HTMLIFrameElement;
+  sendMessage = (target: MessageEvent<any> | string, message: any): void => {
+    let targetOrigin: string;
+    const iframe = document.getElementById('player') as HTMLIFrameElement;
 
-    if (event.data === 'exit') {
-      return this.onAdd.emit();
+    if (typeof target === 'string') {
+      targetOrigin = target;
+    } else if (target instanceof MessageEvent) {
+      targetOrigin = target.origin;
+
+      if (target.data === 'exit') {
+        this.onAdd.emit();
+        return;
+      }
+    } else {
+      targetOrigin = '*';
+      throw new Error('Invalid event type');
     }
 
     iframe.contentWindow.postMessage(message, targetOrigin);
-  }
+  };
 }

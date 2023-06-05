@@ -1,5 +1,6 @@
 <mat-dialog-content class="container">
   <iframe
+    #player
     [src]="iFrameSrc | safe"
     [attr.data-campaignId] = "campaignId"
     allow="autoplay"

@@ -11,6 +11,7 @@ export class Project {
   description: string;
   media: any;
   thumbnail: any;
+  createdBy: any;
   active: boolean;
 
   constructor() {

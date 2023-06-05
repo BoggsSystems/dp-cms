@@ -58,6 +58,12 @@ import { SubscriptionPlansComponent } from './subscription-plans/subscription-pl
 import { SubscribeComponent } from './subscribe/subscribe.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 import { SignupRevampedComponent } from './signup-revamped/signup-revamped.component';
+import { VideoPlayerComponent } from './video-player/video-player.component';
+import { ImageCarouselComponent } from './video-player/image-carousel/image-carousel.component';
+import { MainHelpComponent } from './video-player/main-help/main-help.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { SubtitlePipe } from './video-player/utilities/SubtitlePipe';
+import { NgxImageZoomModule } from 'ngx-image-zoom';
 
 export const HTTP_CMS_AUTH = new InjectionToken('http_cms_auth');
 export const HTTP_XCHANE_AUTH = new InjectionToken('http_xchane_auth');
@@ -81,7 +87,11 @@ export const HTTP_NO_INTERCEPTORS = new InjectionToken('http_no_interceptors');
     SubscriptionPlansComponent,
     SubscribeComponent,
     TermsOfServiceComponent,
-    SignupRevampedComponent
+    SignupRevampedComponent,
+    VideoPlayerComponent,
+    ImageCarouselComponent,
+    MainHelpComponent,
+    SubtitlePipe
   ],
   imports: [
     BrowserModule,
@@ -121,6 +131,8 @@ export const HTTP_NO_INTERCEPTORS = new InjectionToken('http_no_interceptors');
     SharedModule,
     XchaneModule,
     MatCheckboxModule,
+    ScrollingModule,
+    NgxImageZoomModule
   ],
   providers: [
     provideTokenizedHttpClient(HTTP_BILLS, { excludes: [JwtInterceptor, XchaneJwtInterceptor] }),

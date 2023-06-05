@@ -27,7 +27,9 @@ import {timer} from 'rxjs';
 import {VisitorPopupComponent} from '../visitor-popup/visitor-popup.component';
 import {XchaneUser} from '../shared/models/xchane.user';
 import {WebsocketService} from '../shared/services/websocket.service';
-import {DataService} from '../xchane/services/data.service';
+import { DataService } from '../xchane/services/data.service';
+import { VideoHelpComponent } from '../cms/help/video/video-help.component';
+import { VideoPlayerComponent } from '../video-player/video-player.component';
 
 @Component({
   selector: 'digit-pop-videos-grid',
@@ -51,7 +53,7 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   campaignId: string;
   categoryId: string;
   popupDialogRef: MatDialogRef<PlayerComponent>;
-  previewDialogRef: MatDialogRef<PreviewComponent>;
+  previewDialogRef: MatDialogRef<VideoPlayerComponent>;
   monthNames: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   scoreBubbleIsOpen: boolean;
   canToggle: boolean;
@@ -196,7 +198,8 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
       categoryId,
       videoTour: this.videoTour
     };
-    this.previewDialogRef = this.dialog.open(PreviewComponent, dialogConfig);
+    dialogConfig.panelClass = 'video-player-dialog';
+    this.previewDialogRef = this.dialog.open(VideoPlayerComponent, dialogConfig);
     const sub = this.previewDialogRef.componentInstance.onAdd.subscribe(() => {
       this.previewDialogRef.close();
     });

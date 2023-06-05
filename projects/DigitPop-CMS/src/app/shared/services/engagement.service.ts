@@ -20,6 +20,12 @@ export class EngagementService {
     }, httpOptions);
   }
 
+  createEngagementFromPlayer(userId: string, projectId: string) {
+    return this.http.post<any>(`${environment.apiUrl}/api/engagement/`, {
+      userId, projectId
+    }, httpOptions);
+  }
+
   createEngagementFromLast(xchaneUser: XchaneUser) {
     return this.http.post<any>(`${environment.apiUrl}/api/engagement/repeat`, {xchaneUser}, httpOptions);
   }
