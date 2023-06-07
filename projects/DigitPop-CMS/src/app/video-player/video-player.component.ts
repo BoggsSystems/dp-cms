@@ -1,7 +1,5 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Renderer2, ViewChild, Inject } from '@angular/core';
-import { ActivatedRoute, NavigationExtras, Params, Router } from '@angular/router';
+import { Component, ElementRef, EventEmitter, OnInit, Renderer2, ViewChild, Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { environment } from '../../environments/environment';
 
 
 import { AdService } from '../shared/services/player/ad.service';
@@ -28,7 +26,6 @@ enum VideoType {
 })
 export class VideoPlayerComponent implements OnInit {
 
-  onPremise = false;
   isUser: boolean;
   userId: string;
   adId: any;
@@ -51,11 +48,10 @@ export class VideoPlayerComponent implements OnInit {
   adReady = false;
   showThumbnail = true;
   showCanvas = false;
-  showQuizButton = true;
+  showQuizButton = false;
   disablePrevious = true;
   disableNext = true;
   preview = false;
-  params: Params;
   pgIndex: any;
   videoPlaying = false;
   enabledShoppableTour = true;
@@ -63,24 +59,19 @@ export class VideoPlayerComponent implements OnInit {
   isPreview = false;
   isIOS = false;
   isSafari = false;
-  uuid: string;
   autoplay = true;
   errorMessage: string;
   showQuiz = false;
-  onAdd = new EventEmitter();
   @ViewChild('videoPlayer', { static: false }) videoPlayer: ElementRef;
   @ViewChild('canvas') canvas: ElementRef;
 
   // tslint:disable-next-line:max-line-length
   constructor(
-    private router: Router,
     public dialog: MatDialog,
-    private route: ActivatedRoute,
     private adService: AdService,
     private userService: UserService,
     private engagementService: EngagementService,
     private billsByService: BillsbyService,
-    private renderer: Renderer2,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<VideoPlayerComponent>
   ) {
@@ -91,7 +82,6 @@ export class VideoPlayerComponent implements OnInit {
     this.adId = this.data.id;
     this.isUser = this.data.userId && this.data.userId.length !== 8;
     this.userId = this.isUser ? this.data.userId : '';
-    this.uuid = !this.isUser ? this.data.userId : '';
 
     this.videoType = VideoType.Regular;
     this.innerWidth = window.innerWidth;
@@ -209,7 +199,7 @@ export class VideoPlayerComponent implements OnInit {
     const playPromise = this.videoPlayer.nativeElement.play();
     if (playPromise !== undefined && playPromise.catch) {
       playPromise.catch((error: any) => {
-        this.videoMuted = true;
+        this.videoMuted = false;
         this.videoPlayer.nativeElement.play();
         console.log('Play promise error:', error);
       });
@@ -233,7 +223,7 @@ export class VideoPlayerComponent implements OnInit {
     this.setSize();
     this.showVideo = true;
 
-    if (!this.videoMuted && this.isIOS) { // Remove false to mute by default
+    if (!this.videoMuted && this.isIOS) {
       this.toggleVideoMute();
     }
 
@@ -353,31 +343,13 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   onEnded() {
-    if (this.uuid || this.userId) {
-      this.showQuizButton = true;
-    } else {
-      this.showQuizButton = false;
-    }
+    this.showQuizButton = true;
     this.onShowProduct();
   }
 
   startQuiz() {
     this.showQuiz = true;
     this.showQuizButton = false;
-    const navigationExtras: NavigationExtras = this.isUser ? {
-      state: {
-        userId: this.userId,
-        isUser: true,
-        campaignId: this.campaignId,
-        engagementId: this.engagementId,
-        uuid: this.uuid
-      },
-    } : {
-      state: { isUser: false, campaignId: this.campaignId, uuid: this.uuid },
-    };
-
-    return this.router.navigate(['/quiz'], navigationExtras);
-
   }
 
   onResumeVideo() {

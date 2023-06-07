@@ -25,7 +25,6 @@ import {PlayerComponent} from '../xchane/player/player.component';
 import {timer} from 'rxjs';
 import {VisitorPopupComponent} from '../visitor-popup/visitor-popup.component';
 import {XchaneUser} from '../shared/models/xchane.user';
-import {WebsocketService} from '../shared/services/websocket.service';
 import { DataService } from '../xchane/services/data.service';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 
@@ -62,7 +61,7 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   loggedIn = false;
 
   // tslint:disable-next-line:max-line-length
-  constructor(private videosService: VideosGridService, private engagementService: EngagementService, private authService: XchaneAuthenticationService, private dialog: MatDialog, private router: Router, private webSocket: WebsocketService, private data: DataService) {
+  constructor(private videosService: VideosGridService, private engagementService: EngagementService, private authService: XchaneAuthenticationService, private dialog: MatDialog, private router: Router, private data: DataService) {
     this.scoreBubbleIsOpen = false;
     this.canToggle = false;
     this.videosCount = Array(this.videosLimit).fill(0).map((x, i) => i);
