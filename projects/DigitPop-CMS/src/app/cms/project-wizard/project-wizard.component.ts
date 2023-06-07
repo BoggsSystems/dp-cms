@@ -37,6 +37,7 @@ import {PreviewComponent} from '../preview/preview.component';
 import {
   AuthenticationService
 } from '../../shared/services/auth-service.service';
+import { WelcomePopupComponent } from './welcome-popup/welcome-popup.component';
 import {ProjectWizardYoutubePopup} from './popup/youtube-popup.component';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {Cache} from '../../shared/helpers/cache';
@@ -177,15 +178,15 @@ export class ProjectWizardComponent implements OnInit {
     });
   }
 
-  openYoutubeDialog(): void {
-    const dialogRef = this.dialog.open(ProjectWizardYoutubePopup, {
-      width: '100%', height: '90%',
+  openWelcomePopup(): void {
+    const dialogRef = this.dialog.open(WelcomePopupComponent, {
+      panelClass: 'welcome-dialog', width: '100%', height: 'auto'
     });
   }
 
   wizardPopup() {
     if (!this.authService.currentUserValue.projectWizardPopup) {
-      this.openYoutubeDialog();
+      this.openWelcomePopup();
 
       this.authService.projectWizardPopup().subscribe((res) => {
         this.authService.currentUserValue.projectWizardPopup = true;

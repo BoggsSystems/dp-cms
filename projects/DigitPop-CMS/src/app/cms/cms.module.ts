@@ -62,6 +62,7 @@ import { CustomHttpInterceptor } from '../shared/interceptors/http.interceptor';
 import { OkDialogComponent } from './ok-dialog/ok-dialog.component';
 import { NestedProducts } from './dashboard/nested-tables/products.component';
 import { NestedCampaigns } from './dashboard/nested-tables/campaigns.component';
+import { WelcomePopupComponent } from './project-wizard/welcome-popup/welcome-popup.component';
 
 const routes: Routes = [
   {
@@ -153,6 +154,7 @@ const routes: Routes = [
     CampaignTitleComponent,
     NestedProducts,
     NestedCampaigns,
+    WelcomePopupComponent,
   ],
   exports: [RouterModule],
   providers: [
