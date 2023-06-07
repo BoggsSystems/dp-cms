@@ -6,7 +6,7 @@
   font-weight: 300;
   background-color: transparent;
   color: #fff;
-  font-family: Ubuntu, sans-serif;
+  font-family: 'Roboto Condensed', sans-serif;
 }
 
 @mixin product-image-thumbnails($gridColumnStart: 9, $gridColumnSpan: 12, $gridRowStart: 8, $gridRowSpan: 22) {
@@ -23,7 +23,7 @@
   background-color: #000000;
   color: #5abeff;
   font-size: $fontSize;
-  font-family: Ubuntu, sans-serif;
+  font-family: 'Roboto Condensed', sans-serif;
   font-weight: 500;
   display: table-cell;
   vertical-align: middle;
