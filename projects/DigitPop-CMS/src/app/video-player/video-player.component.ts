@@ -87,10 +87,10 @@ export class VideoPlayerComponent implements OnInit {
     this.isUser = this.videoData.userId && this.videoData.userId.length !== 8;
     this.userId = this.isUser ? this.videoData.userId : '';
 
-    this.enabledShoppableTour = this.auth.currentUserValue.tour;
+    this.enabledShoppableTour = this.auth.currentUserValue?.tour;
     this.data.getVideTour().subscribe(state => {
       this.enabledShoppableTour = state.enabled;
-    })
+    });
 
     this.videoType = VideoType.Regular;
     this.innerWidth = window.innerWidth;
