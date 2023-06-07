@@ -287,9 +287,9 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   onExit() {
-    const targetWindow = window.parent;
     this.showThumbnail = true;
     this.showCanvas = false;
+    this.dialogRef.close();
   }
 
   onBackToGroup() {

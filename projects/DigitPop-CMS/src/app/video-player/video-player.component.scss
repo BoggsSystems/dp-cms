@@ -1,8 +1,9 @@
-@mixin product-description($gridColumnStart: 2, $gridColumnSpan: 6, $gridRowStart: 12, $gridRowSpan: 22, $fontSize: 14px) {
+@mixin product-description($gridColumnStart: 2, $gridColumnSpan: 6, $gridRowStart: 12, $gridRowSpan: 22, $fontSize: 12px) {
   margin-top: 10px;
   grid-column: #{$gridColumnStart}/#{$gridColumnSpan};
   grid-row: #{$gridRowStart}/#{$gridRowSpan};
   font-size: $fontSize;
+  line-height: $fontSize * 1.25;
   font-weight: 300;
   background-color: transparent;
   color: #fff;
@@ -69,6 +70,7 @@
   grid-column: #{$gridColumnStart}/#{$gridColumnSpan};
   grid-row: #{$gridRowStart}/#{$gridRowSpan};
   font-size: $fontSize;
+  line-height: $fontSize;
   color: #fff;
 }
 
@@ -76,6 +78,7 @@
   display: grid;
   grid-template-columns: $gridTemplateColumns;
   grid-template-rows: $gridTemplateRows;
+  overflow: hidden;
 }
 
 @mixin product-template-image($width: 100px) {
@@ -91,6 +94,7 @@
   grid-row: 1/2;
   height: $height;
   font-size: $fontSize;
+  font-weight: 500;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -98,10 +102,14 @@
 }
 
 @mixin product-template-description-container($marginLeft: 10px, $height: 100px) {
+  align-items: center;
+  display: flex;
   margin-left: $marginLeft;
   grid-column: 2/3;
   grid-row: 2/3;
   height: $height;
+  font-size: 12px;
+  line-height: 16px;
 }
 
 @mixin product-template-description($width: 175px, $webkitLineClamp: 5) {
@@ -110,6 +118,7 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: $webkitLineClamp;
   overflow: hidden;
+  margin: 0;
 }
 
 .container--error {
