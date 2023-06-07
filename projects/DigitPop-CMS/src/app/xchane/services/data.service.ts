@@ -52,6 +52,13 @@ export class DataService {
   }
 
   /**
+  * Get an Observable video tour.
+  */
+  getVideTour(): Observable<any> {
+    return this.tourSubject.asObservable();
+  }
+
+  /**
    * Set notification display and message.
    * @param displayNotification - The updated display notification status.
    * @param notificationMessage - The updated notification message.

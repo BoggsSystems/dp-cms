@@ -13,7 +13,6 @@ export class AdService {
   }
 
   getAd = (videoId: any, isConsumer: boolean) => {
-    console.log('CALLED GET AD');
     return this.httpClient.get(`${environment.apiUrl}/api/projects/${videoId}/true/${isConsumer}`);
   }
 

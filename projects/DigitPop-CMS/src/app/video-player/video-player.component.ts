@@ -4,8 +4,10 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
 
 import { AdService } from '../shared/services/player/ad.service';
 import { BillsbyService } from '../shared/services/billsby.service';
+import { DataService } from '../xchane/services/data.service';
 import { EngagementService } from '../shared/services/engagement.service';
 import { UserService } from '../shared/services/player/user.service';
+import { XchaneAuthenticationService } from '../shared/services/xchane-auth-service.service';
 
 import { ImageCarouselComponent } from './image-carousel/image-carousel.component';
 import { MainHelpComponent } from './main-help/main-help.component';
@@ -54,7 +56,7 @@ export class VideoPlayerComponent implements OnInit {
   preview = false;
   pgIndex: any;
   videoPlaying = false;
-  enabledShoppableTour = true;
+  enabledShoppableTour = false;
   creatingEngagment = false;
   isPreview = false;
   isIOS = false;
@@ -68,20 +70,27 @@ export class VideoPlayerComponent implements OnInit {
   // tslint:disable-next-line:max-line-length
   constructor(
     public dialog: MatDialog,
+    private auth: XchaneAuthenticationService,
     private adService: AdService,
+    private data: DataService,
     private userService: UserService,
     private engagementService: EngagementService,
     private billsByService: BillsbyService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public videoData: any,
     public dialogRef: MatDialogRef<VideoPlayerComponent>
   ) {
     this.isUser = false;
   }
 
   ngOnInit(): void {
-    this.adId = this.data.id;
-    this.isUser = this.data.userId && this.data.userId.length !== 8;
-    this.userId = this.isUser ? this.data.userId : '';
+    this.adId = this.videoData.id;
+    this.isUser = this.videoData.userId && this.videoData.userId.length !== 8;
+    this.userId = this.isUser ? this.videoData.userId : '';
+
+    this.enabledShoppableTour = this.auth.currentUserValue.tour;
+    this.data.getVideTour().subscribe(state => {
+      this.enabledShoppableTour = state.enabled;
+    })
 
     this.videoType = VideoType.Regular;
     this.innerWidth = window.innerWidth;

@@ -75,6 +75,10 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     this.data.getLogin().subscribe(state => {
       this.loggedIn = state.loggedIn;
     });
+
+    this.data.getVideTour().subscribe(state => {
+      this.videoTour = state.enabled;
+    });
   }
 
   ngOnInit(): void {
