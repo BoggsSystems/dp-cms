@@ -236,8 +236,13 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     return `${this.monthNames[date.getMonth()]}, ${date.getDate()} - ${date.getFullYear()}`;
   }
 
-  handlePostQuiz = (isCorrect: boolean) => {
+  handlePostQuiz = (isCorrect: any) => {
+
     let confirmDialog: any;
+
+    if (this.isUser) {
+      isCorrect = isCorrect.correct;
+    }
 
     if (!isCorrect && !this.dialogOpen) {
       confirmDialog = this.dialog.open(AnswerDialogComponent, {
