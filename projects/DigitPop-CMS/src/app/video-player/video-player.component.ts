@@ -88,7 +88,6 @@ export class VideoPlayerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.data);
     this.adId = this.data.id;
     this.isUser = this.data.userId && this.data.userId.length !== 8;
     this.userId = this.isUser ? this.data.userId : '';
@@ -202,7 +201,7 @@ export class VideoPlayerComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      console.log('The dialog was closed');
+      /* TODO: Handle post closed */
     });
   }
 
@@ -226,7 +225,6 @@ export class VideoPlayerComponent implements OnInit {
     const targetWindow = window.parent;
     if (!this.preview && this.subscription != null) {
       this.adService.createView(this.adId, this.subscription.cycleId).subscribe((res) => {
-        console.log(res);
       }, (err) => {
         console.error(err);
       });
@@ -470,7 +468,7 @@ export class VideoPlayerComponent implements OnInit {
     dialogRef.componentInstance.url = this.selectedImage.url;
 
     dialogRef.afterClosed().subscribe(() => {
-      console.log('The dialog was closed');
+      /* TODO: Handle post clost event */
     });
   }
 

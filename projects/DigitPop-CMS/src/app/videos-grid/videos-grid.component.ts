@@ -211,7 +211,9 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     dialogConfig.panelClass = 'video-player-dialog';
     this.previewDialogRef = this.dialog.open(VideoPlayerComponent, dialogConfig);
     this.previewDialogRef.afterClosed().subscribe((data) => {
-      this.handlePostQuiz(data);
+      if (data !== undefined) {
+        this.handlePostQuiz(data);
+      }
     });
 
     // const sub = this.previewDialogRef.componentInstance.onAdd.subscribe(() => {
