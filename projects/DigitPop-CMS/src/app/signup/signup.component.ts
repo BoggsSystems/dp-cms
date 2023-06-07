@@ -1,22 +1,17 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatDialogRef} from '@angular/material/dialog';
-import {ActivatedRoute, NavigationExtras, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {
   XchaneAuthenticationService
 } from '../shared/services/xchane-auth-service.service';
-import {AuthenticationService} from '../shared/services/auth-service.service';
 import {ConfirmedValidator} from '../shared/helpers/confirmed.validator';
-import {User} from '../shared/models/user';
 import {Role} from '../shared/models/role';
 import {XchaneUser} from '../shared/models/xchane.user';
 import {
   throwError as observableThrowError
 } from 'rxjs/internal/observable/throwError';
 import {DataService} from '../xchane/services/data.service';
-import {WebsocketService} from '../shared/services/websocket.service';
-import {SubscriptionService} from '../shared/services/subscription.service';
-import {environment} from '../../environments/environment';
 
 interface customWindow extends Window {
   billsbyData: any;
@@ -51,23 +46,11 @@ export class SignupComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<SignupComponent>,
     fb: FormBuilder,
-    private route: ActivatedRoute,
     private router: Router,
     private authService: XchaneAuthenticationService,
-    private bizAuthService: AuthenticationService,
     private data: DataService,
-    private webSocket: WebsocketService,
-    private subscriptionService: SubscriptionService,
   ) {
-    if (this.fromQuiz) {
-      this.validRole = Role.Consumer;
-    } else {
-      this.validRole = Role.Business;
-    }
-     /* window['billsbyData'] = {
-      email: "fake@eamil.net",
-      fname: "fake"
-      }; */
+    this.validRole = Role.Consumer;
     this.signUpForm = fb.group({
       email: ['', Validators.required],
       password: ['', [Validators.required]],
@@ -78,7 +61,6 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   }
 
-
   ngOnInit(): void {
   }
 
@@ -86,62 +68,11 @@ export class SignupComponent implements OnInit, OnDestroy {
     return this.signUpForm.controls;
   }
 
-//   OnChangec($event: any){
-//     this.isCheckedConsumer= false;
-//     this.isCheckedBusiness =false;
-//     this.isCheckedConsumer =$event.source.checked;
-//      console.log(this.isCheckedConsumer,this.isCheckedBusiness);
-//      if(this.isCheckedConsumer=true){
-//        this.validRole=Role.Consumer;
-//      }
-//     // MatCheckboxChange {checked,MatCheckbox}
-//   }
-//   OnChangeb($eventa: any){
-//     this.isCheckedConsumer= false;
-//     this.isCheckedBusiness =false;
-//     this.isCheckedBusiness =$eventa.source.checked;
-//     if(this.isCheckedBusiness=true){
-//       this.validRole=Role.Business;
-//     }
-//     console.log(this.isCheckedBusiness,this.isCheckedConsumer);
-//    // MatCheckboxChange {checked,MatCheckbox}
-//  }
-
-  onChange($event: any) {
-    if ($event.source.value === '1') {
-      this.validRole = Role.Consumer;
-    }
-    if ($event.source.value === '2') {
-      this.validRole = Role.Business;
-    }
-  }
-
   submit() {
     if (this.fromQuiz || this.validRole === Role.Consumer) {
       const xchaneUser = new XchaneUser();
       return this.handleXchaneSignUp(xchaneUser);
     }
-
-    const user = new User();
-    user.email = this.signUpForm.controls.email.value;
-    user.password = this.signUpForm.controls.password.value;
-
-    this.bizAuthService.createUser(user).subscribe((res) => {
-      if (res.msg) {
-        return this.errorMessage = res.msg;
-      }
-
-      if (res) {
-        localStorage.setItem('currentRole', 'Business');
-        if (this.fromPlans || this.fromSubscribe) {
-          return this.createSubscription(res.user._id);
-        }
-        this.dialogRef.close();
-        this.router.navigate(['/cms/dashboard']);
-      }
-    }, (err) => {
-      console.log(err);
-    });
   }
 
   handleXchaneSignUp = (user: XchaneUser) => {
@@ -181,22 +112,8 @@ export class SignupComponent implements OnInit, OnDestroy {
       });
   }
 
-  createSubscription = (userId: string) => {
-    this.subscriptionService.createSubscription({
-      user: userId,
-      plan: 'free',
-      subscriptionDate: new Date(),
-      renewalDate: new Date(new Date().getTime() + (30 * 24 * 60 * 60 * 1000)) // 30 days from now
-    }).subscribe(response => {
-      this.dialogRef.close();
-      this.router.navigate(['/cms/dashboard']);
-    });
-  }
-
   refreshHomepage = () => {
     this.data.setLogin(true);
-    this.webSocket.send({trigger: 'signup', value: this.authService.currentUserValue._id});
-    this.webSocket.connect(environment.websocketURL + '/' + this.authService.currentUserValue._id);
     return this.router.navigate(['/']);
   }
 
