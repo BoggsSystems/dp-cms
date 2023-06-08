@@ -4,11 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "build": "ng build DigitPop-CMS --configuration production",
+    "build": "ng build DigitPop-CMS --configuration staging",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "heroku-postbuild": "ng build DigitPop-CMS --configuration production"
+    "heroku-postbuild": "ng build DigitPop-CMS --configuration staging"
   },
   "private": true,
   "dependencies": {
