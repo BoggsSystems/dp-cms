@@ -27,25 +27,18 @@ export class LogoutComponent implements OnInit {
   }
 
   logout() {
+    this.data.setLogin(false);
+
+    localStorage.clear();
+    sessionStorage.clear();
+
     if (this.businessUser.currentUser) {
       this.dialogRef.close(true);
       return this.businessUser.logout();
     }
-    Cache.invokeCache();
-    this.data.setLogin(false);
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('currentuser');
-    localStorage.removeItem('XchaneCurrentUser');
-    localStorage.removeItem('currentRole');
-    localStorage.removeItem('expires_at');
-    localStorage.removeItem('token');
-    sessionStorage.removeItem('currentRole');
-    sessionStorage.removeItem('currentUser');
-    sessionStorage.removeItem('XchaneCurrentUser');
 
-
-    this.router.navigate(['/']);
     this.dialogRef.close(true);
+    this.router.navigate(['/']);
   }
 
   close() {

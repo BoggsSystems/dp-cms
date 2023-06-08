@@ -17,5 +17,8 @@ export class SubscriptionService {
     return this.http.post<any>(this.endpoint, subscriptionData);
   }
 
-  
+  getSubscription(subscriptionId: string): Observable<any> {
+    return this.http.get<any>(`${this.endpoint}/${subscriptionId}`);
+  }
+
 }

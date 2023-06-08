@@ -10,6 +10,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 
 import { BusinessUserService } from '../../shared/services/accounts/business-user.service';
 import { BusinessUser } from '../../shared/interfaces/business-user.json';
+import { SubscriptionService } from '../../shared/services/subscription.service';
 
 @Component({
   selector: 'DigitPop-account',
@@ -34,7 +35,8 @@ export class AccountComponent implements OnInit {
     private billsByService: BillsbyService,
     private imageService: ImageService,
     private dialog: MatDialog,
-    private businessUser: BusinessUserService
+    private businessUser: BusinessUserService,
+    private subscriptionService: SubscriptionService
   ) {
     this.businessUser.currentUser.subscribe(user => {
       this.currentUser = user;
@@ -110,10 +112,18 @@ export class AccountComponent implements OnInit {
   }
 
   getSubscription() {
+    /* this.subscriptionService
+      .getSubscription(this.businessUser.currentUserValue?.subscription)
+      .subscribe(
+        (res) => {
+          console.log(res);
+        }
+      ) */
     this.businessUser
       .getSubscription()
       .subscribe(
         (res) => {
+          console.log(res);
           if (!res.cycleId) return;
           console.log(res);
         }
@@ -136,7 +146,6 @@ export class AccountComponent implements OnInit {
       .getUsage(cycleId)
       .subscribe(
         (res) => {
-          console.log(res);
           this.usage = this.formatBytes(res);
         },
         (err) => {
