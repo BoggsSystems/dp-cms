@@ -3,7 +3,6 @@ import {ActivatedRoute, NavigationExtras, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {first} from 'rxjs/operators';
 import {MatDialogRef} from '@angular/material/dialog';
-import {AuthenticationService} from '../shared/services/auth-service.service';
 import {
   XchaneAuthenticationService
 } from '../shared/services/xchane-auth-service.service';
@@ -15,7 +14,8 @@ import {
 import {XchaneUser} from '../shared/models/xchane.user';
 import {environment} from '../../environments/environment';
 import {WebsocketService} from '../shared/services/websocket.service';
-import {SubscriptionService} from '../shared/services/subscription.service';
+import { SubscriptionService } from '../shared/services/subscription.service';
+import { BusinessUserService } from '../shared/services/accounts/business-user.service';
 
 @Component({
   selector: 'digit-pop-login',
@@ -48,13 +48,13 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService,
+    private businessUser: BusinessUserService,
     private xchaneAuthenticationService: XchaneAuthenticationService,
     private billsbyService: BillsbyService,
     private webSocket: WebsocketService,
     private subscriptionService: SubscriptionService,
   ) {
-    if (this.authenticationService.currentUserValue) {
+    if (this.businessUser.currentUserValue) {
       this.router.navigate(['/']);
     }
     this.validRole = Role.Consumer;
@@ -146,7 +146,7 @@ export class LoginComponent implements OnInit {
           console.log('Update error : ' + err.toString());
         });
     } else if (this.validRole === 'Business' || this.fromPlans || this.fromSubscribe) {
-      this.authenticationService
+      this.businessUser
         .login(this.f.email.value, this.f.password.value)
         .pipe(first())
         .subscribe((res: any) => {
@@ -154,11 +154,11 @@ export class LoginComponent implements OnInit {
 
           if (this.fromPlans) {
             return this.createSubscription(
-              this.authenticationService.currentUserValue._id.toString()
+              this.businessUser.currentUserValue._id.toString()
             );
           } else if (this.fromSubscribe && this.cid && this.sid) {
             return this.createSubscription(
-              this.authenticationService.currentUserValue._id.toString(),
+              this.businessUser.currentUserValue._id.toString(),
               this.cid,
               this.sid
             );
@@ -188,7 +188,7 @@ export class LoginComponent implements OnInit {
     } else {
       data.plan = 'free';
     }
-    
+
     this.subscriptionService.createSubscription(data).subscribe(response => {
       console.log(response);
       this.dialogRef.close();

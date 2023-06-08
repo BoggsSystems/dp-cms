@@ -1,7 +1,8 @@
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, first, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { BusinessUser } from '../../interfaces/business-user.json';
 import { environment } from 'projects/DigitPop-CMS/src/environments/environment';
@@ -15,7 +16,10 @@ export class BusinessUserService {
   public currentUser: Observable<BusinessUser>;
   private currentUserSubject: BehaviorSubject<BusinessUser>;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
     this.currentUserSubject = new BehaviorSubject<BusinessUser>(
       JSON.parse(localStorage.getItem('user'))
     );
@@ -24,6 +28,41 @@ export class BusinessUserService {
 
   public get currentUserValue(): BusinessUser {
     return this.currentUserSubject.value;
+  }
+
+  private storeTokens(accessToken: string, refreshToken: string) {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+  }
+
+  private cleanStorage = () => {
+    if (sessionStorage.getItem('currentRole')) {
+      sessionStorage.removeItem('currentRole');
+    }
+    if (sessionStorage.getItem('user')) {
+      sessionStorage.removeItem('user');
+    }
+    if (sessionStorage.getItem('accessToken')) {
+      sessionStorage.removeItem('accessToken');
+    }
+    if (sessionStorage.getItem('refreshToken')) {
+      sessionStorage.removeItem('refreshToken');
+    }
+
+    if (localStorage.getItem('currentRole')) {
+      localStorage.removeItem('currentRole');
+    }
+    if (localStorage.getItem('user')) {
+      localStorage.removeItem('user');
+    }
+    if (localStorage.getItem('accessToken')) {
+      localStorage.removeItem('accessToken');
+    }
+    if (localStorage.getItem('refreshToken')) {
+      localStorage.removeItem('refreshToken');
+    }
+
+    this.currentUserSubject.next(null);
   }
 
   createUser = (user: BusinessUser): Observable<any> =>
@@ -60,7 +99,36 @@ export class BusinessUserService {
       );
   };
 
-  welcome(): Observable<any> {
+  login(email: string, password: string) {
+    return this.http
+      .post<any>(`${environment.apiUrl}/auth/local`, { email, password })
+      .pipe(
+        switchMap((res) =>
+          res.token && res.refreshToken
+            ? this.handleLoginSuccess(res)
+            : this.handleLoginFailure(res)
+        ),
+        catchError((err) => {
+          console.error(err);
+          return throwError(err);
+        })
+      );
+  }
+
+  private handleLoginSuccess(res: any): Observable<BusinessUser> {
+    this.storeTokens(res.token, res.refreshToken);
+    const user = { ...res.user, token: res.token };
+    localStorage.setItem('user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+    return of(res.user);
+  }
+
+  private handleLoginFailure(res: any): Observable<never> {
+    alert(res.message);
+    return throwError('Login failed');
+  }
+
+  welcome = (): Observable<any> => {
     const userId = this.currentUserValue?._id;
     const url = `${environment.apiUrl}/api/business-users/${userId}/welcome`;
 
@@ -70,5 +138,71 @@ export class BusinessUserService {
         return of(null);
       })
     );
+  }
+
+  projectTour = (): Observable<any> => {
+    const userId = this.currentUserValue?._id;
+    const url = `${environment.apiUrl}/api/business-users/${userId}/tour`;
+
+    return this.http.put<any>(url, { id: userId }).pipe(
+      catchError((error) => {
+        console.error(error);
+        return of(null);
+      })
+    );
+  }
+
+  refreshToken(): Observable<string> {
+    return this.currentUserSubject.pipe(
+      first(),
+      switchMap((currentUser) => {
+        const refreshToken = localStorage.getItem('refreshToken');
+
+        if (!currentUser || !refreshToken) {
+          return throwError('No user or refresh token available.');
+        }
+
+        return this.http.post<any>(`${environment.apiUrl}/auth/local/refresh`, { refreshToken }).pipe(
+          catchError((err) => {
+            console.log(err);
+            return throwError(err);
+          }),
+          switchMap((res) => {
+            if (res.token && res.refreshToken) {
+              this.storeTokens(res.token, res.refreshToken);
+              const updatedUser = { ...currentUser, token: res.token };
+              localStorage.setItem('user', JSON.stringify(updatedUser));
+              this.currentUserSubject.next(updatedUser);
+              return of(res.token);
+            } else {
+              return throwError('Failed to refresh token');
+            }
+          })
+        );
+      })
+    );
+  }
+
+  getSubscription = (subscriptionId?: string) => {
+    if (!subscriptionId) {
+      subscriptionId = this.currentUserValue?.subscription;
+    }
+    return this.http.get<any>(
+      `${environment.apiUrl}/api/subscription/${subscriptionId}`
+    );
+  }
+
+  getUsage = (cycleId: string, userId?: string) => {
+    if (!userId) {
+      userId = this.currentUserValue?._id;
+    }
+    return this.http.get<any>(
+      `${environment.apiUrl}/api/users/${userId}/${cycleId}/usage`
+    );
+  };
+
+  logout = () => {
+    this.cleanStorage();
+    this.router.navigate(['/home']);
   }
 }

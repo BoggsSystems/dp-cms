@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 
 import { SubscriptionService } from '../services/subscription.service';
+import { BusinessUserService } from '../services/accounts/business-user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,17 +15,14 @@ export class UserRoleCheckResolver implements Resolve<boolean> {
 
   constructor(
     private router: Router,
-    private subscriptionService: SubscriptionService
+    private subscriptionService: SubscriptionService,
+    private businessUser: BusinessUserService
   ) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
     this.extractNavigationExtras();
 
-    const currentRole =
-      localStorage.getItem('currentRole') ||
-      sessionStorage.getItem('currentRole');
-
-    if (currentRole === 'Business') {
+    if (this.businessUser.currentUserValue?._id) {
       const user =
         localStorage.getItem('currentuser') ||
         sessionStorage.getItem('currentuser');

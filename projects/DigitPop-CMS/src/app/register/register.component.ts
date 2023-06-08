@@ -2,12 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-  Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ConfirmedValidator } from '../shared/helpers/confirmed.validator';
+import { ActivatedRoute } from '@angular/router';
 import { User } from '../shared/models/user';
-import { AuthenticationService } from '../shared/services/auth-service.service';
 import { BillsbyService } from '../shared/services/billsby.service';
 
 @Component({
@@ -24,21 +21,9 @@ export class RegisterComponent implements OnInit {
   constructor(
     fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router,
-    private authService: AuthenticationService,
     private billsbyService: BillsbyService
   ) {
     console.log("REGISTER COMPONENT");
-
-    // this.form = fb.group(
-    //   {
-    //     password: ['', [Validators.required]],
-    //     confirm_password: ['', [Validators.required]],
-    //   },
-    //   {
-    //     validator: ConfirmedValidator('password', 'confirm_password'),
-    //   }
-    // );
   }
 
   get f() {
@@ -52,19 +37,6 @@ export class RegisterComponent implements OnInit {
     user.cid = this.cid;
     user.sid = this.sid;
     user.password = localStorage.getItem('toSignUpBusinessUserPassword');
-
-    this.authService.createUser(user).subscribe(
-      (res) => {
-        if(res){
-          localStorage.setItem("currentRole",'Business');
-          this.router.navigate(['/cms/dashboard']);
-        }
-      },
-      (err) => {
-        console.log('Update error : ' + err.toString());
-      }
-    );
-
   }
 
   ngOnInit(): void {

@@ -6,6 +6,7 @@ import { LoginComponent } from '../../login/login.component';
 import {
   XchaneAuthenticationService
 } from '../services/xchane-auth-service.service';
+import { BusinessUserService } from '../services/accounts/business-user.service';
 
 @Injectable({ providedIn: 'root' })
 /**
@@ -15,7 +16,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
     private xAuthenticationService: XchaneAuthenticationService,
-    private authenticationService: AuthenticationService,
+    private businessUser: BusinessUserService,
     private dialog: MatDialog
   ) {}
 
@@ -26,8 +27,14 @@ export class AuthGuard implements CanActivate {
    * @param state The router state snapshot
    * @returns A boolean value indicating whether the user is authorized
    */
+  // TODO: check canActivate
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const currentUser = this.xAuthenticationService.currentUserValue || this.authenticationService.currentUserValue;
+    const currentUser = this.xAuthenticationService.currentUserValue || this.businessUser.currentUserValue;
+
+    if ('subscription' in currentUser) {
+      currentUser.role = 'Business';
+    }
+
     if (currentUser) {
       if (route.data.roles && route.data.roles.indexOf(currentUser.role) === -1) {
         this.router.navigate(['/']);

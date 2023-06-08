@@ -14,9 +14,6 @@ import {BillsbyService} from '../../shared/services/billsby.service';
 import {CampaignService} from '../../shared/services/campaign.service';
 import {ProjectService} from '../../shared/services/project.service';
 import {ProductGroupService} from '../../shared/services/product-group.service';
-import {
-  AuthenticationService
-} from '../../shared/services/auth-service.service';
 import {WelcomeComponent} from '../help/welcome/welcome.component';
 import {ProjectsHelpComponent} from '../help/projects/projects-help.component';
 import {
@@ -84,7 +81,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild('campaignSorter') campaignSorter: MatSort;
 
-  constructor(private route: ActivatedRoute, private billsbyService: BillsbyService, private campaignService: CampaignService, private breakpointObserver: BreakpointObserver, private projectService: ProjectService, private productGroupService: ProductGroupService, private authService: AuthenticationService, private router: Router, public dialog: MatDialog,
+  constructor(private route: ActivatedRoute, private billsbyService: BillsbyService, private campaignService: CampaignService, private breakpointObserver: BreakpointObserver, private projectService: ProjectService, private productGroupService: ProductGroupService, private router: Router, public dialog: MatDialog,
   private businessUser: BusinessUserService,
   ) {
     this.height = 25;
@@ -110,16 +107,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   welcome() {
-    // TODO: Remove authService and only keep businessUser service
-    if (!this.authService.currentUserValue.welcomed) {
+    if (!this.businessUser.currentUserValue.welcomed) {
       this.openWelcomeDialog();
 
-      this.authService.welcome().subscribe((res) => {
+      this.businessUser.welcome().subscribe((res) => {
         this.businessUser.currentUserValue.welcomed = true;
         this.businessUser.storeUser(this.businessUser.currentUserValue);
-
-        this.authService.currentUserValue.welcomed = true;
-        this.authService.storeUser(this.authService.currentUserValue);
       }, (error) => {
         this.error = error;
       });

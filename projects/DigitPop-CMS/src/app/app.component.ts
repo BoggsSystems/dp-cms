@@ -25,6 +25,7 @@ import {
 import {WebsocketService} from './shared/services/websocket.service';
 import {DataService} from './xchane/services/data.service';
 import { filter } from 'rxjs/operators';
+import { BusinessUserService } from './shared/services/accounts/business-user.service';
 
 @Component({
   selector: 'digit-pop-root',
@@ -62,7 +63,7 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
   hideNotification = true;
 
   // tslint:disable-next-line:max-line-length
-  constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private webSocket: WebsocketService, public data: DataService) {
+  constructor(public spinnerService: SpinnerService, private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private router: Router, private route: ActivatedRoute, private authService: XchaneAuthenticationService, private webSocket: WebsocketService, public data: DataService, private businessUser: BusinessUserService) {
 
     if (localStorage.getItem('currentRole') === 'Business') {
       this.hideNotification = true;
@@ -132,8 +133,12 @@ export class AppComponent implements OnInit, DoCheck, AfterViewChecked {
     this.isTrial = localStorage.getItem('trial');
     this.currentRole = localStorage.getItem('currentRole') || sessionStorage.getItem('currentRole');
 
-    if (localStorage.getItem('currentuser')) {
-      this.currentUser = JSON.parse(localStorage.getItem('currentuser'));
+    if (localStorage.getItem('user')) {
+      this.currentUser = JSON.parse(localStorage.getItem('user'));
+    }
+
+    if (sessionStorage.getItem('user')) {
+      this.currentUser = JSON.parse(localStorage.getItem('user'));
     }
 
     if (localStorage.getItem('XchaneCurrentUser')) {

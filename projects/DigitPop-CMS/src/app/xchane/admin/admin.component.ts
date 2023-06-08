@@ -5,8 +5,6 @@ import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
 import { XchaneUser } from '../../shared/models/xchane.user';
 import { XchaneAuthenticationService } from '../../shared/services/xchane-auth-service.service';
-import { AuthenticationService } from '../../shared/services/auth-service.service';
-
 
 @Component({
   selector: 'app-admin',
@@ -83,7 +81,7 @@ export class AdminComponent {
 @Injectable()
 export class CanActivateViaAuthGuard implements CanActivate {
 
-  constructor(private authService: AuthenticationService) { }
+  constructor() { }
 
   canActivate() {
     return false;

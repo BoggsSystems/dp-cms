@@ -3,7 +3,8 @@ import {Router} from '@angular/router';
 import {FormGroup} from '@angular/forms';
 import {MatDialogRef} from '@angular/material/dialog';
 import {Cache} from '../shared/helpers/cache';
-import {DataService} from '../xchane/services/data.service';
+import { DataService } from '../xchane/services/data.service';
+import { BusinessUserService } from '../shared/services/accounts/business-user.service';
 
 @Component({
   selector: 'digit-pop-logout',
@@ -17,13 +18,19 @@ export class LogoutComponent implements OnInit {
   returnUrl: string;
   error = '';
 
-  constructor(public dialogRef: MatDialogRef<LogoutComponent>, public router: Router, private data: DataService) {
+  constructor(public dialogRef: MatDialogRef<LogoutComponent>, public router: Router, private data: DataService,
+    private businessUser: BusinessUserService,
+  ) {
   }
 
   ngOnInit() {
   }
 
   logout() {
+    if (this.businessUser.currentUser) {
+      this.dialogRef.close(true);
+      return this.businessUser.logout();
+    }
     Cache.invokeCache();
     this.data.setLogin(false);
     localStorage.removeItem('currentUser');

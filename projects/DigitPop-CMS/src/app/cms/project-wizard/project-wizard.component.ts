@@ -34,15 +34,12 @@ import {
 } from '../help/thumbnail/thumbnail-help.component';
 import {PreviewHelpComponent} from '../help/preview/preview-help.component';
 import {PreviewComponent} from '../preview/preview.component';
-import {
-  AuthenticationService
-} from '../../shared/services/auth-service.service';
 import { WelcomePopupComponent } from './welcome-popup/welcome-popup.component';
-import {ProjectWizardYoutubePopup} from './popup/youtube-popup.component';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {Cache} from '../../shared/helpers/cache';
 import {MatSlideToggleChange} from '@angular/material/slide-toggle';
-import {environment} from '../../../environments/environment';
+import { environment } from '../../../environments/environment';
+import { BusinessUserService } from '../../shared/services/accounts/business-user.service';
 
 
 @Component({
@@ -68,7 +65,7 @@ export class ProjectWizardComponent implements OnInit {
   error = '';
   playerURL = '';
 
-  constructor(private videoService: VideoService, private imageService: ImageService, private projectService: ProjectService, private productGroupService: ProductGroupService, private dialog: MatDialog, private productService: ProductService, private router: Router, private authService: AuthenticationService, private clipboard: Clipboard,) {
+  constructor(private videoService: VideoService, private imageService: ImageService, private projectService: ProjectService, private productGroupService: ProductGroupService, private dialog: MatDialog, private productService: ProductService, private router: Router, private clipboard: Clipboard, private businessUser: BusinessUserService) {
     this.playerURL = environment.playerUrl;
     // Logic to determine if we're editing an existing project or creating a new one
     var nav = this.router.getCurrentNavigation();
@@ -185,11 +182,11 @@ export class ProjectWizardComponent implements OnInit {
   }
 
   wizardPopup() {
-    if (!this.authService.currentUserValue.projectWizardPopup) {
+    if (!this.businessUser.currentUserValue.projectToured) {
       this.openWelcomePopup();
 
-      this.authService.projectWizardPopup().subscribe((res) => {
-        this.authService.currentUserValue.projectWizardPopup = true;
+      this.businessUser.projectTour().subscribe((res) => {
+        this.businessUser.currentUserValue.projectToured = true;
       }, (error) => {
         this.error = error;
       });

@@ -26,6 +26,7 @@ export interface BusinessUser {
   _id?: string;
   branding: Branding;
   welcomed: boolean;
+  projectToured: boolean;
   cid?: string;
   subscription?: string;
   firstName: string;
@@ -33,5 +34,7 @@ export interface BusinessUser {
   email: string;
   password: string;
   address: Address;
-  cardDetails: cardDetails
+  cardDetails: cardDetails;
+  token: string;
+  role?: string;
 }

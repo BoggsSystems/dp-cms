@@ -1,11 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormArray } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { map } from 'rxjs/operators';
 import { HttpEventType } from '@angular/common/http';
-import { User } from '../../shared/models/user';
-import { AuthenticationService } from '../../shared/services/auth-service.service';
+
 import { BillsbyService } from '../../shared/services/billsby.service';
 import { ImageService } from '../../shared/services/image.service';
 import { AccountHelpComponent } from '../help/account/account-help.component';
@@ -34,11 +31,9 @@ export class AccountComponent implements OnInit {
   file: File | null = null;
 
   constructor(
-    private authService: AuthenticationService,
     private billsByService: BillsbyService,
     private imageService: ImageService,
     private dialog: MatDialog,
-    private router: Router,
     private businessUser: BusinessUserService
   ) {
     this.businessUser.currentUser.subscribe(user => {
@@ -103,29 +98,26 @@ export class AccountComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/home']);
+    this.businessUser.logout();
   }
 
   getCid(): string {
-    return this.authService.currentUserValue.cid;
+    return this.businessUser.currentUserValue?.cid;
   }
 
   getSid(): string {
-    return this.authService.currentUserValue.sid;
+    return this.businessUser.currentUserValue?.subscription;
   }
 
   getSubscription() {
-    this.billsByService.getSubscriptionDetails().subscribe(
-      (res) => {
-        this.subscription = res;
-        this.getUsage();
-        console.log(res);
-      },
-      (err) => {
-        console.error(err);
-      }
-    );
+    this.businessUser
+      .getSubscription()
+      .subscribe(
+        (res) => {
+          if (!res.cycleId) return;
+          console.log(res);
+        }
+      );
   }
 
   accountHelp() {
@@ -139,16 +131,16 @@ export class AccountComponent implements OnInit {
     });
   }
 
-  getUsage() {
-    this.authService
-      .getUsage(this.authService.currentUserValue, this.subscription.cycleId)
+  getUsage(cycleId: string) {
+    this.businessUser
+      .getUsage(cycleId)
       .subscribe(
         (res) => {
+          console.log(res);
           this.usage = this.formatBytes(res);
-          console.log('Update response : ' + res.toString());
         },
         (err) => {
-          console.log('Update error : ' + err.toString());
+          console.error(err);
         }
       );
   }
@@ -174,8 +166,6 @@ export class AccountComponent implements OnInit {
     });
     confirmDialog.afterClosed().subscribe((result) => {
       if (result === true) {
-        //this.billsByService.cancelSubscription();
-
         this.billsByService.cancelSubscription().subscribe(
           (res) => {
             this.logout();
