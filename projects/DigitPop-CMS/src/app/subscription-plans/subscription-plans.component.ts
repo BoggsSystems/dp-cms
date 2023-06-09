@@ -3,6 +3,7 @@ import { BillsbyService } from '../shared/services/billsby.service';
 import { Plan } from '../shared/interfaces/plan.json';
 import {VisitorPopupComponent} from '../visitor-popup/visitor-popup.component';
 import {MatDialog} from '@angular/material/dialog';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'digit-pop-subscription-plans',
@@ -15,7 +16,11 @@ export class SubscriptionPlansComponent implements OnInit {
   plans: Plan[];
   popupOpened = false;
 
-  constructor(private billsByService: BillsbyService, private dialog: MatDialog) {
+  constructor(
+    private billsByService: BillsbyService,
+    private dialog: MatDialog,
+    private router: Router
+  ) {
     this.billsByService.getProductPlans().subscribe((res: Plan[]) => {
       this.plans = res;
     });
@@ -41,6 +46,14 @@ export class SubscriptionPlansComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       this.popupOpened = false;
     });
+  }
+
+  redirectToSignUp = (planName: string, cycleId?: string) => {
+    const navigationExtras: NavigationExtras = {
+      state: { planName, cycleId: cycleId ? cycleId : null, },
+    };
+
+    return this.router.navigate(['/signup'], navigationExtras);
   }
 
 }

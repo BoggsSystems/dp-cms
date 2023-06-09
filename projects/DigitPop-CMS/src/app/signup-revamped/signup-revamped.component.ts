@@ -51,6 +51,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     private billsByService: BillsbyService,
     private changeDetectorRef: ChangeDetectorRef
   ) {
+    this.planName = 'free';
     this.extractNavigationExtras();
 
     // Use FormBuilder to initialize the form
@@ -121,7 +122,10 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
 
   private extractNavigationExtras = (): void => {
     const nav = this.router.getCurrentNavigation();
-    const { cid, sid } = nav?.extras?.state || {};
+    const { cid, sid, planName, cycleId } = nav?.extras?.state || {};
+
+    if (planName) this.planName = planName;
+    if (this.cycleId) this.cycleId = cycleId;
 
     const updateValues = (value: { cid: string; sid: string }): void => {
       this.cid = value.cid;

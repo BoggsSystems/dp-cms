@@ -29,7 +29,7 @@
     <div class="usage" *ngIf="usage">
       <h5>Usage : {{ usage }}</h5>
     </div>
-    <div class="cancelSubscription">
+    <div class="cancelSubscription" *ngIf="subscription.nextBillingDate">
       <button
         mat-raised-button
         color

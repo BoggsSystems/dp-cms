@@ -39,8 +39,7 @@
 			</ul>
 		</div>
 
-		<button *ngIf="plan.name !== 'free'" class="card__btn" data-billsby-type="checkout" [attr.data-billsby-product]="plan.productId" [attr.data-billsby-plan]="plan.planId" [attr.data-billsby-cycle]="plan.cycles[plan.cycles.length - 1].cycleId">choose plan</button>
-		<button *ngIf="plan.name === 'free'" class="card__btn" (click)="openVisitorPopup()">choose plan</button>
+		<button class="card__btn" (click)="redirectToSignUp(plan.name, plan.cycles[plan.cycles.length - 1].cycleId)">choose plan</button>
 	</div>
 
 </section>
