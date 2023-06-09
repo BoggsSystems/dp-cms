@@ -20,9 +20,9 @@ export class AdService {
     return this.httpClient.post(`${environment.apiUrl}/api/projects`, requestBody);
   }
 
-  createView = (adId: any, cycle: any) => {
+  createView = (adId: any) => {
     return this.httpClient.post<any>(`${environment.apiUrl}/api/views/`, {
-      id: adId, cycle,
+      id: adId,
     });
   }
 

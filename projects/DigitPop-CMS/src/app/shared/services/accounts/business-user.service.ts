@@ -192,12 +192,20 @@ export class BusinessUserService {
     );
   }
 
-  getUsage = (cycleId: string, userId?: string) => {
+  getUsage = (userId?: string, subscriptionId? : string) => {
     if (!userId) {
       userId = this.currentUserValue?._id;
     }
-    return this.http.get<any>(
-      `${environment.apiUrl}/api/users/${userId}/${cycleId}/usage`
+
+    if (!subscriptionId) {
+      subscriptionId = this.currentUserValue?.subscription;
+    }
+
+    return this.http.post<any>(
+      `${environment.apiUrl}/api/business-users/${userId}/usage`,
+      {
+        subscriptionId: subscriptionId
+      }
     );
   };
 

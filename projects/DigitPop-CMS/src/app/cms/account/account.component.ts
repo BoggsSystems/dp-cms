@@ -11,6 +11,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { BusinessUserService } from '../../shared/services/accounts/business-user.service';
 import { BusinessUser } from '../../shared/interfaces/business-user.json';
 import { SubscriptionService } from '../../shared/services/subscription.service';
+import { LogoutComponent } from '../../logout/logout.component';
 
 @Component({
   selector: 'DigitPop-account',
@@ -45,6 +46,7 @@ export class AccountComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSubscription();
+    this.getUsage();
   }
 
   onSubmitThumbnail() {
@@ -100,7 +102,9 @@ export class AccountComponent implements OnInit {
   }
 
   logout(): void {
-    this.businessUser.logout();
+    const dialogRef = this.dialog.open(LogoutComponent, {
+      panelClass: 'dpop-modal'
+    });
   }
 
   getCid(): string {
@@ -112,22 +116,33 @@ export class AccountComponent implements OnInit {
   }
 
   getSubscription() {
-    /* this.subscriptionService
-      .getSubscription(this.businessUser.currentUserValue?.subscription)
-      .subscribe(
-        (res) => {
-          console.log(res);
-        }
-      ) */
     this.businessUser
       .getSubscription()
       .subscribe(
         (res) => {
-          console.log(res);
-          if (!res.cycleId) return;
-          console.log(res);
+          if (res.plan === 'free') {
+            this.setFreeSubscription(res);
+          }
+          if (!res.billsBySid) return;
+          this.getSubscriptioDetails(res.billsBySid);
         }
       );
+  }
+
+  getSubscriptioDetails(sid: string) {
+    this.billsByService
+      .getSubscriptionDetails(sid)
+      .subscribe(
+        (res) => {
+          this.subscription = res;
+        }
+    );
+  }
+
+  setFreeSubscription(res: any) {
+    this.subscription = res;
+    this.subscription.planName = res.plan;
+    this.subscription.status = res.status;
   }
 
   accountHelp() {
@@ -141,12 +156,13 @@ export class AccountComponent implements OnInit {
     });
   }
 
-  getUsage(cycleId: string) {
+  getUsage(userId?: string, subscriptionId?: string) {
     this.businessUser
-      .getUsage(cycleId)
+      .getUsage()
       .subscribe(
         (res) => {
-          this.usage = this.formatBytes(res);
+          if ('success' in res && !res.success) return;
+          this.usage = this.formatBytes(res.data);
         },
         (err) => {
           console.error(err);

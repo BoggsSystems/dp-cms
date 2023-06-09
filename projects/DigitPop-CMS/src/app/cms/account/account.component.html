@@ -1,31 +1,32 @@
 <div class="container">
+  {{  subscription.planName }}
   <div class="subscriptionInfo">
     <h3 class="header">Subscription Details<mat-icon (click)="accountHelp()">help</mat-icon></h3>
-    <div class="productName">
+    <div class="productName" *ngIf="subscription.productName">
       <h5>Product Name : {{ subscription.productName }}</h5>
     </div>
     <div class="planName">
-      <h5>Plan Name : {{ subscription.planName }}</h5>
+      <h5 style="text-transform: capitalize;">Plan Name : {{ subscription.planName }}</h5>
     </div>
     <div class="status">
       <h5>Status : {{ subscription.status }}</h5>
     </div>
-    <div class="uid">
+    <div class="uid" *ngIf="subscription.customerUniqueId">
       <h5>Customer ID : {{ subscription.customerUniqueId }}</h5>
     </div>
-    <div class="nextBillingAmount">
+    <div class="nextBillingAmount" *ngIf="subscription.nextBillingAmountFormatted">
       <h5>Next Billing Amount : {{ subscription.nextBillingAmountFormatted }}</h5>
     </div>
-    <div class="nextBillingDate">
+    <div class="nextBillingDate" *ngIf="subscription.nextBillingDate">
       <h5>Next Billing Date: {{ subscription.nextBillingDate | date }}</h5>
     </div>
-    <div class="nextCycleRecurringBillingAmount">
+    <div class="nextCycleRecurringBillingAmount" *ngIf="subscription.nextCycleRecurringBillingAmount">
       <h5>
         Next Cycle Recurring Billing Amount:
         {{ subscription.nextCycleRecurringBillingAmount }}
       </h5>
     </div>
-    <div class="usage">
+    <div class="usage" *ngIf="usage">
       <h5>Usage : {{ usage }}</h5>
     </div>
     <div class="cancelSubscription">

@@ -214,6 +214,12 @@ export class VideoPlayerComponent implements OnInit {
       });
     }
 
+    this.adService.createView(this.adId).subscribe((res) => {
+      console.log(res);
+    }, (err) => {
+      console.error(err);
+    });
+
     this.videoPlayer.nativeElement.height = this.innerHeight;
     this.videoPlayer.nativeElement.width = this.innerWidth;
   }
@@ -221,13 +227,6 @@ export class VideoPlayerComponent implements OnInit {
   onStartVideo() {
     this.autoplay = true;
     this.showThumbnail = false;
-    const targetWindow = window.parent;
-    if (!this.preview && this.subscription != null) {
-      this.adService.createView(this.adId, this.subscription.cycleId).subscribe((res) => {
-      }, (err) => {
-        console.error(err);
-      });
-    }
 
     this.setSize();
     this.showVideo = true;
