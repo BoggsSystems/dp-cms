@@ -56,7 +56,7 @@
     </div>
 </mat-toolbar>
 
-<mat-sidenav-container style="overflow: visible" fxFlexFill class="mobile-container">
+<mat-sidenav-container style="overflow: visible; flex-grow: 1;" fxFlexFill class="mobile-container">
     <mat-sidenav #sidenav fxLayout="column">
         <div fxLayout="column">
             <span fxLayoutAlign="end end" class="close-menu" (click)="sidenav.toggle()" href="javascript:void(0)"
@@ -81,7 +81,7 @@
         </div>
     </mat-sidenav>
 
-    <mat-sidenav-content style="overflow: visible" autosize fxFlexFill>
+    <mat-sidenav-content style="overflow: visible;" autosize fxFlexFill>
         <router-outlet></router-outlet>
     </mat-sidenav-content>
 </mat-sidenav-container>

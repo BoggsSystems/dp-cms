@@ -131,7 +131,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.getProjects();
-    this.getCampaigns();
   }
 
   getTablesSetting() {

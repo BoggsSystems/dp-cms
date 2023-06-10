@@ -101,6 +101,12 @@ mat-progress-bar .mat-progress-bar-buffer {
 	background-size: 120% 120%; background-position: 50% 50%; background: rgba(96,96,96,0.8) radial-gradient(ellipse at center, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.6) 100%);
 }
 
+digit-pop-root {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
 .dpop-modal, .dpop-modal * { -moz-box-sizing: border-box !important; -webkit-box-sizing: border-box !important; box-sizing: border-box !important; outline: none; }
 
 .dpop-modal {
