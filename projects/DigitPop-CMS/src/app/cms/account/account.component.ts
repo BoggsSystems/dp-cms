@@ -191,14 +191,13 @@ export class AccountComponent implements OnInit {
     });
     confirmDialog.afterClosed().subscribe((result) => {
       if (result === true) {
-        this.billsByService.cancelSubscription().subscribe(
-          (res) => {
-            this.logout();
-          },
-          (err) => {
-            console.log('Update error : ' + err.toString());
-          }
-        );
+        this.subscriptionService
+          .downgradeToFreePlan()
+          .subscribe(
+            (res) => {
+              if ('plan' in res && res.plan === 'free') this.setFreeSubscription(res);
+            }
+          )
       }
     });
   }
