@@ -378,9 +378,12 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
               this.submissionProgress(true, "You're account created, redirecting to dashboard!");
 
               const user = response.data.user;
-              user.token = response.data.token;
+              const accessToken = response.data.token;
+              const refreshToken = response.data.refreshToken;
 
-              this.businessUserService.storeUser(user);
+              user.token = accessToken;
+
+              this.businessUserService.logUser(user, accessToken, refreshToken);
               this.router.navigate(['/cms/dashboard']);
             }
           }),

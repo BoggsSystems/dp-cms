@@ -79,6 +79,12 @@ export class BusinessUserService {
     this.currentUserSubject = new BehaviorSubject<any>(updatedUser);
   };
 
+  public logUser = (user: any, accessToken: string, refreshToken: any) => {
+    localStorage.setItem('currentRole', 'Business');
+    this.storeUser(user);
+    this.storeTokens(accessToken, refreshToken);
+  }
+
   updateUser = (user?: BusinessUser): Observable<any> => {
     const targetUser = user || this.currentUserValue;
 
