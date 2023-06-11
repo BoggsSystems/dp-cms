@@ -59,7 +59,12 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(1)]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+
+      ]],
       confirmPassword: ['', Validators.required],
       agreeToTerms: [false, Validators.requiredTrue]
     }, { validators: this.passwordMatchValidator });

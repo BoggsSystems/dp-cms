@@ -91,7 +91,7 @@
             <label class="signup__form-label">Password</label>
             <input type="password" formControlName="password" id="password" class="signup__form-input" autocomplete="off">
             <div *ngIf="signupForm.get('password').invalid && signupForm.get('password').touched">
-              <div class="signup__form-error">Please enter your password.</div>
+              <div class="signup__form-error">Your password should be at least 8 characters long, contain at 1 capital letter, 1 small letter, 1 number and 1 symbol.</div>
             </div>
           </div>
           <div class="signup__form-field">
