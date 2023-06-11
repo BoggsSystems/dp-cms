@@ -125,7 +125,7 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
     const { cid, sid, planName, cycleId } = nav?.extras?.state || {};
 
     if (planName) this.planName = planName;
-    if (this.cycleId) this.cycleId = cycleId;
+    if (cycleId) this.cycleId = cycleId;
 
     const updateValues = (value: { cid: string; sid: string }): void => {
       this.cid = value.cid;
