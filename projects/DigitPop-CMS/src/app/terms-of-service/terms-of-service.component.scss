@@ -33,6 +33,16 @@ $sidebar-active-link-color: #c2185b;
     color: #fff;
     opacity: 0.4;
   }
+
+  &__note {
+    display: block;
+    text-transform: capitalize;
+    opacity: 0.5;
+  }
+
+  &__date {
+    opacity: 0.25;
+  }
 }
 
 .container {
@@ -75,6 +85,7 @@ $sidebar-active-link-color: #c2185b;
 
   &__list {
     margin-top: 50px;
+    padding-top: 20px;
     counter-reset: my-counter;
     list-style-type: none;
   }
@@ -138,6 +149,12 @@ $sidebar-active-link-color: #c2185b;
   &__text {
     font-size: 1.15rem;
     line-height: 1.5rem;
+
+    &__prefix {
+      color:#c2185b;
+      font-weight: lighter;
+      font-style: italic;
+    }
   }
 
   &--current {

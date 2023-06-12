@@ -1,6 +1,7 @@
 <header class="header">
   <h1 class="header__title">Terms Of Service</h1>
-  <span class="header__date">Updated July 2023</span>
+  <small class="header__note">operated by Boggs Systems Corporation</small>
+  <span class="header__date">Updated 10 June 2023</span>
 </header>
 
 <div class="container">
@@ -15,42 +16,109 @@
     </ol>
   </aside>
 
-  <div class="content">
-    <section class="section" [class.section--current]="sections[0].id === currentSectionId" id="link1">
-      <h1 class="section__title">01. Lorem ipsum</h1>
+  <div #sectionsContainer class="content">
+    <section class="section">
       <p class="section__text">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit accusamus atque, soluta non tempore laudantium reprehenderit sint doloremque, autem fuga reiciendis architecto fugit dolorem assumenda, rerum praesentium ducimus deleniti! Reiciendis.
+      Welcome to DigitPop! These Terms and Services govern your use of our video hosting and streaming platform, so please read them carefully. By accessing or using DigitPop, you agree to be bound by these terms. If you do not agree with any part of these terms, you may not use our services.
       </p>
     </section>
 
-    <section class="section" [class.section--current]="sections[1].id === currentSectionId" id="link2">
-      <h1 class="section__title">02.Neque porro quisquam est qui</h1>
+    <section class="section" [class.section--current]="sections[0].id === currentSectionId" id="acceptance">
+      <h1 class="section__title">01. Acceptance of Terms</h1>
       <p class="section__text">
-        Neque aliquam vestibulum morbi blandit cursus. Adipiscing commodo elit at imperdiet dui accumsan. Neque viverra justo nec ultrices. At volutpat diam ut venenatis. In egestas erat imperdiet sed euismod. Viverra nibh cras pulvinar mattis nunc sed blandit libero volutpat. Magna ac placerat vestibulum lectus mauris ultrices eros in. Vitae elementum curabitur vitae nunc sed velit. Tortor at risus viverra adipiscing at in. Condimentum mattis pellentesque id nibh tortor id.
+        <span class="section__text__prefix">a.</span> By using DigitPop, you confirm that you are at least 18 years old or have the necessary legal capacity to enter into a contract.
       </p>
       <p class="section__text">
-        Tellus elementum sagittis vitae et leo duis. Risus quis varius quam quisque id diam vel quam. Duis at consectetur loremdonec massa sapien faucibus et molestie. Tortor pretium viverra suspendisse potenti nullam ac tortor. Tristique et egestas quis ipsum suspendisse ultrices gravida dictum fusce. Sed egestas egestas fringilla phasellus faucibus scelerisque eleifend.
-      </p>
-    </section>
-
-    <section class="section" [class.section--current]="sections[2].id === currentSectionId" id="link3">
-      <h1 class="section__title">03. Lorem ipsum dolorem</h1>
-      <p class="section__text">
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+        <span class="section__text__prefix">b.</span> These Terms and Services constitute a legally binding agreement between you and Boggs Systems Corporation.
       </p>
     </section>
 
-    <section class="section" [class.section--current]="sections[3].id === currentSectionId" id="link4">
-      <h1 class="section__title">04. adipiscing elit ipsum</h1>
+    <section class="section" [class.section--current]="sections[1].id === currentSectionId" id="obligations">
+      <h1 class="section__title">02. User Obligations</h1>
       <p class="section__text">
-        Convallis tellus id interdum velit laoreet id donec ultrices. Vestibulum mattis ullamcorper velit sed ullamcorper. Auctor elit sed vulputate mi sit. At quis risus sed vulputate odio ut enim blandit volutpat. Justo laoreet sit ametcursus sit. Tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada. At risus viverra adipiscing at. Ut morbi tincidunt augue interdum velit. Lectus vestibulum mattis ullamcorper velit. Neque convallis a cras semper auctor neque.At in tellus integer feugiat scelerisque varius morbi enim nunc.
+        <span class="section__text__prefix">a.</span> You are responsible for any content you upload or share on DigitPop. Ensure that you have all necessary rights and permissions for the content.
+      </p>
+      <p class="section__text">
+        <span class="section__text__prefix">b.</span> You agree not to use DigitPop for any illegal, harmful, or unauthorized purposes.
+        users' experience.
+      </p>
+      <p class="section__text">
+        <span class="section__text__prefix">c.</span> You will not violate any applicable laws, including copyright or intellectual property laws.
+        users' experience.
+      </p>
+      <p class="section__text">
+        <span class="section__text__prefix">d.</span> You will not engage in any activity that could interfere with the proper functioning of DigitPop or harm other users' experience.
       </p>
     </section>
 
-    <section class="section" [class.section--current]="sections[4].id === currentSectionId" id="link5">
-      <h1 class="section__title">05. Lorem ipsum</h1>
+    <section class="section" [class.section--current]="sections[2].id === currentSectionId" id="ownership">
+      <h1 class="section__title">03. Content Ownership</h1>
       <p class="section__text">
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standarddummy text ever since the 500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+        <span class="section__text__prefix">a.</span> You retain ownership of the content you upload to DigitPop. By submitting content, you grant Boggs Systems Corporation a non-exclusive, worldwide, royalty-free license to host, display, distribute, and reproduce it for the sole purpose of operating and improving our services.
+      </p>
+      <p class="section__text">
+        <span class="section__text__prefix">b.</span> Boggs Systems Corporation respects intellectual property rights and expects its users to do the same. If you believe your copyright has been infringed upon, please follow our copyright infringement policy.
+      </p>
+    </section>
+
+    <section class="section" [class.section--current]="sections[3].id === currentSectionId" id="prohibited">
+      <h1 class="section__title">04. Prohibited Content</h1>
+      <p class="section__text">
+        <span class="section__text__prefix">a.</span> You may not upload, share, or distribute any content that is illegal, defamatory, abusive, obscene, pornographic, or violates the rights of others.
+      </p>
+      <p class="section__text">
+        <span class="section__text__prefix">b.</span> Boggs Systems Corporation reserves the right to remove any content that violates these terms or its policies.
+      </p>
+    </section>
+
+    <section class="section" [class.section--current]="sections[4].id === currentSectionId" id="privacy">
+      <h1 class="section__title">05. Privacy</h1>
+      <p class="section__text">
+        <span class="section__text__prefix">a.</span> Boggs Systems Corporation collects and uses personal information as described in its Privacy Policy. By using DigitPop, you consent to the collection and use of your personal information as outlined therein.
+      </p>
+    </section>
+
+    <section class="section" [class.section--current]="sections[5].id === currentSectionId" id="termination">
+      <h1 class="section__title">06. Termination</h1>
+      <p class="section__text">
+        <span class="section__text__prefix">a.</span> Boggs Systems Corporation reserves the right to terminate or suspend your account at any time, without prior notice or liability, for any reason, including a breach of these terms.
+      </p>
+      <p class="section__text">
+        <span class="section__text__prefix">b.</span> Upon termination, your access to DigitPop and its services will cease, and any content associated with your account may be deleted.
+      </p>
+    </section>
+
+    <section class="section" [class.section--current]="sections[6].id === currentSectionId" id="limitation">
+      <h1 class="section__title">07. Limitation of Liability</h1>
+      <p class="section__text">
+        <span class="section__text__prefix">a.</span> DigitPop is provided on an "as is" and "as available" basis. We do not guarantee uninterrupted or error-free access to our services.
+      </p>
+      <p class="section__text">
+        <span class="section__text__prefix">b.</span> Boggs Systems Corporation shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising out of or relating to your use of DigitPop.
+      </p>
+    </section>
+
+    <section class="section" [class.section--current]="sections[7].id === currentSectionId" id="modifications">
+      <h1 class="section__title">08. Modifications to the Terms</h1>
+      <p class="section__text">
+        <span class="section__text__prefix">a.</span> Boggs Systems Corporation may modify these Terms and Services from time to time. The updated version will be posted on our website, and it is your responsibility to review the changes.
+      </p>
+      <p class="section__text">
+        <span class="section__text__prefix">b.</span> By continuing to use DigitPop after the modifications, you agree to be bound by the revised Terms and Services.
+      </p>
+    </section>
+
+    <section class="section" [class.section--current]="sections[8].id === currentSectionId" id="law">
+      <h1 class="section__title">09. Governing Law and Jurisdiction</h1>
+      <p class="section__text">
+        <span class="section__text__prefix">a.</span> These Terms and Services are governed by and construed in accordance with the laws of Ontario, Canada. Any disputes
+        arising out of these terms shall be subject to the exclusive jurisdiction of the courts of Ontario, Canada.
+      </p>
+    </section>
+
+    <section class="section">
+      <p class="section__text">
+        By using DigitPop, you acknowledge that you have read, understood, and agreed to these Terms and Services. If you have any questions or concerns, please contact us at info@digitpop.com
       </p>
     </section>
   </div>
