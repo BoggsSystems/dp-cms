@@ -13,6 +13,7 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
 import { AuthGuard } from './shared/guards/auth-guard.service';
 import { NameGuard } from './shared/services/campaign.service';
 import { UserRoleCheckResolver } from './shared/resolvers/user-role-check.resolver';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 
 const routes: Routes = [
   {
@@ -55,6 +56,10 @@ const routes: Routes = [
   {
     path: 'signup',
     component: SignupRevampedComponent,
+  },
+  {
+    path: 'privacy',
+    component: PrivacyPolicyComponent,
   },
   {
     path: 'login',

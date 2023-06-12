@@ -1,0 +1,168 @@
+$header-bg: #292929;
+$header-border: 1px solid rgba(255, 255, 255, 0.25);
+$sidebar-bg: rgba(0, 0, 0, 0.15);
+$sidebar-border: 1px solid rgba(255, 255, 255, 0.25);
+$sidebar-active-link-color: #c2185b;
+
+.header {
+  z-index: 2;
+  width: 100%;
+  padding: 30px;
+  position: sticky;
+  top: 0;
+  background-color: $header-bg;
+  border-bottom: $header-border;
+
+  @media only screen and (min-width: 1024px) {
+    padding: 40px;
+    padding-left: calc(30% + 60px);
+  }
+
+  &__title {
+    margin-bottom: 5px;
+    font-size: 3rem;
+    line-height: 3.5rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: #fff;
+  }
+
+  &__subtitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    opacity: 0.4;
+  }
+
+  &__note {
+    display: block;
+    text-transform: capitalize;
+    opacity: 0.5;
+  }
+
+  &__date {
+    opacity: 0.25;
+  }
+}
+
+.container {
+  display: flex;
+}
+
+.sidebar {
+  display: none;
+  z-index: 3;
+  padding-left: 30px;
+  height: 100vh;
+  width: 30%;
+  border-right: $sidebar-border;
+  background: $sidebar-bg;
+  position: sticky;
+  top: 0;
+  bottom: 0;
+
+  @media only screen and (min-width: 1024px) {
+    display: block;
+  }
+
+  &__title {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    font-size: 35px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: capitalize;
+
+    &::after {
+      content: "";
+      display: block;
+      width: 35%;
+      height: 2px;
+      margin-top: 15px;
+      background-color: $sidebar-active-link-color;
+    }
+  }
+
+  &__list {
+    margin-top: 50px;
+    padding-top: 20px;
+    counter-reset: my-counter;
+    list-style-type: none;
+  }
+
+  &__item {
+    margin-bottom: 20px;
+
+    &:before {
+      content: "0" counter(my-counter) ". ";
+      counter-increment: my-counter;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #fff;
+      opacity: 0.5;
+    }
+
+    &:nth-of-type(n + 10):before {
+      content: counter(my-counter) ". ";
+    }
+  }
+
+  &__link {
+    font-size: 18px;
+    color: #fff;
+    opacity: 0.5;
+
+    &--active {
+      font-weight: 600;
+      opacity: 1;
+    }
+  }
+}
+
+.content {
+  width: 100%;
+  margin-top: 30px;
+
+  @media only screen and (min-width: 1024px) {
+    width: 70%;
+  }
+}
+
+.section {
+  margin-bottom: 50px;
+  padding: 30px;
+  padding-bottom: 0;
+  opacity: 0.5;
+
+  @media only screen and (min-width: 1024px) {
+    padding-left: 60px;
+    padding-right: 40px;
+  }
+
+  &__title {
+    margin-bottom: 15px;
+    font-size: 2rem;
+    font-weight: 500;
+    color: #fff;
+  }
+
+  &__text {
+    font-size: 1.15rem;
+    line-height: 1.5rem;
+
+    &__prefix {
+      color: #c2185b;
+      font-weight: lighter;
+      font-style: italic;
+    }
+  }
+
+  &--current {
+    opacity: 1;
+
+    .section__title {
+      font-weight: 900;
+      font-style: italic;
+    }
+  }
+}
