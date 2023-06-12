@@ -29,6 +29,9 @@ import { Cloudinary } from '../../shared/helpers/cloudinary';
 
 import { BusinessUserService } from '../../shared/services/accounts/business-user.service';
 
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 interface TablesSettings {
   [key: string]: any;
 }
@@ -75,6 +78,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   filterValue = '';
   sortBy = 'createdAt';
   sortDirection = 'desc';
+  private cancelFiltering: boolean;
+  private filterChange$ = new Subject<void>();
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild('campaignPaginator') campaignPaginator: MatPaginator;
@@ -84,6 +89,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   constructor(private route: ActivatedRoute, private billsbyService: BillsbyService, private campaignService: CampaignService, private breakpointObserver: BreakpointObserver, private projectService: ProjectService, private productGroupService: ProductGroupService, private router: Router, public dialog: MatDialog,
   private businessUser: BusinessUserService,
   ) {
+    this.cancelFiltering = false;
     this.height = 25;
     this.width = 150;
   }
@@ -270,7 +276,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  renderProjects(projects: any) {
+  renderProjects(projects: any, filtering?: boolean) {
+    if (filtering && this.cancelFiltering) {
+      this.cancelFiltering = false;
+      return;
+    }
     this.dataSource = new MatTableDataSource(projects);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -345,39 +355,51 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  applyFilter(event: Event) {
+  async applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
 
     if (!filterValue) {
+      this.cancelFiltering = true;
       return this.getProjects();
     }
 
+    this.filterChange$.next();
+
     const data: any = filterValue.trim().toLowerCase();
-    const cachedProjects: any = JSON.parse(sessionStorage.getItem('cachedResults'));
+    const cachedProjects: any = JSON.parse(sessionStorage.getItem('cached-results'));
     this.dataSource.filter = filterValue.trim().toLowerCase();
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
 
     this.isFiltered = true;
     this.filterValue = filterValue;
-    return sessionStorage.setItem('cached-results', JSON.stringify(this.dataSource.filteredData));
+
+    sessionStorage.setItem('cached-results', JSON.stringify(this.dataSource.filteredData));
+    return this.populateFilteredData(this.projectsPageSize);
   }
 
-  populateFilteredData = () => {
-    const filterResults = this.dataSource.filteredData;
-    const populatedResults: Project[] = [];
+  populateFilteredData = (pageSize?: number) => {
+    let filteredData = this.dataSource.filteredData;
+    filteredData = this.dataSource.sortData(filteredData, this.dataSource.sort);
+    const promises: Promise<Object>[] = [];
 
-    filterResults.forEach((result: Project, index: number) => {
-      this.projectService
-        .getProject(result._id)
-        .subscribe((project: Project) => {
-          populatedResults.push(project);
-          sessionStorage.setItem('cached-results', JSON.stringify(populatedResults));
-          this.dataSource.filteredData = populatedResults;
-        });
-    });
-  }
+    for (let i = 0; i < Math.min(pageSize, filteredData.length); i++) {
+      const result = filteredData[i];
+      promises.push(this.projectService.getProject(result._id).toPromise());
+    }
+
+    Promise.all(promises)
+      .then((projects: Object[]) => {
+        const typedProjects: Project[] = projects as Project[];
+        this.dataSource.filteredData = typedProjects;
+        this.renderProjects(typedProjects, true);
+      })
+      .catch((error) => {
+        // Handle error
+      });
+  };
 
   applyCampaignsFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
