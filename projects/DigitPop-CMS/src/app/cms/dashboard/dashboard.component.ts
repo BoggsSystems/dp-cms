@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {BreakpointObserver} from '@angular/cdk/layout';
-import {first} from 'rxjs/operators';
+import {catchError, first, mergeMap} from 'rxjs/operators';
 import {ActivatedRoute, NavigationExtras, Router} from '@angular/router';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -28,9 +28,8 @@ import {Cache, RequestArguments} from '../../shared/helpers/cache';
 import { Cloudinary } from '../../shared/helpers/cloudinary';
 
 import { BusinessUserService } from '../../shared/services/accounts/business-user.service';
-
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, from, of } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 
 interface TablesSettings {
   [key: string]: any;
@@ -78,8 +77,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   filterValue = '';
   sortBy = 'createdAt';
   sortDirection = 'desc';
-  private cancelFiltering: boolean;
-  private filterChange$ = new Subject<void>();
+  private filterChange$ = new Subject<string>();
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild('campaignPaginator') campaignPaginator: MatPaginator;
@@ -89,7 +87,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   constructor(private route: ActivatedRoute, private billsbyService: BillsbyService, private campaignService: CampaignService, private breakpointObserver: BreakpointObserver, private projectService: ProjectService, private productGroupService: ProductGroupService, private router: Router, public dialog: MatDialog,
   private businessUser: BusinessUserService,
   ) {
-    this.cancelFiltering = false;
     this.height = 25;
     this.width = 150;
   }
@@ -276,11 +273,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  renderProjects(projects: any, filtering?: boolean) {
-    if (filtering && this.cancelFiltering) {
-      this.cancelFiltering = false;
-      return;
-    }
+  renderProjects(projects: any) {
     this.dataSource = new MatTableDataSource(projects);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -355,49 +348,55 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  async applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
 
     if (!filterValue) {
-      this.cancelFiltering = true;
       return this.getProjects();
     }
 
     this.filterChange$.next();
 
-    const data: any = filterValue.trim().toLowerCase();
-    const cachedProjects: any = JSON.parse(sessionStorage.getItem('cached-results'));
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const cachedProjects: any[] = JSON.parse(sessionStorage.getItem('cached-results'));
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+    if (cachedProjects) {
+      const filteredData = cachedProjects.filter((project: any) =>
+        project.name.toLowerCase().includes(filterValue)
+      );
+      // return this.renderProjects(filteredData);
+      return this.populateFilteredData();
     }
 
-    this.isFiltered = true;
-    this.filterValue = filterValue;
-
-    sessionStorage.setItem('cached-results', JSON.stringify(this.dataSource.filteredData));
-    return this.populateFilteredData(this.projectsPageSize);
+    this.filterChange$.next(filterValue);
   }
 
-  populateFilteredData = (pageSize?: number) => {
-    let filteredData = this.dataSource.filteredData;
-    filteredData = this.dataSource.sortData(filteredData, this.dataSource.sort);
-    const promises: Promise<Object>[] = [];
+  populateFilteredData = () => {
+    this.filterChange$
+      .pipe(
+        switchMap((filterValue) => {
+          const filterResults = this.dataSource.filteredData.slice(0, 20); // Get the first 20 filtered results
+          const populatedResults: Project[] = [];
 
-    for (let i = 0; i < Math.min(pageSize, filteredData.length); i++) {
-      const result = filteredData[i];
-      promises.push(this.projectService.getProject(result._id).toPromise());
-    }
-
-    Promise.all(promises)
-      .then((projects: Object[]) => {
-        const typedProjects: Project[] = projects as Project[];
-        this.dataSource.filteredData = typedProjects;
-        this.renderProjects(typedProjects, true);
-      })
-      .catch((error) => {
-        // Handle error
+          return from(filterResults).pipe(
+            mergeMap((result: Project) =>
+              this.projectService.getProject(result._id).pipe(
+                takeUntil(this.filterChange$), // Cancel previous requests when a new filter value is emitted
+                catchError((error) => {
+                  // Handle error
+                  return of(null); // Return a null value to continue with other requests
+                })
+              )
+            )
+          );
+        })
+      )
+      .subscribe((project: Project) => {
+        if (project) {
+          const cachedProjects: Project[] = JSON.parse(sessionStorage.getItem('cached-results')) || [];
+          cachedProjects.push(project);
+          sessionStorage.setItem('cached-results', JSON.stringify(cachedProjects));
+          this.dataSource.filteredData = cachedProjects;
+        }
       });
   };
 

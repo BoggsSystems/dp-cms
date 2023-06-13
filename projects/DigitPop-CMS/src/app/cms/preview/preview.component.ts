@@ -12,7 +12,8 @@ export class PreviewComponent implements OnInit {
   iFrameSrc: any;
 
   constructor(public dialogRef: MatDialogRef<PreviewComponent>, @Inject(MAT_DIALOG_DATA) data: any) {
-    this.iFrameSrc = `${environment.playerUrl}/ad/${data.id}`;
+    const { id, isPreview } = data;
+    this.iFrameSrc = `${environment.playerUrl}/ad/${id}/preview/true`;
   }
 
   ngOnInit(): void {
