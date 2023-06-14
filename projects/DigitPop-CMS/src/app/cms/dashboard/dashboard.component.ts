@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {BreakpointObserver} from '@angular/cdk/layout';
-import {catchError, first, mergeMap} from 'rxjs/operators';
+import {catchError, first, map, mergeMap, toArray} from 'rxjs/operators';
 import {ActivatedRoute, NavigationExtras, Router} from '@angular/router';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -28,7 +28,7 @@ import {Cache, RequestArguments} from '../../shared/helpers/cache';
 import { Cloudinary } from '../../shared/helpers/cloudinary';
 
 import { BusinessUserService } from '../../shared/services/accounts/business-user.service';
-import { Subject, from, of } from 'rxjs';
+import { BehaviorSubject, Subject, forkJoin, from, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
 interface TablesSettings {
@@ -77,7 +77,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   filterValue = '';
   sortBy = 'createdAt';
   sortDirection = 'desc';
-  private filterChange$ = new Subject<string>();
+  filterChange$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  private destroy$: Subject<void> = new Subject<void>();
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild('campaignPaginator') campaignPaginator: MatPaginator;
@@ -349,56 +350,70 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
 
     if (!filterValue) {
+      sessionStorage.removeItem('cached-results');
       return this.getProjects();
     }
 
-    this.filterChange$.next();
-
-    const cachedProjects: any[] = JSON.parse(sessionStorage.getItem('cached-results'));
-
-    if (cachedProjects) {
-      const filteredData = cachedProjects.filter((project: any) =>
-        project.name.toLowerCase().includes(filterValue)
-      );
-      // return this.renderProjects(filteredData);
-      return this.populateFilteredData();
-    }
-
     this.filterChange$.next(filterValue);
-  }
 
-  populateFilteredData = () => {
     this.filterChange$
       .pipe(
-        switchMap((filterValue) => {
-          const filterResults = this.dataSource.filteredData.slice(0, 20); // Get the first 20 filtered results
-          const populatedResults: Project[] = [];
+        map((filterValue: string) => {
+          const cachedProjects: any = sessionStorage.getItem('my-projects');
+          const data = JSON.parse(cachedProjects);
 
-          return from(filterResults).pipe(
-            mergeMap((result: Project) =>
-              this.projectService.getProject(result._id).pipe(
-                takeUntil(this.filterChange$), // Cancel previous requests when a new filter value is emitted
-                catchError((error) => {
-                  // Handle error
-                  return of(null); // Return a null value to continue with other requests
-                })
-              )
-            )
-          );
+          const filteredData = data.filter((project: Project) => {
+            return project.name && project.name.toLowerCase().includes(filterValue);
+          });
+          return filteredData;
         })
       )
-      .subscribe((project: Project) => {
-        if (project) {
-          const cachedProjects: Project[] = JSON.parse(sessionStorage.getItem('cached-results')) || [];
-          cachedProjects.push(project);
-          sessionStorage.setItem('cached-results', JSON.stringify(cachedProjects));
-          this.dataSource.filteredData = cachedProjects;
+      .subscribe((filteredData: Project[]) => {
+        const filteredDataSource = filteredData;
+        this.renderProjects(filteredDataSource);
+        this.populateFilteredData(filteredDataSource);
+
+        sessionStorage.setItem('cached-results', JSON.stringify(filteredDataSource));
+
+        if (this.dataSource.paginator) {
+          this.dataSource.paginator.firstPage();
         }
       });
+
+    return null;
+  }
+
+  populateFilteredData = (filteredData: Project[]) => {
+    let counter = 0;
+    const filteredProjects: Project[] = [];
+
+    const observables = filteredData.map((project) => {
+      if (counter >= this.projectsPageSize) {
+        filteredProjects.push(project);
+        return null;
+      }
+
+      return this.projectService.getProject(project._id);
+    });
+
+    forkJoin(observables).subscribe((results: any[]) => {
+      results.forEach((res) => {
+        if (res) {
+          filteredProjects.push(res);
+        }
+      });
+
+      this.renderProjects(filteredProjects);
+    });
   };
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   applyCampaignsFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
