@@ -87,7 +87,7 @@
           </span>
           </th>
           <td *matCellDef="let element" mat-cell>
-            {{ element.stats.videoWatchCount }}
+            {{ element.metric ? element.metric.totalVideoWatches : element.stats.videoWatchCount }}
           </td>
         </ng-container>
 
@@ -99,7 +99,7 @@
             </span>
           </th>
           <td *matCellDef="let element" mat-cell>
-            {{ element.stats.videoPauseCount }}
+            {{ element.metric ? element.metric.totalVideoPauses : element.stats.videoPauseCount }}
           </td>
         </ng-container>
 
@@ -111,7 +111,7 @@
           </span>
           </th>
           <td *matCellDef="let element" mat-cell>
-            {{ element.stats.videoClickCount }}
+            {{ element.metric ? element.metric.totalVideoClicks : element.stats.videoClickCount }}
           </td>
         </ng-container>
 
@@ -123,7 +123,7 @@
           </span>
           </th>
           <td *matCellDef="let element" mat-cell>
-            {{ element.stats.buyNowClickCount }}
+            {{ element.metric ? element.metric.totalBuyNowClicks : element.stats.buyNowClickCount }}
           </td>
         </ng-container>
 
