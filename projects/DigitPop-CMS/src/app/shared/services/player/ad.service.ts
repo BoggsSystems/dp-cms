@@ -27,8 +27,11 @@ export class AdService {
   }
 
   updateStats = (projectId: string, action: string, productId = '') => {
-    return this.httpClient.post<any>(`${environment.apiUrl}/api/projects/updateStats`, {
-      projectId,
+    const source = 'campaign';
+
+    return this.httpClient.put<any>(`${environment.apiUrl}/api/metrics/`, {
+      source,
+      project: projectId,
       action,
       productId
     });
