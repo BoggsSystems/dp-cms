@@ -66,7 +66,7 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     this.canToggle = false;
     this.videosCount = Array(this.videosLimit).fill(0).map((x, i) => i);
     this.categoryVideosCount = 0;
-    this.selectedCategories = ['Clothing']; // Set default category Cosmetics
+    this.selectedCategories = ['Cosmetics']; // Set default category Cosmetics
 
     if (sessionStorage.getItem('XchaneCurrentUser') || localStorage.getItem('XchaneCurrentUser')) {
       this.loggedIn = true;
