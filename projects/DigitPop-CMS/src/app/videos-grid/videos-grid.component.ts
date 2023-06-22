@@ -59,9 +59,11 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   popupOpened = false;
   dialogOpen = false;
   loggedIn = false;
+  lastCampaignId: string | null;
 
   // tslint:disable-next-line:max-line-length
   constructor(private videosService: VideosGridService, private engagementService: EngagementService, private authService: XchaneAuthenticationService, private dialog: MatDialog, private router: Router, private data: DataService) {
+    this.lastCampaignId = null;
     this.scoreBubbleIsOpen = false;
     this.canToggle = false;
     this.videosCount = Array(this.videosLimit).fill(0).map((x, i) => i);
@@ -141,10 +143,11 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     }
 
     return this.videosService
-      .getVideos(this.selectedCategories, this.page, this.videosLimit, currentUserId)
+      .getVideos(this.selectedCategories, this.page, this.videosLimit, currentUserId, this.lastCampaignId)
       .subscribe((response) => {
         this.categoryVideosCount = response[0].count;
         this.videos = isAppend ? [...this.videos, ...response] : response;
+        this.lastCampaignId = response[response.length - 1].campaignId;
         this.buildGrid();
       }, (error: Error) => {
         console.error(error);

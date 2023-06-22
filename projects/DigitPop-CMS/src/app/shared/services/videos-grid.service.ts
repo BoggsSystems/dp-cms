@@ -19,12 +19,16 @@ export class VideosGridService {
   constructor(private httpClient: HttpClient) {
   }
 
-  getVideos = (categories: string[], page: number, limit: number, userId: string | null): Observable<ProjectMedia[]> => {
+  getVideos = (categories: string[], page: number, limit: number, userId: string | null, lastCampaignId: string | null = null): Observable<ProjectMedia[]> => {
     let params = new HttpParams();
     params = categories.length ? params.append('categories', categories.join(',')) : null;
     params = params.append('page', page.toString());
     params = params.append('limit', limit.toString());
     params = params.append('userId', userId);
+
+    if (lastCampaignId) {
+      params = params.append('lastCampaignId', lastCampaignId);
+    }
 
     this.cachedVideo$ = this.cacheMap.has(params.toString()) ? this.cacheMap.get(params.toString()) : null;
     if (!this.cachedVideo$) {
