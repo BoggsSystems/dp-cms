@@ -130,12 +130,13 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
   }
 
   setCategory: (category: string) => void = (category: string) => {
+    this.lastCampaignId = null;
     this.selectedCategories = category === 'All' ? this.categories : [category];
     this.page = 0;
     this.getVideos();
   }
 
-  getVideos: (isAppend?: boolean) => void = async (isAppend: boolean = false) => {
+  getVideos: (isAppend?: boolean, isAll?: boolean) => void = async (isAppend: boolean = false, isAll: boolean = false) => {
     let currentUserId = localStorage.getItem('XchaneCurrentUser') ? JSON.parse(localStorage.getItem('XchaneCurrentUser'))._id : false;
 
     if (!currentUserId) {
@@ -146,8 +147,21 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
       .getVideos(this.selectedCategories, this.page, this.videosLimit, currentUserId, this.lastCampaignId)
       .subscribe((response) => {
         this.categoryVideosCount = response[0].count;
-        this.videos = isAppend ? [...this.videos, ...response] : response;
-        this.lastCampaignId = response[response.length - 1].campaignId;
+
+        const uniqueIds = new Set();
+        const uniqueResponse: ProjectMedia[] = [];
+
+        response.forEach(video => {
+          if (!uniqueIds.has(video._id)) {
+            uniqueIds.add(video._id);
+            uniqueResponse.push(video);
+          }
+        });
+
+        const updatedVideos = isAppend ? [...this.videos, ...uniqueResponse] : uniqueResponse;
+        this.videos = updatedVideos;
+
+        this.lastCampaignId = isAll ? null : response[response.length - 1].campaignId;
         this.buildGrid();
       }, (error: Error) => {
         console.error(error);
