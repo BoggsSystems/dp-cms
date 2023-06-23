@@ -45,7 +45,7 @@ export class BillsbyService {
   ) { }
 
   getProductPlans(): Observable<any> {
-    const productId = '5511';
+    const productId = '1142';
     return this.httpClient.get(`${this.billsByUrl}/products/${productId}/plans`);
   }
 
