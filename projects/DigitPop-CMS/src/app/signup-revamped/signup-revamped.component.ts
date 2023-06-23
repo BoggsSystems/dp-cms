@@ -211,6 +211,18 @@ export class SignupRevampedComponent implements OnInit, AfterViewInit {
 
   private getPlans = () => {
     this.billsByService.getProductPlans().subscribe((res: Plan[]) => {
+
+      res.map(plan => {
+        const cycles = plan.cycles;
+
+        for (const cycle of cycles) {
+          if (cycle.visibility === "Public") {
+            plan.cycles = [cycle];
+            break;
+          }
+        }
+      });
+
       this.plans = res;
     });
   }
