@@ -3,6 +3,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CampaignService } from '../../shared/services/campaign.service';
 import { ProjectService } from '../../shared/services/project.service';
+import { MatPaginator } from '@angular/material/paginator';
 
 
 @Component({
@@ -11,13 +12,15 @@ import { ProjectService } from '../../shared/services/project.service';
   styleUrls: ['./campaigns.component.scss']
 })
 export class CampaignsComponent implements OnInit {
-  displayedColumns: string[] = ['name','budgetAmount','active', 'impressionCount', 'engagementCount', 'pauseCount', 'buyNowCount', 'salesCount'];
+  displayedColumns: string[] = ['name','budgetAmount','active', 'impressionCount', 'engagementCount', 'pauseCount', 'buyNowCount', 'salesCount', 'edit'];
   dataSource:any;
 
   constructor(private campaignService: CampaignService, private projectService: ProjectService,) {
   }
 
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
 
 
   ngOnInit() {
@@ -25,6 +28,7 @@ export class CampaignsComponent implements OnInit {
       .subscribe((campaigns: any[]) => {
 
         this.dataSource = new MatTableDataSource(campaigns);
+        this.dataSource.paginator = this.paginator;
         this.dataSource.sortingDataAccessor = (item:any, property:any) => {
 
           switch(property) {

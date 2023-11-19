@@ -195,6 +195,10 @@ export class VideosGridComponent implements OnInit, AfterViewInit {
     this.campaignId = campaignId;
     this.categoryId = categoryId;
 
+    console.log("Project Id:  " + this.projectId);
+    console.log("Campaign Id:  " + this.campaignId);
+    console.log("Category Id:  " + this.categoryId);
+
     const dialogConfig = new MatDialogConfig();
 
     const getUserId = (): string | boolean => {

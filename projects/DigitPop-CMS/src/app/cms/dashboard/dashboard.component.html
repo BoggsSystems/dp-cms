@@ -199,10 +199,16 @@
       </table>
     </div>
 
+
+
     <mat-paginator #paginator (page)="onTableChange($event, 'projects')"
                    [pageIndex]="projectsPage"
                    [pageSizeOptions]="[5, 10, 20]" [pageSize]="projectsPageSize"
                    showFirstLastButtons>
     </mat-paginator>
+
+    <DigitPop-campaigns></DigitPop-campaigns>
   </div>
+
+
 </div>
